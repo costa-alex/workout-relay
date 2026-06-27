@@ -1,0 +1,13 @@
+.git
+.github
+
+cypress
+
+boot/build
+ui/dist
+
+**/.gradle
+**/node_modules
+
+README.md
+LICENSE
