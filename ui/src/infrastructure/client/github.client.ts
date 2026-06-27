@@ -15,7 +15,7 @@ export class GitHubClient {
   }
 
   getLatestRelease(): Observable<any> {
-    return this.httpClient.get(`${GitHubClient.url}/repos/freekode/tp2intervals/releases/latest`).pipe(
+    return this.httpClient.get(`${GitHubClient.url}/repos/costa-alex/tp2intervals/releases/latest`).pipe(
       map(response => new Release(response)),
     )
   }
