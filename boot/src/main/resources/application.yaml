@@ -20,7 +20,7 @@ spring:
     serialization:
       fail-on-empty-beans: false
   datasource:
-    url: jdbc:sqlite:tp2intervals.sqlite
+    url: jdbc:sqlite:/data/tp2intervals.sqlite
     driver-class-name: org.sqlite.JDBC
   jpa:
     open-in-view: false
@@ -49,4 +49,4 @@ management:
 
 logging:
   file:
-    name: tp2intervals.log
+    name: /data/tp2intervals.log
