@@ -1,6 +1,21 @@
-tp2intervals.sqlite
-*.log*
-node_modules
+.git
+.github
 
-.idea
-.vscode
+cypress
+docs
+jdktool
+
+boot/build
+boot/src/main/resources/static
+
+ui/dist
+
+**/.gradle
+**/node_modules
+
+*.sqlite
+*.log*
+data
+
+README.md
+LICENSE

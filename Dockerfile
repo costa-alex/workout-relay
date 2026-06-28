@@ -23,7 +23,7 @@ WORKDIR /app
 COPY . .
 
 # copiar frontend compilado
-RUN mkdir -p boot/src/main/resources/static
+RUN rm -rf boot/src/main/resources/static && mkdir -p boot/src/main/resources/static
 
 COPY --from=ui-builder /ui/dist/ui/browser/ boot/src/main/resources/static/
 
@@ -31,7 +31,7 @@ RUN chmod +x boot/gradlew
 
 WORKDIR /app/boot
 
-RUN ./gradlew bootJar -x test
+RUN ./gradlew --no-daemon bootJar -x test
 
 # ===========================
 # Stage 3 - Runtime
@@ -44,4 +44,4 @@ COPY --from=builder /app/boot/build/libs/tp2intervals.jar app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java","-jar","/app/app.jar"]

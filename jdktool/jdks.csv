@@ -1,5 +1,0 @@
-variant,version,os,arch,url,checksum
-jre,21,mac,x64,https://cdn.azul.com/zulu/bin/zulu21.34.19-ca-jre21.0.3-macosx_x64.zip,607d4f8fbbca4c10f50644ffcd7ee6213d53e7b393ce466cfc96795961e9a204
-jre,21,mac,arm64,https://cdn.azul.com/zulu/bin/zulu21.34.19-ca-jre21.0.3-macosx_aarch64.zip,413d1b38c4a7a20c30d272bb0c1a774c27b01876d0e2f7fe23b238b068a8456f
-jre,21,win,x64,https://cdn.azul.com/zulu/bin/zulu21.34.19-ca-jre21.0.3-win_x64.zip,56c17e0f152055bfc110347b017e1efd2e1fc243e483d2e3fe371910287059f9
-jre,21,linux,x64,https://cdn.azul.com/zulu/bin/zulu21.34.19-ca-jre21.0.3-linux_x64.zip,ca00198d3a33425f5a29a1dd0eaed6d86a41cffdab7d18764523ad24d3a21df8
