@@ -1,13 +1,32 @@
-.progress-bar {
-  height: 4px
+.app-container {
+  min-height: 100vh;
 }
 
-main {
-  //align-items: center;
-  display: flex;
-  flex-direction: column;
-  width: 75%;
-  max-width: 1080px;
-  margin: auto;
-  padding: 16px;
+.app-drawer {
+  width: 280px;
+  max-width: 85vw;
+}
+
+.drawer-header {
+  padding: 20px 16px 12px;
+}
+
+.drawer-header h3 {
+  margin: 0;
+}
+
+.drawer-header small {
+  display: block;
+  margin-top: 4px;
+  opacity: .7;
+}
+
+.app-main {
+  padding: 24px;
+}
+
+@media (max-width: 768px) {
+  .app-main {
+    padding: 16px;
+  }
 }

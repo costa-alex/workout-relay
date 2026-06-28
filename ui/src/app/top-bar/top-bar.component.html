@@ -1,134 +1,63 @@
-<mat-drawer-container class="drawer-container">
-
-  <mat-drawer #drawer mode="over">
-
-<div class="drawer-header">
-
-  <h3>TP2Intervals</h3>
-
-  <small>v{{ appVersion }}</small>
-
-</div>
-
-<mat-divider></mat-divider>
-
-    <mat-nav-list>
-
-  @for (button of menuButtons; track button) {
-
-    <a
-      mat-list-item
-      [routerLink]="button.url"
-      (click)="drawer.close()"
-      [activated]="router.url === button.url">
-
-      <mat-icon matListItemIcon>
-
-        {{ button.icon }}
-
-      </mat-icon>
-
-      <span matListItemTitle>
-
-        {{ button.name }}
-
-      </span>
-
-    </a>
-
-  }
-
-</mat-nav-list>
-
-  </mat-drawer>
-
-  <mat-toolbar color="primary">
+<mat-toolbar color="primary" class="top-bar">
 
   @if (isMobile$ | async) {
 
     <button
       mat-icon-button
-      (click)="drawer.toggle()">
-
+      aria-label="Open menu"
+      (click)="menuClicked.emit()">
       <mat-icon>menu</mat-icon>
-
     </button>
 
     <span class="mobile-title">
-
-      <mat-icon>
-
-sync
-
-</mat-icon>
-
-TP2Intervals
-
+      <mat-icon>sync</mat-icon>
+      <span>TP2Intervals</span>
     </span>
 
   } @else {
 
-    @for (button of menuButtons; track button) {
+    <div class="desktop-menu">
+      @for (button of menuButtons; track button.url) {
 
-      @if (router.url === button.url) {
-
-        <button
-          mat-stroked-button
-          [routerLink]="[button.url]">
-
-          {{button.name}}
-
-        </button>
-
-      } @else {
-
-        <button
-          mat-flat-button
-          color="primary"
-          [routerLink]="[button.url]">
-
-          {{button.name}}
-
-        </button>
+        @if (router.url === button.url) {
+          <button
+            mat-stroked-button
+            [routerLink]="[button.url]">
+            {{ button.name }}
+          </button>
+        } @else {
+          <button
+            mat-flat-button
+            color="primary"
+            [routerLink]="[button.url]">
+            {{ button.name }}
+          </button>
+        }
 
       }
-
-    }
+    </div>
 
   }
 
   <span class="spacer"></span>
 
-    <a
-      mat-button
-      [href]="githubLink"
-      target="_blank"
-      class="github-link"
-      [matBadgeHidden]="updateAvailableBadgeHidden"
-      [matTooltipDisabled]="updateAvailableBadgeHidden"
-      matTooltip="Update available"
-      matBadge="1"
-      matBadgeSize="small"
-      matBadgePosition="before"
-      matBadgeColor="accent">
+  <a
+    mat-button
+    [href]="githubLink"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="github-link"
+    [matBadgeHidden]="updateAvailableBadgeHidden"
+    [matTooltipDisabled]="updateAvailableBadgeHidden"
+    matTooltip="Update available"
+    matBadge="1"
+    matBadgeSize="small"
+    matBadgePosition="before"
+    matBadgeColor="accent">
 
-      <span>v{{ appVersion }}</span>
+    <span>v{{ appVersion }}</span>
+    <mat-icon>integration_instructions</mat-icon>
 
-      <mat-icon fontSet="material-icons-outlined">
-        code
-      </mat-icon>
-
-    </a>
-
-  </mat-toolbar>
-
-</mat-drawer-container>
-<!--
-<a mat-icon-button
-     href="https://forum.intervals.icu/t/tp2intervals-copy-trainingpeaks-and-trainerroad-workouts-plans-to-intervals/63375"
-     target="_blank" class="external-link">
-    <mat-icon>
-      forum
-    </mat-icon>
   </a>
--->
+
+</mat-toolbar>

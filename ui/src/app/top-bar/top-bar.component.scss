@@ -1,10 +1,12 @@
-.drawer-container {
-  min-height: 64px;
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-mat-drawer {
-  width: 280px;
-  max-width: 85vw;
+.desktop-menu {
+  display: flex;
+  gap: 8px;
 }
 
 .mobile-title {
@@ -20,16 +22,14 @@ mat-drawer {
   flex: 1 1 auto;
 }
 
-.drawer-header {
-  padding: 20px 16px 12px;
+.github-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.drawer-header h3 {
-  margin: 0;
-}
-
-.drawer-header small {
-  display: block;
-  margin-top: 4px;
-  opacity: .7;
+@media (max-width: 420px) {
+  .mobile-title span {
+    display: none;
+  }
 }

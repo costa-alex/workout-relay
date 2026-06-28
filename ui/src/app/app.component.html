@@ -1,4 +1,45 @@
-<app-top-bar></app-top-bar>
-<main>
-  <router-outlet></router-outlet>
-</main>
+<mat-drawer-container class="app-container">
+
+  <mat-drawer #drawer mode="over" class="app-drawer">
+
+    <div class="drawer-header">
+      <h3>TP2Intervals</h3>
+      <small>v{{ appVersion }}</small>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <mat-nav-list>
+      @for (button of menuButtons; track button.url) {
+        <a
+          mat-list-item
+          [routerLink]="button.url"
+          (click)="drawer.close()"
+          [activated]="router.url === button.url">
+
+          <mat-icon matListItemIcon>{{ button.icon }}</mat-icon>
+          <span matListItemTitle>{{ button.name }}</span>
+
+        </a>
+      }
+    </mat-nav-list>
+
+  </mat-drawer>
+
+  <mat-drawer-content>
+
+    <app-top-bar
+      [menuButtons]="menuButtons"
+      [appVersion]="appVersion"
+      [githubLink]="githubLink"
+      [updateAvailableBadgeHidden]="updateAvailableBadgeHidden"
+      (menuClicked)="drawer.toggle()">
+    </app-top-bar>
+
+    <main class="app-main">
+      <router-outlet></router-outlet>
+    </main>
+
+  </mat-drawer-content>
+
+</mat-drawer-container>
