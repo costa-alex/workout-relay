@@ -47,17 +47,23 @@
     target="_blank"
     rel="noopener noreferrer"
     class="github-link"
-    [matBadgeHidden]="updateAvailableBadgeHidden"
     [matTooltipDisabled]="updateAvailableBadgeHidden"
-    matTooltip="Update available"
-    matBadge="1"
-    matBadgeSize="small"
-    matBadgePosition="before"
-    matBadgeColor="accent">
+    matTooltip="Update available">
 
     <span class="github-content">
       <mat-icon class="github-icon" svgIcon="github"></mat-icon>
-      <span class="version-text">v{{ appVersion }}</span>
+
+      <span
+        class="version-text version-badge"
+        [matBadgeHidden]="updateAvailableBadgeHidden"
+        matBadge="1"
+        matBadgeSize="small"
+        matBadgePosition="above after"
+        matBadgeColor="accent">
+
+        v{{ appVersion }}
+
+      </span>
     </span>
 
   </a>
