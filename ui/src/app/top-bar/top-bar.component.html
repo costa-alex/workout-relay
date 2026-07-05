@@ -41,31 +41,4 @@
 
   <span class="spacer"></span>
 
-  <a
-    mat-button
-    [href]="githubLink"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="github-link"
-    [matTooltipDisabled]="updateAvailableBadgeHidden"
-    matTooltip="Update available">
-
-    <span class="github-content">
-      <mat-icon class="github-icon" svgIcon="github"></mat-icon>
-
-      <span
-        class="version-text version-badge"
-        [matBadgeHidden]="updateAvailableBadgeHidden"
-        matBadge="1"
-        matBadgeSize="small"
-        matBadgePosition="above after"
-        matBadgeColor="accent">
-
-        v{{ appVersion }}
-
-      </span>
-    </span>
-
-  </a>
-
 </mat-toolbar>

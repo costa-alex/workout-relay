@@ -2,27 +2,38 @@
 
   <mat-drawer #drawer mode="over" class="app-drawer">
 
-    <div class="drawer-header">
-      <h3>TP2Intervals</h3>
-      <small>v{{ appVersion }}</small>
+  <div class="drawer-header">
+    <div class="drawer-app-title">
+      TP2Intervals
     </div>
+  </div>
 
-    <mat-divider></mat-divider>
+  <mat-divider></mat-divider>
 
-    <mat-nav-list>
-      @for (button of menuButtons; track button.url) {
-        <a
-          mat-list-item
-          [routerLink]="button.url"
-          (click)="drawer.close()"
-          [activated]="router.url === button.url">
+  <mat-nav-list class="drawer-menu">
+    @for (button of menuButtons; track button.url) {
+      <a
+        mat-list-item
+        class="drawer-item"
+        [routerLink]="button.url"
+        (click)="drawer.close()"
+        [activated]="router.url === button.url">
 
-          <mat-icon matListItemIcon>{{ button.icon }}</mat-icon>
-          <span matListItemTitle>{{ button.name }}</span>
+        <mat-icon
+          matListItemIcon
+          class="drawer-item-icon">
+          {{ button.icon }}
+        </mat-icon>
 
-        </a>
-      }
-    </mat-nav-list>
+        <span
+          matListItemTitle
+          class="drawer-item-title">
+          {{ button.name }}
+        </span>
+
+      </a>
+    }
+  </mat-nav-list>
 
   </mat-drawer>
 
@@ -30,9 +41,6 @@
 
     <app-top-bar
       [menuButtons]="menuButtons"
-      [appVersion]="appVersion"
-      [githubLink]="githubLink"
-      [updateAvailableBadgeHidden]="updateAvailableBadgeHidden"
       (menuClicked)="drawer.toggle()">
     </app-top-bar>
 
@@ -46,18 +54,30 @@
         <div class="footer-meta">
           <span>TP2Intervals</span>
 
-          <span class="footer-separator"> • </span>
-
-          <span>v{{ appVersion }}</span>
-
-          <span class="footer-separator"> • </span>
-
+          <span class="footer-separator">•</span>
           <a
             [href]="githubLink"
             target="_blank"
             rel="noopener noreferrer">
             GitHub
           </a>
+
+          <span class="footer-separator">•</span>
+          <a
+            class="footer-version"
+            [href]="githubLink"
+            target="_blank"
+            rel="noopener noreferrer"
+            [matBadgeHidden]="updateAvailableBadgeHidden"
+            matBadge="1"
+            matBadgeSize="small"
+            matBadgePosition="above after"
+            matBadgeColor="accent"
+            [matTooltipDisabled]="updateAvailableBadgeHidden"
+            matTooltip="New version available">
+            v{{ appVersion }}
+          </a>
+          
         </div>
 
         <div class="footer-disclaimer">

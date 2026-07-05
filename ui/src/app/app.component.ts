@@ -6,6 +6,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { forkJoin } from 'rxjs';
 import * as semver from 'semver';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { TopBarComponent } from 'app/top-bar/top-bar.component';
 import { EnvironmentService } from 'infrastructure/environment.service';
@@ -21,7 +23,9 @@ import { GitHubClient } from 'infrastructure/client/github.client';
     MatSidenavModule,
     MatListModule,
     MatDividerModule,
-    MatIconModule
+    MatIconModule,
+    MatBadgeModule,
+    MatTooltipModule
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
