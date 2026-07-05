@@ -8,7 +8,7 @@ class CreateTPWorkoutRequestDTO(
     var athleteId: String,
     var workoutDay: LocalDate,
     var workoutTypeValueId: Int,
-    var workoutSubTypeValueId: Int? = null,
+    var workoutSubTypeValueId: Int?,
     var title: String,
     var description: String?,
     var totalTime: Double?,

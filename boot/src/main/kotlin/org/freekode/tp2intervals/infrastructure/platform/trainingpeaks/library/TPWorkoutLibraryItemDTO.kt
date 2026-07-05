@@ -6,6 +6,7 @@ import org.freekode.tp2intervals.infrastructure.platform.trainingpeaks.workout.s
 class TPWorkoutLibraryItemDTO(
     exerciseLibraryItemId: String,
     workoutTypeId: Int,
+    workoutSubTypeId: Int,
     itemName: String,
     totalTimePlanned: Double?,
     tssPlanned: Int?,
@@ -15,6 +16,7 @@ class TPWorkoutLibraryItemDTO(
 ) : TPBaseWorkoutResponseDTO(
     exerciseLibraryItemId,
     workoutTypeId,
+    workoutSubTypeId,
     itemName,
     totalTimePlanned,
     tssPlanned,
