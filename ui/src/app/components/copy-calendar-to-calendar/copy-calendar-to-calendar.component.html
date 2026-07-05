@@ -46,34 +46,35 @@
   </div>
 
   <div class="action-button-section action-grid">
-  <button
-    mat-raised-button
-    id="btn-confirm"
-    color="primary"
-    type="button"
-    [disabled]="formGroup.invalid || inProgress"
-    (click)="submit()">
-    Confirm
-  </button>
+    <button
+      mat-raised-button
+      id="btn-confirm"
+      color="primary"
+      type="button"
+      [disabled]="formGroup.invalid || inProgress"
+      (click)="submit()">
+      Confirm
+    </button>
 
-  <button
-    mat-raised-button
-    color="primary"
-    type="button"
-    [disabled]="formGroup.invalid || inProgress"
-    (click)="today()">
-    Only today
-  </button>
+    <button
+      mat-raised-button
+      color="primary"
+      type="button"
+      [disabled]="formGroup.invalid || inProgress"
+      (click)="today()">
+      Only today
+    </button>
 
-  <button
-    mat-raised-button
-    color="primary"
-    type="button"
-    [disabled]="formGroup.invalid || inProgress"
-    (click)="tomorrow()">
-    Only tomorrow
-  </button>
-
+    <button
+      mat-raised-button
+      color="primary"
+      type="button"
+      [disabled]="formGroup.invalid || inProgress"
+      (click)="tomorrow()">
+      Only tomorrow
+    </button>
+  </div>
+  
   <div *ngIf="scheduleRequests.length > 0" style="margin-bottom: 10px">
     <mat-list>
       <mat-list-item>
@@ -98,22 +99,22 @@
   </div>
 
   <div class="action-button-section action-grid single-action">
-  <button
-    mat-raised-button
-    color="primary"
-    type="button"
-    class="schedule-button"
-    matTooltip="Beta feature. Scheduled job runs every 20 minutes and will sync workouts for today. Jobs won't persist after app restart."
-    [disabled]="formGroup.invalid || inProgress"
-    (click)="scheduleToday()">
+    <button
+      mat-raised-button
+      color="primary"
+      type="button"
+      class="schedule-button"
+      matTooltip="Beta feature. Scheduled job runs every 20 minutes and will sync workouts for today. Jobs won't persist after app restart."
+      [disabled]="formGroup.invalid || inProgress"
+      (click)="scheduleToday()">
 
-    <span class="schedule-button-content">
-      <span>Schedule for today</span>
-      <span class="beta-badge">Beta</span>
-    </span>
+      <span class="schedule-button-content">
+        <span>Schedule for today</span>
+        <span class="beta-badge">Beta</span>
+      </span>
 
-  </button>
-</div>
+    </button>
+  </div>
 
   <mat-progress-bar *ngIf="inProgress" mode="query" style="margin-top: 10px"></mat-progress-bar>
 </form>
