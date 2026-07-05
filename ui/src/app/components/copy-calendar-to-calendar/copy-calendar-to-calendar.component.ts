@@ -20,6 +20,7 @@ import {WorkoutClient} from "infrastructure/client/workout.client";
 import {NotificationService} from "infrastructure/notification.service";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {TrainingTypes} from "infrastructure/training-types";
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'copy-calendar-to-calendar',
@@ -40,6 +41,7 @@ import {TrainingTypes} from "infrastructure/training-types";
     MatListModule,
     NgIf,
     MatTooltipModule,
+    MatIconModule
   ],
   templateUrl: './copy-calendar-to-calendar.component.html',
   styleUrl: './copy-calendar-to-calendar.component.scss'
