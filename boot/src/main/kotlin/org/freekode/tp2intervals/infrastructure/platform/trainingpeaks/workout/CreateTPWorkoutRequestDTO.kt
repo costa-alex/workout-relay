@@ -8,7 +8,7 @@ class CreateTPWorkoutRequestDTO(
     var athleteId: String,
     var workoutDay: LocalDate,
     var workoutTypeValueId: Int,
-    var workoutSubTypeValueId: Int?,
+    var workoutSubTypeId: Int,
     var title: String,
     var description: String?,
     var totalTime: Double?,
@@ -31,17 +31,17 @@ class CreateTPWorkoutRequestDTO(
             athleteId: String, workout: Workout, structureStr: String?
         ): CreateTPWorkoutRequestDTO {
             return CreateTPWorkoutRequestDTO(
-                athleteId,
-                workout.date ?: LocalDate.now(),
-                TPTrainingTypeMapper.getByType(workout.details.type),
-                49, // TODO: Map workout subtype to TrainingPeaks subtype value ID
-                workout.details.name,
-                buildDescription(workout),
-                null,
-                workout.details.duration?.toMinutes()?.toDouble()?.div(60),
-                null,
-                workout.details.load,
-                structureStr
+                athleteId = athleteId,
+                workoutDay = workout.date ?: LocalDate.now(),
+                workoutTypeValueId = TPTrainingTypeMapper.getByType(workout.details.type),
+                workoutSubTypeId = 49,
+                title = workout.details.name,
+                description = buildDescription(workout),
+                plannedWorkoutId = null,
+                totalTimePlanned = workout.details.duration?.toMinutes()?.toDouble()?.div(60),
+                distancePlanned = null,
+                tssPlanned = workout.details.load,
+                structure = structureStr
             )
         }
 

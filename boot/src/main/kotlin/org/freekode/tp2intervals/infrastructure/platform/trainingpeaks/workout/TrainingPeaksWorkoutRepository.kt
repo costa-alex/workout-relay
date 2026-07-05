@@ -132,6 +132,14 @@ class TrainingPeaksWorkoutRepository(
         )
         log.debug("Creating TrainingPeaks workout {}, target preview: {}", workout.details.name, targetPreview(workout))
         log.debug("TrainingPeaks structure preview for {}: {}", workout.details.name, structureStr?.take(600))
+        
+        log.info(
+            "Creating TP workout '{}'. workoutTypeValueId={}, workoutSubTypeId={}",
+            createRequest.title,
+            createRequest.workoutTypeValueId,
+            createRequest.workoutSubTypeId
+        )
+        
         trainingPeaksApiClient.createAndPlanWorkout(athleteId, createRequest)
     }
 
