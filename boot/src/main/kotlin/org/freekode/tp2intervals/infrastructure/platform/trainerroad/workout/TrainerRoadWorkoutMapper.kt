@@ -7,8 +7,11 @@ import org.freekode.tp2intervals.domain.workout.WorkoutDetails
 import org.freekode.tp2intervals.domain.workout.structure.*
 import java.time.Duration
 import kotlin.math.roundToInt
+import org.slf4j.LoggerFactory
 
 class TrainerRoadWorkoutMapper {
+    private val log = LoggerFactory.getLogger(this.javaClass)
+    
     fun toWorkout(trWorkoutResponseDTO: TRWorkoutResponseDTO, removeHtmlTags: Boolean): Workout {
         val trWorkout: TRWorkoutResponseDTO.TRWorkout = trWorkoutResponseDTO.workout
         val steps = convertSteps(trWorkout.intervalData)
