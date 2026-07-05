@@ -12,6 +12,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {Platform} from "infrastructure/platform";
 import {MatDividerModule} from "@angular/material/divider";
 import {MatListModule} from "@angular/material/list";
+import { MatIconModule } from '@angular/material/icon';
 import {
   CopyCalendarToCalendarComponent
 } from "app/components/copy-calendar-to-calendar/copy-calendar-to-calendar.component";
@@ -31,6 +32,7 @@ import {
     MatSnackBarModule,
     MatSelectModule,
     MatCheckboxModule,
+    MatIconModule,
     MatDividerModule,
     MatListModule,
     CopyCalendarToCalendarComponent,

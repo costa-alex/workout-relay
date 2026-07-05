@@ -35,6 +35,10 @@
 
 .beta-icon {
   opacity: .7;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
 }
 
 @media (max-width: 600px) {
