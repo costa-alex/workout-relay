@@ -13,7 +13,7 @@ data class Workout(
 ) : Serializable {
     companion object {
         fun note(date: LocalDate, name: String, description: String?, externalData: ExternalData): Workout {
-            return Workout(WorkoutDetails(TrainingType.NOTE, name, description, null, null, externalData), date, null)
+            return Workout(WorkoutDetails(TrainingType.NOTE, TrainingType.UNKNOWN, name, description, null, null, externalData), date, null)
         }
     }
 
