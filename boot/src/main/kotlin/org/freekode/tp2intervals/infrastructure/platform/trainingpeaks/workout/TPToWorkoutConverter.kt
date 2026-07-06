@@ -40,10 +40,16 @@ class TPToWorkoutConverter {
         var description = tpWorkout.description.orEmpty()
         description += tpWorkout.coachComments?.let { "\n- - - -\n$it" }.orEmpty()
 
+        val workoutType = tpWorkout.getWorkoutType()
+            ?: TrainingType.UNKNOWN
+
+        val workoutSubType = tpWorkout.getWorkoutSubType()
+            ?: workoutType
+
         return Workout(
             WorkoutDetails(
-                tpWorkout.getWorkoutType()!!,
-                tpWorkout.getWorkoutSubType()!!,
+                workoutType,
+                workoutSubType,
                 if (tpWorkout.title.isNullOrBlank()) "Workout" else tpWorkout.title,
                 description,
                 tpWorkout.totalTimePlanned?.let { Duration.ofMinutes((it * 60).toLong()) },
