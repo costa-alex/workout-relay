@@ -1,27 +1,24 @@
-<!-- 
-[![Build branches](https://github.com/freekode/tp2intervals/actions/workflows/branch.yml/badge.svg)](https://github.com/freekode/tp2intervals/actions/workflows/branch.yml)
-[![release](https://img.shields.io/github/release/freekode/tp2intervals)](https://github.com/freekode/tp2intervals/releases/latest)
 
+[![Build branches](https://github.com/costa-alex/tp2intervals/actions/workflows/docker.yml/badge.svg)](https://github.com/costa-alex/tp2intervals/actions/workflows/docker.yml)
+[![release](https://img.shields.io/github/release/costa-alex/tp2intervals)](https://github.com/costa-alex/tp2intervals/releases/latest)
+<!-- 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E6W6XZP)
 -->
 
 # Third Party to Intervals.icu
 
-App to sync workouts between TrainingPeaks, TrainerRoad and Intervals.icu.
-
-The tool runs on Docker and there's an executable JAR.
+App to sync workouts between TrainingPeaks, TrainerRoad and Intervals.icu. It's a selfhosted app that runs on Docker and includes a mobile friendly user-interface.
 
 **Only for educational purposes**
 
-<img src="https://github.com/freekode/tp2intervals/blob/main/docs/tp.png?raw=true" width="25%"><img src="https://github.com/freekode/tp2intervals/blob/main/docs/tr.png?raw=true" width="25%">
+<img src="https://github.com/costa-alex/tp2intervals/blob/main/docs/TP2I_mobile.JPG?raw=true" width="25%"> <img src="https://github.com/costa-alex/tp2intervals/blob/main/docs/TP2TR.JPG?raw=true" width="25%">
 
 * [List of features](#list-of-features)
 * [Configuration](#configuration)
     + [Intervals.icu](#intervalsicu)
     + [TrainingPeaks](#trainingpeaks)
     + [TrainerRoad](#trainerroad)
-* [Other ways to run the app](#other-ways-to-run-the-app)
-    + [Executable JAR](#executable-jar)
+* [How to run the app](#how-to-run-the-app)
     + [Docker](#docker)
 * [FAQ](#faq)
     + [General](#general)
@@ -48,6 +45,8 @@ Coach account
 
 **TrainerRoad**
 * Sync planned workouts in calendar from TrainerRoad to TrainingPeaks or Intervals.icu
+    + Syncs planned TSS value
+    + Automatically sets the Training Peaks activity type as Ride and subtype as Virtual Bike 
 * Copy workouts from TrainerRoad library to Intervals
 * Create training plan or workout folder on Intervals.icu from planned workouts on TrainerRoad
 
@@ -87,20 +86,9 @@ Cookie `SharedTrainerRoadAuth` (key and value, smth like `SharedTrainerRoadAuth=
 
 Be aware, Firefox cuts long strings in Dev Tool window. Copy cookie value with right click -> Copy Value.
 
-## Other ways to run the app
-### Executable JAR
-The project has executable jar with web UI. It requires JDK 21. To run jar:
-```shell
-java -jar tp2intervals.jar
-```
-
-By default, UI is available on `http://localhost:8098`. To change port start jar with parameter:
-```shell
-java -Dserver.port=9090 -jar tp2intervals.jar
-```
-
+## How to run the app
 ### Docker
-Docker image also built for every release
+There is a Docker image built with every release
 
 ```yaml
 version: "3.9"
