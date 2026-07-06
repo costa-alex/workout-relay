@@ -34,7 +34,7 @@ class CreateTPWorkoutRequestDTO(
                 athleteId = athleteId,
                 workoutDay = workout.date ?: LocalDate.now(),
                 workoutTypeValueId = TPTrainingTypeMapper.getWorkoutTypeValueId(workout.details.type),
-                workoutSubTypeId = TPTrainingTypeMapper.getWorkoutSubTypeValueId(workout.details.type),
+                workoutSubTypeId = TPTrainingTypeMapper.getWorkoutSubTypeValueId(workout.details.subType),
                 title = workout.details.name,
                 description = buildDescription(workout),
                 totalTime = null,
