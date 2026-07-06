@@ -8,6 +8,7 @@ import org.freekode.tp2intervals.domain.TrainingType
 
 data class WorkoutDetails(
     val type: TrainingType,
+    val subType: TrainingType,
     val name: String,
     val description: String?,
     val duration: Duration?,

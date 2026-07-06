@@ -33,6 +33,16 @@ export class TopBarComponent {
       shareReplay()
     );
 
+  get currentPageTitle(): string {
+    const currentUrl = this.router.url.split('?')[0].split('#')[0];
+
+    const currentButton = this.menuButtons.find(button =>
+      currentUrl === button.url || currentUrl.startsWith(`${button.url}/`)
+    );
+
+    return currentButton?.name ?? '';
+  }
+
   constructor(
     protected router: Router,
     private breakpointObserver: BreakpointObserver

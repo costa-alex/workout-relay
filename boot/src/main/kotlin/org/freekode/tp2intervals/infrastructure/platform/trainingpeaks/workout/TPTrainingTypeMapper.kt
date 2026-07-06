@@ -4,27 +4,46 @@ import org.freekode.tp2intervals.domain.TrainingType
 
 class TPTrainingTypeMapper {
     companion object {
-        private val typeMap = mapOf(
+
+        private val workoutTypeMap = mapOf(
             TrainingType.SWIM to 1,
             TrainingType.BIKE to 2,
             TrainingType.VIRTUAL_BIKE to 2,
+            TrainingType.MTB to 2,
+            TrainingType.RUN to 3,
+            TrainingType.WALK to 3,
+            TrainingType.WEIGHT to 9,
+            TrainingType.NOTE to 7,
+            TrainingType.UNKNOWN to 100
+        )
+
+        private val workoutSubTypeMap = mapOf(
+            TrainingType.SWIM to 1,
+            TrainingType.BIKE to 2,
+            TrainingType.VIRTUAL_BIKE to 49,
             TrainingType.RUN to 3,
             TrainingType.MTB to 8,
             TrainingType.WEIGHT to 9,
-            TrainingType.NOTE to 7, // day off
-            TrainingType.UNKNOWN to 4, // brick
-            TrainingType.UNKNOWN to 5, // crosstrain
-            TrainingType.UNKNOWN to 9, // custom
-            TrainingType.UNKNOWN to 11, // xc-ski
-            TrainingType.UNKNOWN to 12, // rowing
-            TrainingType.UNKNOWN to 13, // walk
-            TrainingType.UNKNOWN to 100 // other
+            TrainingType.NOTE to 7,
+            TrainingType.WALK to 13,
+            TrainingType.UNKNOWN to 100
         )
 
+        fun getWorkoutTypeValueId(trainingType: TrainingType): Int =
+            workoutTypeMap[trainingType] ?: workoutTypeMap[TrainingType.UNKNOWN]!!
+
+        fun getWorkoutSubTypeValueId(trainingType: TrainingType): Int =
+            workoutSubTypeMap[trainingType] ?: workoutSubTypeMap[TrainingType.UNKNOWN]!!
+
         fun getByValue(value: Int): TrainingType =
-            typeMap.filterValues { it == value }.keys.firstOrNull() ?: TrainingType.UNKNOWN
+            workoutSubTypeMap.filterValues { it == value }.keys.firstOrNull()
+                ?: TrainingType.UNKNOWN
 
-        fun getByType(trainingType: TrainingType): Int = typeMap[trainingType]!!
-
+        /**
+         * Keep this for backwards compatibility with existing code.
+         * Prefer getWorkoutTypeValueId() or getWorkoutSubTypeValueId().
+         */
+        fun getByType(trainingType: TrainingType): Int =
+            getWorkoutTypeValueId(trainingType)
     }
 }

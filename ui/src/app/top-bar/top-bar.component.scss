@@ -9,13 +9,13 @@
   gap: 8px;
 }
 
-.mobile-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.mobile-page-title {
   margin-left: 12px;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 1rem;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .spacer {
