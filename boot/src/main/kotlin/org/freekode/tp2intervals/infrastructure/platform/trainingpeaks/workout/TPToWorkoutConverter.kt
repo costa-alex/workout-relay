@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.Duration
 import java.time.LocalDate
+import org.freekode.tp2intervals.domain.TrainingType
 
 @Component
 class TPToWorkoutConverter {
