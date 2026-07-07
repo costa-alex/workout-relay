@@ -7,11 +7,11 @@
 
 # Third Party to Intervals.icu
 
-App to sync workouts between TrainingPeaks, TrainerRoad and Intervals.icu. It's a selfhosted app that runs on Docker and includes a mobile friendly user-interface.
+Selfhosted app, available on Docker to sync workouts between TrainerRoad, TrainingPeaks and Intervals.icu. Includes a mobile friendly user-interface to quicky sync workouts from your phone.
 
-**Only for educational purposes**
+Fork from [Litwilly](https://github.com/Litwilly/tp2intervals) which in turn is a fork from [freekode](https://github.com/freekode/tp2intervals) who initially developed tp2intervals. My fork is more focused on the integration between TrainerRoad and Training Peaks as I do most of my TrainerRoad workouts on Training Peaks Virtual.
 
-<img src="https://github.com/costa-alex/tp2intervals/blob/main/docs/TP2I_mobile.JPG?raw=true" width="25%"> <img src="https://github.com/costa-alex/tp2intervals/blob/main/docs/TP2TR.JPG?raw=true" width="25%">
+<img src="https://github.com/costa-alex/tp2intervals/blob/main/docs/TP2I_mobile.JPG" width="25%"> <img src="https://github.com/costa-alex/tp2intervals/blob/main/docs/TP2TR.JPG" width="25%">
 
 * [List of features](#list-of-features)
 * [Configuration](#configuration)
