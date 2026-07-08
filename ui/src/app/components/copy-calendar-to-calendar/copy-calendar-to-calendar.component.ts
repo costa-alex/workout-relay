@@ -102,7 +102,7 @@ export class CopyCalendarToCalendarComponent implements OnInit {
       switchMap(() => this.loadScheduleRequests()),
       finalize(() => this.inProgress = false)
     ).subscribe(() => {
-      this.notificationService.success(`Scheduled sync job`)
+      this.notificationService.scheduledSyncCreated()
     })
   }
 
@@ -123,8 +123,11 @@ export class CopyCalendarToCalendarComponent implements OnInit {
     this.workoutClient.copyCalendarToCalendar(startDate, endDate, trainingTypes, skipSynced, direction).pipe(
       finalize(() => this.inProgress = false)
     ).subscribe((response) => {
-      this.notificationService.success(
-        `Planned: ${response.copied}\n Filtered out: ${response.filteredOut}\n From ${response.startDate} to ${response.endDate}`)
+      this.notificationService.copyCalendarToCalendarCompleted(
+        response,
+        Platform.getTitle(direction.sourcePlatform),
+        Platform.getTitle(direction.targetPlatform)
+      )
     })
   }
 
@@ -156,7 +159,7 @@ export class CopyCalendarToCalendarComponent implements OnInit {
       switchMap(() => this.loadScheduleRequests()),
       finalize(() => this.inProgress = false)
     ).subscribe(() => {
-      this.notificationService.success(`Deleted job`)
+      this.notificationService.scheduledSyncDeleted()
     })
   }
 }

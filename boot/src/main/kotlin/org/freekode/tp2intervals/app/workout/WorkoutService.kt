@@ -27,33 +27,76 @@ class WorkoutService(
     
     fun copyWorkoutsC2C(request: CopyFromCalendarToCalendarRequest): CopyWorkoutsResponse {
         log.info("Received request for copy calendar to calendar: $request")
+
         val sourceWorkoutRepository = workoutRepositoryMap[request.sourcePlatform]!!
         val targetWorkoutRepository = workoutRepositoryMap[request.targetPlatform]!!
 
-        val allWorkoutsToSync = sourceWorkoutRepository.getWorkoutsFromCalendar(request.startDate, request.endDate)
-        var filteredWorkoutsToSync = allWorkoutsToSync.filter { request.types.contains(it.details.type) }
-        if (request.skipSynced) {
-            val plannedWorkouts = targetWorkoutRepository.getWorkoutsFromCalendar(request.startDate, request.endDate)
+        val allWorkoutsToSync = sourceWorkoutRepository.getWorkoutsFromCalendar(
+            request.startDate,
+            request.endDate
+        )
 
-            filteredWorkoutsToSync = filteredWorkoutsToSync.filter { sourceWorkout ->
-                plannedWorkouts.none { targetWorkout ->
+        val workoutsAfterTypeFilter = allWorkoutsToSync.filter {
+            request.types.contains(it.details.type)
+        }
+
+        val skippedByType = allWorkoutsToSync.size - workoutsAfterTypeFilter.size
+
+        val workoutsToSync = if (request.skipSynced) {
+            val plannedWorkouts = targetWorkoutRepository.getWorkoutsFromCalendar(
+                request.startDate,
+                request.endDate
+            )
+
+            val partitionedWorkouts = workoutsAfterTypeFilter.partition { sourceWorkout ->
+                plannedWorkouts.any { targetWorkout ->
                     hasSameExternalId(
                         sourceWorkout.details.externalData,
                         targetWorkout.details.externalData
                     )
                 }
             }
+
+            val alreadySyncedWorkouts = partitionedWorkouts.first
+            val newWorkouts = partitionedWorkouts.second
+
+            log.info(
+                "Copy calendar to calendar filtering result. total={}, skippedByType={}, skippedAlreadySynced={}, copied={}",
+                allWorkoutsToSync.size,
+                skippedByType,
+                alreadySyncedWorkouts.size,
+                newWorkouts.size
+            )
+
+            newWorkouts
+        } else {
+            log.info(
+                "Copy calendar to calendar filtering result. total={}, skippedByType={}, skippedAlreadySynced=0, copied={}",
+                allWorkoutsToSync.size,
+                skippedByType,
+                workoutsAfterTypeFilter.size
+            )
+
+            workoutsAfterTypeFilter
         }
 
+        val skippedAlreadySynced = workoutsAfterTypeFilter.size - workoutsToSync.size
+        val filteredOut = skippedByType + skippedAlreadySynced
+
         val response = CopyWorkoutsResponse(
-            filteredWorkoutsToSync.size,
-            allWorkoutsToSync.size - filteredWorkoutsToSync.size,
-            request.startDate,
-            request.endDate,
-            ExternalData.empty() // TODO figure smth better
+            copied = workoutsToSync.size,
+            filteredOut = filteredOut,
+            skippedByType = skippedByType,
+            skippedAlreadySynced = skippedAlreadySynced,
+            startDate = request.startDate,
+            endDate = request.endDate,
+            externalData = ExternalData.empty()
         )
-        targetWorkoutRepository.saveWorkoutsToCalendar(filteredWorkoutsToSync)
+
+        targetWorkoutRepository.saveWorkoutsToCalendar(workoutsToSync)
+
         log.info("Saved workouts to calendar successfully: $response")
+
         return response
     }
 
@@ -68,12 +111,16 @@ class WorkoutService(
 
         val newPlan = targetPlanRepository.createLibraryContainer(request.name, request.isPlan, request.startDate)
         targetWorkoutRepository.saveWorkoutsToLibrary(newPlan, filteredWorkouts)
+        val skippedByType = allWorkouts.size - filteredWorkouts.size
+
         return CopyWorkoutsResponse(
-            filteredWorkouts.size,
-            allWorkouts.size - filteredWorkouts.size,
-            request.startDate,
-            request.endDate,
-            newPlan.externalData
+            copied = filteredWorkouts.size,
+            filteredOut = skippedByType,
+            skippedByType = skippedByType,
+            skippedAlreadySynced = 0,
+            startDate = request.startDate,
+            endDate = request.endDate,
+            externalData = newPlan.externalData
         )
     }
 
@@ -84,7 +131,15 @@ class WorkoutService(
 
         val workout = sourceWorkoutRepository.getWorkoutFromLibrary(request.workoutExternalData)
         targetWorkoutRepository.saveWorkoutsToLibrary(request.targetLibraryContainer, listOf(workout))
-        return CopyWorkoutsResponse(1, 0, LocalDate.now(), LocalDate.now(), request.targetLibraryContainer.externalData)
+        return CopyWorkoutsResponse(
+            copied = 1,
+            filteredOut = 0,
+            skippedByType = 0,
+            skippedAlreadySynced = 0,
+            startDate = LocalDate.now(),
+            endDate = LocalDate.now(),
+            externalData = request.targetLibraryContainer.externalData
+        )
     }
 
     fun findWorkoutsByName(platform: Platform, name: String): List<WorkoutDetails> {

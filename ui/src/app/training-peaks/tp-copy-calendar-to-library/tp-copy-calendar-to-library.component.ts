@@ -86,8 +86,7 @@ export class TpCopyCalendarToLibraryComponent implements OnInit {
     this.workoutClient.copyCalendarToLibrary(name, startDate, endDate, trainingTypes, this.direction, isPlan).pipe(
       finalize(() => this.inProgress = false)
     ).subscribe((response) => {
-      this.notificationService.success(
-        `Copied: ${response.copied}\n Filtered out: ${response.filteredOut}\n From ${response.startDate} to ${response.endDate}`)
+      this.notificationService.copyCalendarToLibraryCompleted(response, name)
     })
   }
 }

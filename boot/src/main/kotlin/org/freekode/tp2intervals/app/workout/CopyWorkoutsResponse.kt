@@ -6,6 +6,8 @@ import java.time.LocalDate
 data class CopyWorkoutsResponse(
     val copied: Int,
     val filteredOut: Int,
+    val skippedByType: Int,
+    val skippedAlreadySynced: Int,
     val startDate: LocalDate,
     val endDate: LocalDate,
     val externalData: ExternalData
