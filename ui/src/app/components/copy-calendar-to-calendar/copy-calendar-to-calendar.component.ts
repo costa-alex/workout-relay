@@ -21,6 +21,7 @@ import {NotificationService} from "infrastructure/notification.service";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {TrainingTypes} from "infrastructure/training-types";
 import { MatIconModule } from '@angular/material/icon';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'copy-calendar-to-calendar',
@@ -61,6 +62,7 @@ export class CopyCalendarToCalendarComponent implements OnInit {
   scheduleRequests: any[] = []
 
   constructor(
+    private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
     private configurationClient: ConfigurationClient,
     private workoutClient: WorkoutClient,
@@ -74,6 +76,7 @@ export class CopyCalendarToCalendarComponent implements OnInit {
     })
     this.formGroup = this.getFormGroup();
     this.loadScheduleRequests().subscribe()
+    this.applyDirectionFromQueryParams();
   }
 
   submit() {
@@ -161,5 +164,33 @@ export class CopyCalendarToCalendarComponent implements OnInit {
     ).subscribe(() => {
       this.notificationService.scheduledSyncDeleted()
     })
+  }
+
+  private platformKey(platform: any): string {
+    return typeof platform === 'string'
+      ? platform
+      : platform?.key;
+  }
+
+  private applyDirectionFromQueryParams(): void {
+    this.activatedRoute.queryParamMap.subscribe(params => {
+      const sourcePlatform = params.get('source');
+      const targetPlatform = params.get('target');
+
+      if (!sourcePlatform || !targetPlatform) {
+        return;
+      }
+
+      const selectedDirection = this.directions.find(direction =>
+        this.platformKey(direction.value.sourcePlatform) === sourcePlatform &&
+        this.platformKey(direction.value.targetPlatform) === targetPlatform
+      );
+
+      if (selectedDirection) {
+        this.formGroup.patchValue({
+          direction: selectedDirection.value
+        });
+      }
+    });
   }
 }

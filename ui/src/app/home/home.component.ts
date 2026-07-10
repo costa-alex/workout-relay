@@ -28,6 +28,10 @@ interface SyncRoute {
   targetKey: string;
   targetTitle: string;
   route: string;
+  queryParams: {
+    source: string;
+    target: string;
+  };
 }
 
 @Component({
@@ -74,28 +78,44 @@ export class HomeComponent implements OnInit {
       sourceTitle: Platform.TRAINER_ROAD.title,
       targetKey: Platform.TRAINING_PEAKS.key,
       targetTitle: Platform.TRAINING_PEAKS.title,
-      route: '/trainer-road'
+      route: '/trainer-road',
+      queryParams: {
+        source: Platform.TRAINER_ROAD.key,
+        target: Platform.TRAINING_PEAKS.key
+      }
     },
     {
       sourceKey: Platform.TRAINER_ROAD.key,
       sourceTitle: Platform.TRAINER_ROAD.title,
       targetKey: Platform.INTERVALS.key,
       targetTitle: Platform.INTERVALS.title,
-      route: '/trainer-road'
+      route: '/trainer-road',
+      queryParams: {
+        source: Platform.TRAINER_ROAD.key,
+        target: Platform.INTERVALS.key
+      }
     },
     {
       sourceKey: Platform.TRAINING_PEAKS.key,
       sourceTitle: Platform.TRAINING_PEAKS.title,
       targetKey: Platform.INTERVALS.key,
       targetTitle: Platform.INTERVALS.title,
-      route: '/training-peaks'
+      route: '/training-peaks',
+      queryParams: {
+        source: Platform.TRAINING_PEAKS.key,
+        target: Platform.INTERVALS.key
+      }
     },
     {
       sourceKey: Platform.INTERVALS.key,
       sourceTitle: Platform.INTERVALS.title,
       targetKey: Platform.TRAINING_PEAKS.key,
       targetTitle: Platform.TRAINING_PEAKS.title,
-      route: '/training-peaks'
+      route: '/training-peaks',
+      queryParams: {
+        source: Platform.INTERVALS.key,
+        target: Platform.TRAINING_PEAKS.key
+      }
     }
   ];
 
