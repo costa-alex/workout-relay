@@ -37,59 +37,61 @@
 
   </mat-drawer>
 
-  <mat-drawer-content>
+  <mat-drawer-content class="app-drawer-content">
 
-    <app-top-bar
-      [menuButtons]="menuButtons"
-      (menuClicked)="drawer.toggle()">
-    </app-top-bar>
+    <div class="app-content-shell">
 
-    <main class="app-main">
-      <router-outlet></router-outlet>
-    </main>
+      <app-top-bar
+        [menuButtons]="menuButtons"
+        (menuClicked)="drawer.toggle()">
+      </app-top-bar>
 
-    <footer class="app-footer">
-      <div class="footer-content">
+      <main class="app-main">
+        <router-outlet></router-outlet>
+      </main>
 
-        <div class="footer-meta">
-          <span>TP2Intervals</span>
+      <footer class="app-footer">
+        <div class="footer-content">
 
-          <span class="footer-separator">•</span>
-          <a
-            [href]="githubLink"
-            target="_blank"
-            rel="noopener noreferrer">
-            GitHub
-          </a>
+          <div class="footer-meta">
+            <span>TP2Intervals</span>
 
-          <span class="footer-separator">•</span>
-          <a
-            class="footer-version"
-            [href]="githubLink"
-            target="_blank"
-            rel="noopener noreferrer"
-            [matBadgeHidden]="updateAvailableBadgeHidden"
-            matBadge="1"
-            matBadgeSize="small"
-            matBadgePosition="above after"
-            matBadgeColor="accent"
-            [matTooltipDisabled]="updateAvailableBadgeHidden"
-            matTooltip="New version available">
-            v{{ appVersion }}
-          </a>
-          
+            <span class="footer-separator">•</span>
+            <a
+              [href]="githubLink"
+              target="_blank"
+              rel="noopener noreferrer">
+              GitHub
+            </a>
+
+            <span class="footer-separator">•</span>
+            <a
+              class="footer-version"
+              [href]="githubLink"
+              target="_blank"
+              rel="noopener noreferrer"
+              [matBadgeHidden]="updateAvailableBadgeHidden"
+              matBadge="1"
+              matBadgeSize="small"
+              matBadgePosition="above after"
+              matBadgeColor="accent"
+              [matTooltipDisabled]="updateAvailableBadgeHidden"
+              matTooltip="New version available">
+              v{{ appVersion }}
+            </a>
+            
+          </div>
+
+          <div class="footer-disclaimer">
+            TP2Intervals is an independent, self-hosted application and is not
+            affiliated with, endorsed by, or sponsored by TrainerRoad,
+            TrainingPeaks, or Intervals.icu. All trademarks belong to their
+            respective owners.
+          </div>
+
         </div>
-
-        <div class="footer-disclaimer">
-          TP2Intervals is an independent, self-hosted application and is not
-          affiliated with, endorsed by, or sponsored by TrainerRoad,
-          TrainingPeaks, or Intervals.icu. All trademarks belong to their
-          respective owners.
-        </div>
-
-      </div>
-    </footer>
-
+      </footer>
+    </div>
   </mat-drawer-content>
 
 </mat-drawer-container>

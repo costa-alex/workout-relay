@@ -2,7 +2,18 @@
   min-height: 100vh;
 }
 
+.app-drawer-content {
+  min-height: 100vh;
+}
+
+.app-content-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .app-main {
+  flex: 1 0 auto;
   padding: 24px;
 }
 
@@ -31,7 +42,7 @@
 
 @media (max-width: 768px) {
   .app-main {
-    padding: 72px 16px 16px;
+    padding: 16px;
   }
 
   .app-footer {
@@ -83,6 +94,7 @@
   padding: 0 20px;
   display: flex;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .drawer-app-title {
@@ -101,7 +113,7 @@
 }
 
 .drawer-item-icon {
-  margin-right: 10px !important;
+  margin-right: 8px !important;
   opacity: 0.85;
 }
 
