@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.util.concurrent.TimeUnit
-import org.freekode.tp2intervals.domain.Platform
 
 @Service
 class WorkoutScheduledJob(
@@ -46,19 +45,9 @@ class WorkoutScheduledJob(
     private fun handleCopyCalendarToCalendarRequest(
         request: C2CTodayScheduledRequest
     ) {
-        val todayRequest = request.forToday()
-
-        if (
-            request.sourcePlatform == Platform.TRAINER_ROAD &&
-            request.targetPlatform == Platform.TRAINING_PEAKS
-        ) {
-            workoutService
-                .reconcileScheduledTrainerRoadToTrainingPeaks(
-                    todayRequest
-                )
-        } else {
-            workoutService.copyWorkoutsC2C(todayRequest)
-        }
+        workoutService.copyWorkoutsC2C(
+            request.forToday()
+        )
     }
 
     private fun ScheduleRequestEntity.toSchedulable(): C2CTodayScheduledRequest {
