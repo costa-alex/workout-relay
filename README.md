@@ -1,146 +1,514 @@
-
 [![Build branches](https://github.com/costa-alex/tp2intervals/actions/workflows/docker.yml/badge.svg)](https://github.com/costa-alex/tp2intervals/actions/workflows/docker.yml)
-[![release](https://img.shields.io/github/release/costa-alex/tp2intervals)](https://github.com/costa-alex/tp2intervals/releases/latest)
-<!-- 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E6W6XZP)
--->
+[![Latest release](https://img.shields.io/github/v/release/costa-alex/tp2intervals)](https://github.com/costa-alex/tp2intervals/releases/latest)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 
-# Third Party to Intervals.icu
+# TP2Intervals
 
-Selfhosted app, available on Docker to sync workouts between TrainerRoad, TrainingPeaks and Intervals.icu. Includes a mobile friendly user-interface to quicky sync workouts from your phone.
+TP2Intervals is a self-hosted web application for copying and synchronizing planned workouts between **TrainerRoad**, **TrainingPeaks**, and **Intervals.icu**.
 
-Fork from [Litwilly](https://github.com/Litwilly/tp2intervals) which in turn is a fork from [freekode](https://github.com/freekode/tp2intervals) who initially developed tp2intervals. My fork is more focused on the integration between TrainerRoad and Training Peaks as I do most of my TrainerRoad workouts on Training Peaks Virtual.
+It provides a responsive, mobile-friendly interface for manual synchronization, workout-library operations, recurring schedules, and synchronization history.
 
-<img src="https://github.com/costa-alex/tp2intervals/blob/main/docs/TP2I_mobile.JPG" width="25%"> <img src="https://github.com/costa-alex/tp2intervals/blob/main/docs/TP2TR.JPG" width="25%">
+> This project is independent and is not affiliated with, endorsed by, or sponsored by TrainerRoad, TrainingPeaks, or Intervals.icu. All trademarks belong to their respective owners.
 
-* [List of features](#list-of-features)
-* [Configuration](#configuration)
-    + [Intervals.icu](#intervalsicu)
-    + [TrainingPeaks](#trainingpeaks)
-    + [TrainerRoad](#trainerroad)
-* [How to run the app](#how-to-run-the-app)
-    + [Docker](#docker)
-* [FAQ](#faq)
-    + [General](#general)
-    + [Info regarding scheduling for the next day with TrainingPeaks free account](#info-regarding-scheduling-for-the-next-day-with-trainingpeaks-free-account)
-* [Troubleshooting](#troubleshooting)
-    + [How to get logs](#how-to-get-logs)
-    + [How to record HAR file](#how-to-record-har-file)
+<p>
+  <img src="docs/TP2I_mobile.JPG" alt="TP2Intervals mobile interface" width="28%">
+  <img src="docs/TP2TR.JPG" alt="TP2Intervals workout synchronization" width="28%">
+</p>
 
-**Docker image location ⚠️**
+## Contents
 
-**Image url: `ghcr.io/costa-alex/tp2intervals:latest`**
+- [Features](#features)
+- [Supported synchronization directions](#supported-synchronization-directions)
+- [Automation and history](#automation-and-history)
+- [Configuration](#configuration)
+- [Running with Docker Compose](#running-with-docker-compose)
+- [Updating](#updating)
+- [Building from source](#building-from-source)
+- [Data, backups, and logs](#data-backups-and-logs)
+- [Security considerations](#security-considerations)
+- [Known limitations](#known-limitations)
+- [Troubleshooting](#troubleshooting)
+- [Project background](#project-background)
+- [License](#license)
 
-## List of features
+## Features
 
-**TrainingPeaks**
+### Calendar synchronization
 
-Athlete account
-* Sync planned workouts in calendar between Intervals.icu and TrainingPeaks (for today and tomorrow with free TP account)
-* Copy whole training plan from TrainingPeaks
-* Create training plan or workout folder on Intervals.icu from planned workouts on TrainingPeaks
+- Copy planned workouts between supported platform calendars.
+- Select a custom date range.
+- Use quick actions for **Only today** and **Only tomorrow**.
+- Filter by workout type, including ride, virtual ride, MTB, run, swim, walk, weight training, and other activities.
+- Skip workouts that were already synchronized by comparing platform identifiers.
+- Continue processing a batch when an individual workout fails, while reporting the failed items.
+- Preserve relevant workout metadata where supported, including workout structure, duration, load, and external platform identifiers.
 
-Coach account
-* Copy whole training plan and workout library from TrainingPeaks
+### TrainerRoad to TrainingPeaks reconciliation
 
-**TrainerRoad**
-* Sync planned workouts in calendar from TrainerRoad to TrainingPeaks or Intervals.icu
-    + Syncs planned TSS value
-    + Automatically sets the Training Peaks activity type as Ride and subtype as Virtual Bike 
-* Copy workouts from TrainerRoad library to Intervals
-* Create training plan or workout folder on Intervals.icu from planned workouts on TrainerRoad
+For one-day TrainerRoad → TrainingPeaks operations, TP2Intervals can reconcile changed planned workouts instead of only adding another copy.
 
-Automatically schedule workouts for today, by checking your calendar every 20 minutes.
-To clear up scheduled jobs just restart the application.
+This behavior is used by:
 
+- **Only today**;
+- **Only tomorrow**;
+- scheduled TrainerRoad → TrainingPeaks synchronization.
+
+When the TrainerRoad workout identifier changes, TP2Intervals:
+
+1. creates the new workout in TrainingPeaks;
+2. confirms that the creation succeeded;
+3. removes the previous application-managed TrainingPeaks workout.
+
+Only workouts previously created by TP2Intervals, with the expected external identifiers and metadata marker, are eligible for removal. Manually created TrainingPeaks workouts are not removed by this reconciliation process.
+
+The regular **Confirm** action for a custom date range uses normal copy behavior and does not remove replaced workouts.
+
+### Workout libraries and training plans
+
+The application also supports operations beyond calendar-to-calendar synchronization:
+
+- Copy a workout from the TrainerRoad workout library to an Intervals.icu library.
+- Copy planned TrainerRoad workouts into a new Intervals.icu workout folder or training plan.
+- Copy a TrainingPeaks training plan or workout library to Intervals.icu.
+- Copy planned TrainingPeaks calendar workouts into an Intervals.icu workout library.
+
+Some TrainingPeaks operations depend on whether the configured account is an athlete or coach account.
+
+### User interface
+
+- Responsive Angular Material interface designed for desktop and mobile use.
+- Home page with platform connection status and available synchronization routes.
+- Platform-specific pages for TrainerRoad and TrainingPeaks operations.
+- Dedicated **Automation** page.
+- In-app result notifications with copied, skipped, replaced, and failed workout counts.
+- Version display and release-update indication.
+- Debug mode for detailed troubleshooting logs.
+
+## Supported synchronization directions
+
+| Source | Destination | Manual calendar sync | Scheduled sync | Changed-workout reconciliation |
+|---|---|:---:|:---:|:---:|
+| TrainerRoad | TrainingPeaks | Yes | Yes | Yes, for one-day operations |
+| TrainerRoad | Intervals.icu | Yes | Yes | No |
+| TrainingPeaks | Intervals.icu | Yes | Yes | No |
+| Intervals.icu | TrainingPeaks | Yes | Yes | No |
+
+TrainerRoad is currently a source platform only. TrainingPeaks → TrainerRoad and Intervals.icu → TrainerRoad are not supported.
+
+## Automation and history
+
+The **Automation** page allows you to create recurring calendar synchronization jobs for any supported direction.
+
+Current scheduler behavior:
+
+- scheduled jobs process the **current day**;
+- all schedules run every **60 minutes**;
+- schedules are persisted in SQLite and survive container restarts;
+- duplicate schedule definitions are rejected;
+- each schedule can be executed immediately with **Run now**;
+- schedules can be deleted without deleting previously synchronized workouts.
+
+TrainerRoad → TrainingPeaks schedules automatically use the safe changed-workout reconciliation described above. Other directions use normal synchronization with the configured duplicate-skipping behavior.
+
+### Synchronization history
+
+Calendar-to-calendar executions are stored and displayed on the Automation page. The history includes:
+
+- manual operations;
+- scheduled executions;
+- **Run now** executions;
+- source and destination platforms;
+- processed date range;
+- copied, removed, skipped, and failed counts;
+- execution status;
+- available error details.
+
+Possible statuses are:
+
+- `RUNNING`
+- `SUCCESS`
+- `NO_CHANGES`
+- `PARTIAL_SUCCESS`
+- `FAILED`
+
+The interface displays the 50 most recent executions. Calendar-to-library and library-to-library operations are not currently included in synchronization history.
 
 ## Configuration
-Before using the application you need to configure access to platforms.
-Access to Intervals.icu is required, access to other platforms is optional.
 
-After you gathered all required configuration, you can click Confirm button.
-If everything is fine, you will be redirected to the home page.
+Open **Configuration** after starting the application. Intervals.icu credentials are required; TrainingPeaks and TrainerRoad are optional and are only needed for their corresponding features.
 
-If your configuration is wrong. You will see an error that there is no access to particular platform.
-Check all your values and save configuration again.
+Configuration, schedules, and execution history are stored in the SQLite database under `/data`.
 
 ### Intervals.icu
-Copy API key and Athlete Id from [Settings page](https://intervals.icu/settings) in Developer Settings section on Intervals.icu web page.
+
+In Intervals.icu, open **Settings** and locate the **Developer Settings** section.
+
+Configure:
+
+- **API Key**
+- **Athlete ID**, usually in a format such as `i12345`
+
+Advanced settings are also available for power, heart-rate, and pace range percentages used when converting workout targets.
 
 ### TrainingPeaks
-To use TrainingPeaks copy all cookies from request `https://tpapi.trainingpeaks.com/users/v3/token` and put it on Configuration page.
-The app automatically will remove redundant parts and only require cookie will remain. Follow guide below how to do that.
 
-The app requires `Production_tpAuth` cookie (key and value, smth like `Production_tpAuth=very_long_string`).
-Another guide is [available here](https://forum.intervals.icu/t/implemented-push-workout-to-wahoo/783/87)
+The TrainingPeaks integration currently uses an authenticated browser-session cookie rather than OAuth.
 
-<img src="https://github.com/freekode/tp2intervals/blob/main/docs/tp_guide.png?raw=true">
+Required cookie:
+
+```text
+Production_tpAuth=<value>
+```
+
+To obtain it:
+
+1. Sign in to TrainingPeaks in your browser.
+2. Open the browser developer tools and select the **Network** tab.
+3. Reload TrainingPeaks or open a calendar page.
+4. Select an authenticated request to `tpapi.trainingpeaks.com`.
+5. Copy the request's `Cookie` header or the `Production_tpAuth` cookie value.
+6. Paste it into the TP2Intervals Configuration page.
+
+The application accepts the complete cookie string and extracts the required value.
+
+See [`docs/tp_guide.png`](docs/tp_guide.png) for a visual guide.
 
 ### TrainerRoad
-Configuration is very similar to TrainingPeaks. Copy all cookies from request `https://tpapi.trainingpeaks.com/users/v3/token` and put it on Configuration page.
-The app automatically will remove redundant parts and only require cookie will remain. Follow guide below how to do that.
 
-Cookie `SharedTrainerRoadAuth` (key and value, smth like `SharedTrainerRoadAuth=very_long_string`) is required for the app.
+The TrainerRoad integration also uses an authenticated browser-session cookie.
 
-<img src="https://github.com/freekode/tp2intervals/blob/main/docs/tr_guide.png?raw=true">
+Required cookie:
 
-Be aware, Firefox cuts long strings in Dev Tool window. Copy cookie value with right click -> Copy Value.
+```text
+SharedTrainerRoadAuth=<value>
+```
 
-## How to run the app
-### Docker
-There is a Docker image built with every release
+To obtain it:
+
+1. Sign in to TrainerRoad in your browser.
+2. Open the browser developer tools and select the **Network** tab.
+3. Reload the page or open the TrainerRoad calendar or workout library.
+4. Select an authenticated request to `www.trainerroad.com`.
+5. Copy the request's `Cookie` header or the `SharedTrainerRoadAuth` cookie value.
+6. Paste it into the TP2Intervals Configuration page.
+
+The **Remove HTML tags from description** option can be enabled if TrainerRoad descriptions contain unwanted markup.
+
+See [`docs/tr_guide.png`](docs/tr_guide.png) for a visual guide.
+
+> Browser-session cookies can expire. If a platform suddenly becomes unavailable, obtain a fresh cookie and update the configuration.
+
+## Running with Docker Compose
+
+The published container image is:
+
+```text
+ghcr.io/costa-alex/tp2intervals:latest
+```
+
+Create a directory for the application:
+
+```bash
+mkdir -p tp2intervals/data
+cd tp2intervals
+```
+
+Create `docker-compose.yml`:
 
 ```yaml
-version: "3.9"
 services:
   tp2intervals:
     image: ghcr.io/costa-alex/tp2intervals:latest
     container_name: tp2intervals
     restart: unless-stopped
+    environment:
+      # Replace with your local IANA timezone.
+      JAVA_TOOL_OPTIONS: "-Duser.timezone=Europe/Lisbon"
     ports:
       - "8098:8080"
     volumes:
       - ./data:/data
 ```
 
-## FAQ
+Start the application:
 
-### General
-* Ramp steps in TrainerRoad are not supported
-* More info you can find on the forum https://forum.intervals.icu/t/tp2intervals-copy-trainingpeaks-and-trainerroad-workouts-plans-to-intervals/63375
+```bash
+docker compose up -d
+```
 
-### Info regarding scheduling for the next day with TrainingPeaks free account
-Officially if you have a free TP account, you can't plan workouts for future dates, but practically you can.
-You can plan a workout for the next day relative to TrainingPeaks server local time. The server is in UTC-6 time zone. Let's check some examples:
+Open:
 
-Example 1. Your TZ is UTC+2 and current local date time 20.05.2024 06:00. It means at this moment TP server local date time is 19.05.2024 22:00.
-Therefore, you can plan workouts for 20.05.2024. But you can't plan workouts for 21.05.2024, you can do it in 2 hours, because in 2 hours server local time will be 20.05.2024 00:00.
+```text
+http://<server-address>:8098
+```
 
-Example 2. Your TZ is UTC+12, current local date time 20.05.2024 18:00. TP server local date time is 20.05.2024 00:00. At this moment, you can plan workouts for 21.05.2024.
+Then open **Configuration**, enter the credentials for the platforms you use, and save them.
 
-Visible time difference with [worldtimebuddy](https://www.worldtimebuddy.com/?pl=1&lid=206,100,756135,2193733&h=206&hf=0)
+### Using a fixed release
+
+For a more predictable deployment, replace `latest` with a release tag:
+
+```yaml
+image: ghcr.io/costa-alex/tp2intervals:<version>
+```
+
+This Compose definition can also be deployed through tools such as Komodo, Portainer, or another Docker-compatible orchestrator.
+
+### Health endpoint
+
+Spring Boot Actuator exposes a health endpoint at:
+
+```text
+http://<server-address>:8098/actuator/health
+```
+
+## Updating
+
+Pull the newest image and recreate the container:
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+Review the logs after updating:
+
+```bash
+docker compose logs -f --tail=200 tp2intervals
+```
+
+Database schema updates are applied automatically by Liquibase when the application starts.
+
+## Building from source
+
+### Build the complete Docker image
+
+From the repository root:
+
+```bash
+docker build -t tp2intervals:local .
+```
+
+Run it:
+
+```bash
+docker run --rm \
+  --name tp2intervals \
+  -p 8098:8080 \
+  -e JAVA_TOOL_OPTIONS="-Duser.timezone=Europe/Lisbon" \
+  -v "$(pwd)/data:/data" \
+  tp2intervals:local
+```
+
+The multi-stage Docker build:
+
+1. builds the Angular UI with Node.js 20;
+2. copies the UI into the Spring Boot resources;
+3. builds the Kotlin application with Java 21;
+4. produces a single runtime container exposing port `8080`.
+
+### Local development
+
+Requirements:
+
+- Java 21
+- Node.js 20
+- npm
+
+Start the backend from the repository root:
+
+```bash
+mkdir -p data
+cd boot
+
+SPRING_DATASOURCE_URL="jdbc:sqlite:../data/tp2intervals.sqlite" \
+LOGGING_FILE_NAME="../data/tp2intervals.log" \
+./gradlew bootRun
+```
+
+In another terminal, start the Angular development server:
+
+```bash
+cd ui
+npm ci
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:4200
+```
+
+The Angular development server proxies `/api` and `/actuator` requests to the backend at `http://localhost:8080`.
+
+### Run tests and builds
+
+Backend:
+
+```bash
+cd boot
+./gradlew test
+./gradlew bootJar
+```
+
+Frontend:
+
+```bash
+cd ui
+npm ci
+npm run build
+npm test
+```
+
+## Data, backups, and logs
+
+The `/data` directory contains the persistent application state:
+
+```text
+/data/tp2intervals.sqlite
+/data/tp2intervals.log
+```
+
+The SQLite database contains platform configuration, schedules, and synchronization history. Protect it because it may contain authentication cookies.
+
+### Backup
+
+Stop the container before copying the SQLite database:
+
+```bash
+docker compose stop tp2intervals
+cp data/tp2intervals.sqlite \
+  "data/tp2intervals.sqlite.backup-$(date +%Y%m%d-%H%M%S)"
+docker compose start tp2intervals
+```
+
+Back up the complete data directory if preferred:
+
+```bash
+tar -czf "tp2intervals-data-$(date +%Y%m%d-%H%M%S).tar.gz" data/
+```
+
+### Logs
+
+Follow container output:
+
+```bash
+docker compose logs -f --tail=200 tp2intervals
+```
+
+Read the persistent application log:
+
+```bash
+tail -f data/tp2intervals.log
+```
+
+Enable **Debug Mode** on the Configuration page when additional request and integration details are needed. Disable it again after troubleshooting because debug logs can be verbose and may include sensitive platform information.
+
+## Security considerations
+
+TP2Intervals is intended for self-hosted, trusted environments.
+
+- The application does not currently provide built-in user authentication.
+- Do not expose it directly to the public Internet without an authenticated reverse proxy, VPN, or access-control layer.
+- Restrict access to the `/data` directory and its backups.
+- Never commit platform cookies, the SQLite database, logs, or HAR files to Git.
+- Treat TrainingPeaks and TrainerRoad cookies as account credentials.
+- Use HTTPS when accessing the application across an untrusted network.
+
+The TrainingPeaks and TrainerRoad integrations depend on web endpoints and session cookies that may change without notice.
+
+## Known limitations
+
+- TrainerRoad ramp steps are not currently supported.
+- TrainerRoad is supported as a source, not as a synchronization destination.
+- Changed-workout replacement is currently limited to one-day TrainerRoad → TrainingPeaks operations.
+- Changed-workout detection is primarily based on the TrainerRoad workout identifier. A content change that keeps the same identifier may be treated as already synchronized.
+- Scheduled jobs always process the current day and currently run at a fixed 60-minute interval.
+- The scheduler interval cannot yet be configured per schedule.
+- Synchronization history currently covers calendar-to-calendar operations only.
+- TrainingPeaks capabilities can differ between athlete, coach, free, and Premium accounts.
+
+### TrainingPeaks future dates
+
+TrainingPeaks free accounts may restrict planning workouts on future dates. TP2Intervals displays a warning when synchronizing beyond the near-term date range. A TrainingPeaks Premium account may be required for longer future ranges.
 
 ## Troubleshooting
-To identify the problems with any platform, logs from the users helps very much.
 
-Gather logs from [guide below](#how-to-get-logs). And in case of TrainerRoad platform try to [record HAR file](#how-to-record-har-file). Send the files directly to me.
+### A platform is shown as disconnected
 
-#### How to get logs
-1. Go to Configuration
-2. In General section check Debug Mode, click Confirm
-3. Reproduce your issue
-4. Find log file according to your system
+1. Open **Configuration**.
+2. Obtain a new API key or authentication cookie.
+3. Save the configuration again.
+4. Check the application logs for the platform-specific error.
 
-* JAR: ./tp2intervals.log
+### A synchronization reports partial success or failure
 
-#### How to record HAR file
-1. Open new tab in your browser
-2. Open dev tools, check Preserve log (Firefox Cog -> Persist Logs)
+Open **Automation → Sync history** to review:
 
-   <img src="https://github.com/freekode/tp2intervals/blob/main/docs/har-1.png?raw=true" width="70%">
-3. Next steps are very important, as they simulate what the app does.
-   Open TrainerRoad page, open workout library, find any workout, open workout page (the page where you have chart with workout steps, description, alternatives, etc.)
-4. In dev tools, click Export HAR (Firefox - Cog -> Save All as HAR), save the file and send it to me
+- the execution status;
+- copied and removed counts;
+- failed workout counts;
+- the available error message.
 
-   <img src="https://github.com/freekode/tp2intervals/blob/main/docs/har-2.png?raw=true" width="70%">
+Batch synchronization continues after individual workout failures, so some workouts may still be copied successfully.
 
+### Scheduler uses the wrong day or the history time is incorrect
+
+Set the JVM timezone explicitly in Docker Compose:
+
+```yaml
+environment:
+  JAVA_TOOL_OPTIONS: "-Duser.timezone=Europe/Lisbon"
+```
+
+Replace `Europe/Lisbon` with your local [IANA timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+
+### Inspect the SQLite database
+
+Install the SQLite command-line client on the Docker host and inspect the database while the application is stopped:
+
+```bash
+docker compose stop tp2intervals
+sqlite3 data/tp2intervals.sqlite ".tables"
+docker compose start tp2intervals
+```
+
+Always create a backup before changing database contents manually.
+
+### Record a HAR file
+
+A HAR file can help diagnose changes in TrainerRoad or TrainingPeaks requests:
+
+1. Open the platform in a new browser tab.
+2. Open Developer Tools → **Network**.
+3. Enable **Preserve log**.
+4. Reproduce the relevant platform action.
+5. Export the network log as a HAR file.
+
+See [`docs/har-1.png`](docs/har-1.png) and [`docs/har-2.png`](docs/har-2.png).
+
+> HAR files can contain session cookies and personal data. Never attach them to a public issue without sanitizing them first.
+
+## Project background
+
+This repository is a fork of [Litwilly/tp2intervals](https://github.com/Litwilly/tp2intervals), which is itself based on the original project by [freekode/tp2intervals](https://github.com/freekode/tp2intervals).
+
+This fork places additional emphasis on TrainerRoad → TrainingPeaks synchronization, including mobile usability, changed-workout reconciliation, persisted automation, and execution history.
+
+Additional discussion about the original project and workout conversion behavior is available in the [Intervals.icu forum thread](https://forum.intervals.icu/t/tp2intervals-copy-trainingpeaks-and-trainerroad-workouts-plans-to-intervals/63375).
+
+## Technology stack
+
+- Angular 17 and Angular Material
+- Kotlin 1.9
+- Spring Boot 3.2
+- Java 21
+- Spring Data JPA and OpenFeign
+- SQLite
+- Liquibase
+- Docker
+
+## License
+
+TP2Intervals is distributed under the [GNU General Public License v3.0](LICENSE).
