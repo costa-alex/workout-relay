@@ -73,8 +73,8 @@ class WorkoutScheduledJob(
     }
 
     @Scheduled(
-        fixedRate = 60,
-        timeUnit = TimeUnit.MINUTES
+        fixedRateString = "\${app.scheduler.interval-hours}",
+        timeUnit = TimeUnit.HOURS
     )
     fun job() {
         val requests = scheduleRequestRepository

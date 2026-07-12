@@ -1,4 +1,6 @@
 app:
+  scheduler:
+    interval-hours: ${SCHEDULER_INTERVAL_HOURS:1}
   training-peaks:
     api-url: https://tpapi.trainingpeaks.com
   intervals:

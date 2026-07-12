@@ -1,6 +1,7 @@
 package org.freekode.tp2intervals
 
 import org.freekode.tp2intervals.infrastructure.configuration.DefaultConfiguration
+import org.freekode.tp2intervals.infrastructure.configuration.SchedulerProperties
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
@@ -12,7 +13,10 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @EnableFeignClients
 @EnableCaching
 @EnableScheduling
-@EnableConfigurationProperties(DefaultConfiguration::class)
+@EnableConfigurationProperties(
+    DefaultConfiguration::class,
+    SchedulerProperties::class,
+)
 class Application
 
 fun main(args: Array<String>) {

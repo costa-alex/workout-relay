@@ -102,7 +102,7 @@ The **Automation** page allows you to create recurring calendar synchronization 
 Current scheduler behavior:
 
 - scheduled jobs process the **current day**;
-- all schedules run every **60 minutes**;
+- all schedules use the global scheduler interval, which defaults to **1 hour**;
 - schedules are persisted in SQLite and survive container restarts;
 - duplicate schedule definitions are rejected;
 - each schedule can be executed immediately with **Run now**;
@@ -224,11 +224,17 @@ services:
     environment:
       # Replace with your local IANA timezone.
       JAVA_TOOL_OPTIONS: "-Duser.timezone=Europe/Lisbon"
+      # Global interval for all scheduled syncs. Accepted values: 1-24 hours.
+      SCHEDULER_INTERVAL_HOURS: "${SCHEDULER_INTERVAL_HOURS:-1}"
     ports:
       - "8098:8080"
     volumes:
       - ./data:/data
 ```
+
+`SCHEDULER_INTERVAL_HOURS` is read when the application starts. It accepts whole
+hours from `1` to `24`, applies to every scheduled sync in the instance, and
+defaults to `1`. Recreate the container after changing it.
 
 Start the application:
 
@@ -296,6 +302,7 @@ docker run --rm \
   --name tp2intervals \
   -p 8098:8080 \
   -e JAVA_TOOL_OPTIONS="-Duser.timezone=Europe/Lisbon" \
+  -e SCHEDULER_INTERVAL_HOURS=1 \
   -v "$(pwd)/data:/data" \
   tp2intervals:local
 ```
@@ -323,6 +330,7 @@ cd boot
 
 SPRING_DATASOURCE_URL="jdbc:sqlite:../data/tp2intervals.sqlite" \
 LOGGING_FILE_NAME="../data/tp2intervals.log" \
+SCHEDULER_INTERVAL_HOURS=1 \
 ./gradlew bootRun
 ```
 
@@ -424,8 +432,8 @@ The TrainingPeaks and TrainerRoad integrations depend on web endpoints and sessi
 - TrainerRoad is supported as a source, not as a synchronization destination.
 - Changed-workout replacement is currently limited to one-day TrainerRoad → TrainingPeaks operations.
 - Changed-workout detection is primarily based on the TrainerRoad workout identifier. A content change that keeps the same identifier may be treated as already synchronized.
-- Scheduled jobs always process the current day and currently run at a fixed 60-minute interval.
-- The scheduler interval cannot yet be configured per schedule.
+- Scheduled jobs always process the current day.
+- The scheduler interval is global for the application instance and cannot be configured per schedule.
 - Synchronization history currently covers calendar-to-calendar operations only.
 - TrainingPeaks capabilities can differ between athlete, coach, free, and Premium accounts.
 

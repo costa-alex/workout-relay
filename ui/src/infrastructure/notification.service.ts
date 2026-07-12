@@ -162,7 +162,7 @@ export class NotificationService {
   }
 
   scheduledSyncCreated(): void {
-    this.success('Scheduled sync created. It will run every 60 minutes for today.');
+    this.success('Scheduled sync created. It will run at the configured interval for today.');
   }
 
   scheduledSyncDeleted(): void {
