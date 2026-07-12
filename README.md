@@ -19,8 +19,8 @@ It provides a responsive, mobile-friendly interface for manual synchronization, 
 
 - [Features](#features)
 - [Supported synchronization directions](#supported-synchronization-directions)
-- [Automation and history](#automation-and-history)
-- [Configuration](#configuration)
+- [Scheduler and history](#scheduler-and-history)
+- [Settings](#settings)
 - [Running with Docker Compose](#running-with-docker-compose)
 - [Updating](#updating)
 - [Building from source](#building-from-source)
@@ -79,7 +79,7 @@ Some TrainingPeaks operations depend on whether the configured account is an ath
 - Responsive Angular Material interface designed for desktop and mobile use.
 - Home page with platform connection status and available synchronization routes.
 - Platform-specific pages for TrainerRoad and TrainingPeaks operations.
-- Dedicated **Automation** page.
+- Dedicated **Scheduler** page.
 - In-app result notifications with copied, skipped, replaced, and failed workout counts.
 - Version display and release-update indication.
 - Debug mode for detailed troubleshooting logs.
@@ -95,9 +95,9 @@ Some TrainingPeaks operations depend on whether the configured account is an ath
 
 TrainerRoad is currently a source platform only. TrainingPeaks → TrainerRoad and Intervals.icu → TrainerRoad are not supported.
 
-## Automation and history
+## Scheduler and history
 
-The **Automation** page allows you to create recurring calendar synchronization jobs for any supported direction.
+The **Scheduler** page allows you to create recurring calendar synchronization jobs for any supported direction.
 
 Current scheduler behavior:
 
@@ -112,7 +112,7 @@ TrainerRoad → TrainingPeaks schedules automatically use the safe changed-worko
 
 ### Synchronization history
 
-Calendar-to-calendar executions are stored and displayed on the Automation page. The history includes:
+Calendar-to-calendar executions are stored and displayed on the Scheduler page. The history includes:
 
 - manual operations;
 - scheduled executions;
@@ -133,11 +133,11 @@ Possible statuses are:
 
 The interface displays the 50 most recent executions. Calendar-to-library and library-to-library operations are not currently included in synchronization history.
 
-## Configuration
+## Settings
 
-Open **Configuration** after starting the application. Intervals.icu credentials are required; TrainingPeaks and TrainerRoad are optional and are only needed for their corresponding features.
+Open **Settings** after starting the application. Intervals.icu credentials are required; TrainingPeaks and TrainerRoad are optional and are only needed for their corresponding features.
 
-Configuration, schedules, and execution history are stored in the SQLite database under `/data`.
+Settings, schedules, and execution history are stored in the SQLite database under `/data`.
 
 ### Intervals.icu
 
@@ -167,7 +167,7 @@ To obtain it:
 3. Reload TrainingPeaks or open a calendar page.
 4. Select an authenticated request to `tpapi.trainingpeaks.com`.
 5. Copy the request's `Cookie` header or the `Production_tpAuth` cookie value.
-6. Paste it into the TP2Intervals Configuration page.
+6. Paste it into the TP2Intervals Settings page.
 
 The application accepts the complete cookie string and extracts the required value.
 
@@ -190,7 +190,7 @@ To obtain it:
 3. Reload the page or open the TrainerRoad calendar or workout library.
 4. Select an authenticated request to `www.trainerroad.com`.
 5. Copy the request's `Cookie` header or the `SharedTrainerRoadAuth` cookie value.
-6. Paste it into the TP2Intervals Configuration page.
+6. Paste it into the TP2Intervals Settings page.
 
 The **Remove HTML tags from description** option can be enabled if TrainerRoad descriptions contain unwanted markup.
 
@@ -248,7 +248,7 @@ Open:
 http://<server-address>:8098
 ```
 
-Then open **Configuration**, enter the credentials for the platforms you use, and save them.
+Then open **Settings**, enter the credentials for the platforms you use, and save them.
 
 ### Using a fixed release
 
@@ -411,7 +411,7 @@ Read the persistent application log:
 tail -f data/tp2intervals.log
 ```
 
-Enable **Debug Mode** on the Configuration page when additional request and integration details are needed. Disable it again after troubleshooting because debug logs can be verbose and may include sensitive platform information.
+Enable **Debug Mode** on the Settings page when additional request and integration details are needed. Disable it again after troubleshooting because debug logs can be verbose and may include sensitive platform information.
 
 ## Security considerations
 
@@ -445,14 +445,14 @@ TrainingPeaks free accounts may restrict planning workouts on future dates. TP2I
 
 ### A platform is shown as disconnected
 
-1. Open **Configuration**.
+1. Open **Settings**.
 2. Obtain a new API key or authentication cookie.
 3. Save the configuration again.
 4. Check the application logs for the platform-specific error.
 
 ### A synchronization reports partial success or failure
 
-Open **Automation → Sync history** to review:
+Open **Scheduler → Sync history** to review:
 
 - the execution status;
 - copied and removed counts;

@@ -158,7 +158,7 @@ export class NotificationService {
   }
 
   configurationSaved(): void {
-    this.success('Configuration saved successfully.');
+    this.success('Settings saved successfully.');
   }
 
   scheduledSyncCreated(): void {

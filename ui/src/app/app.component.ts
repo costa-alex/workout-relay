@@ -50,12 +50,12 @@ export class AppComponent implements OnInit {
     },
     {
       icon: 'schedule',
-      name: 'Automation',
+      name: 'Scheduler',
       url: '/automation'
     },
     {
       icon: 'settings',
-      name: 'Configuration',
+      name: 'Settings',
       url: '/config'
     }
   ];

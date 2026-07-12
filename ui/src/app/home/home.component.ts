@@ -161,7 +161,7 @@ export class HomeComponent implements OnInit {
     const info = this.platformInfo[platformKey];
 
     if (!info?.isValid) {
-      return 'Open Configuration to verify the credentials for this platform.';
+      return 'Open Settings to verify the credentials for this platform.';
     }
 
     switch (platformKey) {

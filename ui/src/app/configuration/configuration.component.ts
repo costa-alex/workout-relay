@@ -79,7 +79,7 @@ export class ConfigurationComponent implements OnInit {
     this.configClient.updateConfig(newConfiguration).pipe(
       finalize(() => this.inProgress = false)
     ).subscribe(() => {
-      this.notificationService.success('Configuration successfully saved')
+      this.notificationService.success('Settings saved successfully')
       this.router.navigate(['/home']);
     });
   }
