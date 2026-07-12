@@ -76,7 +76,6 @@ export class ConfigurationComponent implements OnInit {
     this.inProgress = true
     let newConfiguration = new ConfigData(this.formGroup.getRawValue());
 
-    console.log(newConfiguration)
     this.configClient.updateConfig(newConfiguration).pipe(
       finalize(() => this.inProgress = false)
     ).subscribe(() => {
