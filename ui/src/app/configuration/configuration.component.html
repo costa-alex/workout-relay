@@ -1,143 +1,223 @@
-<mat-progress-bar *ngIf="inProgress" mode="query"></mat-progress-bar>
+<div class="configuration-page app-panel-page">
 
-<form [formGroup]="formGroup" novalidate (ngSubmit)="onSubmit()">
-  <div>
-    <h2 class="config-section-title">
-      Intervals.icu
+  <div *ngIf="inProgress" class="loading-container app-panel-container">
+    <mat-progress-bar mode="query"></mat-progress-bar>
+  </div>
 
-      <a
-        class="help-link"
-        href="https://github.com/costa-alex/tp2intervals?tab=readme-ov-file#intervalsicu"
-        target="_blank"
-        rel="noopener noreferrer"
-        matTooltip="How to configure"
-        matTooltipPosition="right">
+  <form
+    class="content-container app-panel-container"
+    [formGroup]="formGroup"
+    novalidate
+    (ngSubmit)="onSubmit()">
 
-        <mat-icon>help_outline</mat-icon>
+    <mat-accordion multi class="config-accordion app-panel-accordion">
 
-      </a>
-    </h2>
+      <mat-expansion-panel class="config-panel app-panel-card" [expanded]="true">
+        <mat-expansion-panel-header class="config-header app-panel-card-header">
+          <div class="config-header-content app-panel-card-header-content">
+            <div class="config-icon app-panel-card-icon">
+              <mat-icon>monitor_heart</mat-icon>
+            </div>
 
-    <mat-form-field class="full-width">
-      <mat-label>Intervals API Key</mat-label>
-      <input matInput placeholder="123456qwerty123456qwerty1" formControlName="intervals.api-key">
-    </mat-form-field>
-
-    <mat-form-field class="full-width">
-      <mat-label>Intervals Athlete Id</mat-label>
-      <input matInput placeholder="i00000" formControlName="intervals.athlete-id">
-    </mat-form-field>
-
-    <mat-accordion>
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Advanced properties
-          </mat-panel-title>
+            <div class="config-text app-panel-card-text">
+              <h2 class="config-title app-panel-card-title">Intervals.icu</h2>
+              <div class="config-description app-panel-card-description">
+                Configure your connection and workout conversion settings.
+              </div>
+            </div>
+          </div>
         </mat-expansion-panel-header>
 
-        <mat-form-field class="full-width">
-          <mat-label>Intervals Power range percentage</mat-label>
-          <input matInput type="number" placeholder="5.0" formControlName="intervals.power-range">
-        </mat-form-field>
+        <div class="panel-content">
+          <div class="panel-help">
+            <a
+              class="help-link"
+              href="https://github.com/costa-alex/tp2intervals?tab=readme-ov-file#intervalsicu"
+              target="_blank"
+              rel="noopener noreferrer">
+              <mat-icon>help_outline</mat-icon>
+              <span>How to configure</span>
+            </a>
+          </div>
 
-        <mat-form-field class="full-width">
-          <mat-label>Intervals HR range percentage</mat-label>
-          <input matInput type="number" placeholder="5.0" formControlName="intervals.hr-range">
-        </mat-form-field>
+          <mat-form-field class="full-width">
+            <mat-label>Intervals API Key</mat-label>
+            <input matInput placeholder="123456qwerty123456qwerty1" formControlName="intervals.api-key">
+          </mat-form-field>
 
-        <mat-form-field class="full-width">
-          <mat-label>Intervals Pace range percentage</mat-label>
-          <input matInput type="number" placeholder="5.0" formControlName="intervals.pace-range">
-        </mat-form-field>
+          <mat-form-field class="full-width">
+            <mat-label>Intervals Athlete Id</mat-label>
+            <input matInput placeholder="i00000" formControlName="intervals.athlete-id">
+          </mat-form-field>
+
+          <mat-accordion class="advanced-accordion">
+            <mat-expansion-panel class="advanced-panel">
+              <mat-expansion-panel-header>
+                <mat-panel-title class="advanced-title">
+                  <mat-icon>tune</mat-icon>
+                  <span>Advanced properties</span>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+              <mat-form-field class="full-width">
+                <mat-label>Intervals Power range percentage</mat-label>
+                <input matInput type="number" placeholder="5.0" formControlName="intervals.power-range">
+              </mat-form-field>
+
+              <mat-form-field class="full-width">
+                <mat-label>Intervals HR range percentage</mat-label>
+                <input matInput type="number" placeholder="5.0" formControlName="intervals.hr-range">
+              </mat-form-field>
+
+              <mat-form-field class="full-width">
+                <mat-label>Intervals Pace range percentage</mat-label>
+                <input matInput type="number" placeholder="5.0" formControlName="intervals.pace-range">
+              </mat-form-field>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
       </mat-expansion-panel>
+
+      <mat-expansion-panel class="config-panel app-panel-card" [expanded]="true">
+        <mat-expansion-panel-header class="config-header app-panel-card-header">
+          <div class="config-header-content app-panel-card-header-content">
+            <div class="config-icon app-panel-card-icon">
+              <mat-icon>show_chart</mat-icon>
+            </div>
+
+            <div class="config-text app-panel-card-text">
+              <h2 class="config-title app-panel-card-title">TrainingPeaks</h2>
+              <div class="config-description app-panel-card-description">
+                Add the authentication details used to connect your account.
+              </div>
+            </div>
+          </div>
+        </mat-expansion-panel-header>
+
+        <div class="panel-content">
+          <div class="panel-help">
+            <a
+              class="help-link"
+              href="https://github.com/costa-alex/tp2intervals?tab=readme-ov-file#trainingpeaks"
+              target="_blank"
+              rel="noopener noreferrer">
+              <mat-icon>help_outline</mat-icon>
+              <span>How to configure</span>
+            </a>
+          </div>
+
+          <mat-form-field class="full-width">
+            <mat-label>TrainingPeaks Auth Cookie</mat-label>
+            <input matInput placeholder="Production_tpAuth=very_long_string" formControlName="training-peaks.auth-cookie">
+            @if (formGroup.controls['training-peaks.auth-cookie'].errors?.['pattern']) {
+              <mat-error>Must be in format Production_tpAuth=[a-zA-Z0-9-_]*</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel class="config-panel app-panel-card" [expanded]="true">
+        <mat-expansion-panel-header class="config-header app-panel-card-header">
+          <div class="config-header-content app-panel-card-header-content">
+            <div class="config-icon app-panel-card-icon">
+              <mat-icon>directions_bike</mat-icon>
+            </div>
+
+            <div class="config-text app-panel-card-text">
+              <h2 class="config-title app-panel-card-title">TrainerRoad</h2>
+              <div class="config-description app-panel-card-description">
+                Configure authentication and workout description options.
+              </div>
+            </div>
+          </div>
+        </mat-expansion-panel-header>
+
+        <div class="panel-content">
+          <div class="panel-help">
+            <a
+              class="help-link"
+              href="https://github.com/costa-alex/tp2intervals?tab=readme-ov-file#trainerroad"
+              target="_blank"
+              rel="noopener noreferrer">
+              <mat-icon>help_outline</mat-icon>
+              <span>How to configure</span>
+            </a>
+          </div>
+
+          <mat-form-field class="full-width">
+            <mat-label>TrainerRoad Auth Cookie</mat-label>
+            <input matInput placeholder="TrainerRoadAuth=very_long_string" formControlName="trainer-road.auth-cookie">
+            @if (formGroup.controls['trainer-road.auth-cookie'].errors?.['pattern']) {
+              <mat-error>Must be in format SharedTrainerRoadAuth=...</mat-error>
+            }
+          </mat-form-field>
+
+          <div class="checkbox-line">
+            <mat-checkbox formControlName="trainer-road.remove-html-tags">
+              Remove HTML tags from description
+            </mat-checkbox>
+            <span
+              class="beta-indicator"
+              matTooltip="Beta feature"
+              matTooltipPosition="right"
+              aria-label="Beta feature"
+              tabindex="0">
+              <mat-icon>auto_awesome</mat-icon>
+            </span>
+          </div>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel class="config-panel app-panel-card" [expanded]="true">
+        <mat-expansion-panel-header class="config-header app-panel-card-header">
+          <div class="config-header-content app-panel-card-header-content">
+            <div class="config-icon app-panel-card-icon">
+              <mat-icon>settings</mat-icon>
+            </div>
+
+            <div class="config-text app-panel-card-text">
+              <h2 class="config-title app-panel-card-title">General</h2>
+              <div class="config-description app-panel-card-description">
+                Control application diagnostics and other global options.
+              </div>
+            </div>
+          </div>
+        </mat-expansion-panel-header>
+
+        <div class="panel-content general-content">
+          <mat-checkbox formControlName="general.debug-mode">
+            Debug Mode
+          </mat-checkbox>
+
+          <div *ngIf="formGroup.controls['general.debug-mode'].value" class="log-location">
+            <div class="log-location-title">
+              <mat-icon>description</mat-icon>
+              <span>Log location</span>
+            </div>
+
+            <div class="log-location-list">
+              <div><span>Linux</span><code>~/.config/tp2intervals/logs/main.log</code></div>
+              <div><span>MacOS</span><code>~/Library/Logs/tp2intervals/main.log</code></div>
+              <div><span>Windows</span><code>%USERPROFILE%\AppData\Roaming\tp2intervals\logs\main.log</code></div>
+              <div><span>JAR</span><code>./tp2intervals.log</code></div>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel>
+
     </mat-accordion>
-  </div>
 
-  <div>
-    <h2 class="config-section-title">
-      TrainingPeaks
-      <a
-        class="help-link"
-        href="https://github.com/costa-alex/tp2intervals?tab=readme-ov-file#trainingpeaks"
-        target="_blank"
-        rel="noopener noreferrer"
-        matTooltip="How to configure"
-        matTooltipPosition="right">
-
-        <mat-icon>help_outline</mat-icon>
-
-      </a>
-    </h2>
-
-    <mat-form-field class="full-width">
-      <mat-label>TrainingPeaks Auth Cookie</mat-label>
-      <input matInput placeholder="Production_tpAuth=very_long_string" formControlName="training-peaks.auth-cookie">
-      @if (formGroup.controls['training-peaks.auth-cookie'].errors?.['pattern']) {
-        <mat-error>Must be in format Production_tpAuth=[a-zA-Z0-9-_]*</mat-error>
-      }
-    </mat-form-field>
-  </div>
-
-  <div>
-    <h2 class="config-section-title">
-      TrainerRoad
-      <a
-        class="help-link"
-        href="https://github.com/costa-alex/tp2intervals?tab=readme-ov-file#trainerroad"
-        target="_blank"
-        rel="noopener noreferrer"
-        matTooltip="How to configure"
-        matTooltipPosition="right">
-
-        <mat-icon>help_outline</mat-icon>
-
-      </a>
-    </h2>
-
-    <mat-form-field class="full-width">
-      <mat-label>TrainerRoad Auth Cookie</mat-label>
-      <input matInput placeholder="TrainerRoadAuth=very_long_string" formControlName="trainer-road.auth-cookie">
-      @if (formGroup.controls['trainer-road.auth-cookie'].errors?.['pattern']) {
-        <mat-error>Must be in format SharedTrainerRoadAuth=...</mat-error>
-      }
-    </mat-form-field>
-
-    <mat-checkbox class="form-checkbox" formControlName="trainer-road.remove-html-tags">
-      Remove HTML tags from description
-    </mat-checkbox>
-    <i class="bi bi-stars beta-icon"
-       matTooltip="Beta feature"
-       matTooltipPosition="right"></i>
-  </div>
-
-  <div>
-    <h2>General</h2>
-
-    <div class="row">
-      <mat-checkbox class="form-checkbox" formControlName="general.debug-mode">
-        Debug Mode
-      </mat-checkbox>
+    <div class="form-actions">
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="formGroup.invalid || inProgress">
+        <mat-icon>save</mat-icon>
+        <span>Confirm</span>
+      </button>
     </div>
 
-    <div *ngIf="formGroup.controls['general.debug-mode'].value" class="row" style="margin-bottom: 20px">
-      Log location:<br>
-      Linux: ~/.config/tp2intervals/logs/main.log<br>
-      MacOS: ~/Library/Logs/tp2intervals/main.log<br>
-      Windows: %USERPROFILE%\AppData\Roaming\tp2intervals\logs\main.log<br>
-      JAR: ./tp2intervals.log<br>
-    </div>
-  </div>
+  </form>
 
-  <div class="row action-button-section">
-    <button
-      mat-raised-button
-      color="primary"
-      type="submit"
-      [disabled]="formGroup.invalid || inProgress"
-    >
-      Confirm
-    </button>
-  </div>
-
-</form>
+</div>

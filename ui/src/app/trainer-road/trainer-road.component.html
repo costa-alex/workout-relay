@@ -1,26 +1,26 @@
-<div class="trainer-road-page">
+<div class="trainer-road-page app-panel-page">
 
-  <div *ngIf="!platformInfo" class="loading-container">
+  <div *ngIf="!platformInfo" class="loading-container app-panel-container">
     <mat-progress-bar mode="query"></mat-progress-bar>
   </div>
 
-  <div *ngIf="platformInfo?.isValid === false" class="not-configured">
+  <div *ngIf="platformInfo?.isValid === false" class="not-configured app-panel-container">
     Platform is not configured. Please set required parameters on the Configuration page.
   </div>
 
-  <div *ngIf="platformInfo?.isValid" class="content-container">
-    <mat-accordion multi class="action-accordion">
+  <div *ngIf="platformInfo?.isValid" class="content-container app-panel-container">
+    <mat-accordion multi class="action-accordion app-panel-accordion">
 
-      <mat-expansion-panel class="action-panel">
-        <mat-expansion-panel-header class="action-header">
-          <div class="action-header-content">
-            <div class="action-icon">
+      <mat-expansion-panel class="action-panel app-panel-card">
+        <mat-expansion-panel-header class="action-header app-panel-card-header">
+          <div class="action-header-content app-panel-card-header-content">
+            <div class="action-icon app-panel-card-icon">
               <mat-icon>sync</mat-icon>
             </div>
 
-            <div class="action-text">
-              <div class="action-title">Sync planned workouts</div>
-              <div class="action-description">
+            <div class="action-text app-panel-card-text">
+              <div class="action-title app-panel-card-title">Sync planned workouts</div>
+              <div class="action-description app-panel-card-description">
                 Sync your TR planned workouts to another platform.
               </div>
             </div>
@@ -30,16 +30,16 @@
         <tr-copy-calendar-to-calendar></tr-copy-calendar-to-calendar>
       </mat-expansion-panel>
 
-      <mat-expansion-panel class="action-panel">
-        <mat-expansion-panel-header class="action-header">
-          <div class="action-header-content">
-            <div class="action-icon">
+      <mat-expansion-panel class="action-panel app-panel-card">
+        <mat-expansion-panel-header class="action-header app-panel-card-header">
+          <div class="action-header-content app-panel-card-header-content">
+            <div class="action-icon app-panel-card-icon">
               <mat-icon>fitness_center</mat-icon>
             </div>
 
-            <div class="action-text">
-              <div class="action-title">Copy workout</div>
-              <div class="action-description">
+            <div class="action-text app-panel-card-text">
+              <div class="action-title app-panel-card-title">Copy workout</div>
+              <div class="action-description app-panel-card-description">
                 Copy workouts from the TR library to the Intervals.icu library.
               </div>
             </div>
@@ -49,16 +49,16 @@
         <tr-copy-library-to-library></tr-copy-library-to-library>
       </mat-expansion-panel>
 
-      <mat-expansion-panel class="action-panel">
-        <mat-expansion-panel-header class="action-header">
-          <div class="action-header-content">
-            <div class="action-icon">
+      <mat-expansion-panel class="action-panel app-panel-card">
+        <mat-expansion-panel-header class="action-header app-panel-card-header">
+          <div class="action-header-content app-panel-card-header-content">
+            <div class="action-icon app-panel-card-icon">
               <mat-icon>library_books</mat-icon>
             </div>
 
-            <div class="action-text">
-              <div class="action-title">Copy planned workouts</div>
-              <div class="action-description">
+            <div class="action-text app-panel-card-text">
+              <div class="action-title app-panel-card-title">Copy planned workouts</div>
+              <div class="action-description app-panel-card-description">
                 Copy your TR plan to a Intervals.icu workout library.
               </div>
             </div>

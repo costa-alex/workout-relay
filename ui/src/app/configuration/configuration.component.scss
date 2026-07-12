@@ -1,49 +1,139 @@
-.full-width {
-  width: 100%;
+:host {
+  display: block;
 }
 
-.row {
+.loading-container {
+  margin-bottom: 12px;
+}
+
+.panel-help {
   display: flex;
-  flex-direction: row;
-}
-
-.col {
-  flex: 1;
-}
-
-.error-message {
-  margin-left: 10px;
-  color: red;
-}
-
-form {
-  padding: 10px;
-}
-
-.form-checkbox {
-  padding-bottom: 22px
-}
-
-.config-section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  justify-content: flex-end;
+  margin-bottom: 8px;
 }
 
 .help-link {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
   color: inherit;
+  font-size: 0.9rem;
   text-decoration: none;
+  opacity: 0.72;
 }
 
-.help-link mat-icon {
-  font-size: 20px;
+.help-link:hover,
+.help-link:focus-visible {
+  text-decoration: underline;
+  opacity: 1;
+}
+
+.help-link mat-icon,
+.advanced-title mat-icon,
+.beta-indicator,
+.beta-indicator mat-icon,
+.log-location-title mat-icon {
   width: 20px;
   height: 20px;
-  opacity: 0.7;
+  font-size: 20px;
 }
 
-.help-link:hover mat-icon {
-  opacity: 1;
+.full-width {
+  width: 100%;
+}
+
+.advanced-panel {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+.advanced-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.advanced-title mat-icon {
+  opacity: 0.72;
+}
+
+.checkbox-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.beta-indicator {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.general-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.log-location {
+  padding: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.025);
+}
+
+.log-location-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.log-location-list {
+  display: grid;
+  gap: 8px;
+}
+
+.log-location-list > div {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.log-location-list span {
+  font-weight: 500;
+}
+
+.log-location-list code {
+  overflow-wrap: anywhere;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 4px;
+}
+
+.form-actions button {
+  min-width: 128px;
+}
+
+@media (max-width: 600px) {
+  .panel-help {
+    justify-content: flex-start;
+  }
+
+  .log-location-list > div {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
 }
