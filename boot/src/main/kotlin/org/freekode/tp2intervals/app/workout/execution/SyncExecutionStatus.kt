@@ -5,5 +5,6 @@ enum class SyncExecutionStatus {
     SUCCESS,
     NO_CHANGES,
     PARTIAL_SUCCESS,
-    FAILED
+    FAILED,
+    INTERRUPTED
 }

@@ -244,15 +244,16 @@ services:
       JAVA_TOOL_OPTIONS: "-Duser.timezone=Europe/Lisbon"
       # Global interval for all scheduled syncs. Accepted values: 1-24 hours.
       SCHEDULER_INTERVAL_HOURS: "${SCHEDULER_INTERVAL_HOURS:-1}"
+      # Maximum number of synchronization executions retained in history.
+      SYNC_HISTORY_RETENTION_LIMIT: "100"
     ports:
       - "8098:8080"
     volumes:
       - ./data:/data
 ```
 
-`SCHEDULER_INTERVAL_HOURS` is read when the application starts. It accepts whole
-hours from `1` to `24`, applies to every scheduled sync in the instance, and
-defaults to `1`. Recreate the container after changing it.
+`SCHEDULER_INTERVAL_HOURS` is read when the application starts. It accepts whole hours from `1` to `24`, applies to every scheduled sync in the instance, and defaults to `1`. Recreate the container after changing it.
+`SYNC_HISTORY_RETENTION_LIMIT` is the maximum number of scheduler executions retained in history.
 
 Start the application:
 
@@ -321,6 +322,7 @@ docker run --rm \
   -p 8098:8080 \
   -e JAVA_TOOL_OPTIONS="-Duser.timezone=Europe/Lisbon" \
   -e SCHEDULER_INTERVAL_HOURS=1 \
+  -e SYNC_HISTORY_RETENTION_LIMIT=100 \
   -v "$(pwd)/data:/data" \
   tp2intervals:local
 ```

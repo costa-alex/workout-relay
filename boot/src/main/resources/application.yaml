@@ -1,6 +1,8 @@
 app:
   scheduler:
     interval-hours: ${SCHEDULER_INTERVAL_HOURS:1}
+  sync-history:
+    retention-limit: ${SYNC_HISTORY_RETENTION_LIMIT:100}
   training-peaks:
     api-url: https://tpapi.trainingpeaks.com
   intervals:

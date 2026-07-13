@@ -7,12 +7,18 @@ import org.freekode.tp2intervals.infrastructure.sync.SyncExecutionEntity
 import org.freekode.tp2intervals.infrastructure.sync.SyncExecutionRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import org.freekode.tp2intervals.infrastructure.configuration.SyncHistoryProperties
+import org.slf4j.LoggerFactory
+import org.springframework.data.domain.PageRequest
 
 @Service
 class SyncExecutionService(
     private val workoutService: WorkoutService,
-    private val syncExecutionRepository: SyncExecutionRepository
+    private val syncExecutionRepository: SyncExecutionRepository,
+    private val maintenanceService: SyncExecutionMaintenanceService,
+    private val syncHistoryProperties: SyncHistoryProperties
 ) {
+    private val log = LoggerFactory.getLogger(this.javaClass)
 
     fun execute(
         request: CopyFromCalendarToCalendarRequest,
@@ -40,12 +46,14 @@ class SyncExecutionService(
             execution.finishedAt = LocalDateTime.now()
             execution.copied = response.copied
             execution.removed = response.removed
-            execution.skippedByType = response.skippedByType
+            execution.skippedByType =
+                response.skippedByType
             execution.skippedAlreadySynced =
                 response.skippedAlreadySynced
             execution.failed = response.failed
             execution.failedToRemove =
                 response.failedToRemove
+
             execution.errorMessage = (
                 response.failedWorkouts.map { failure ->
                     "${failure.workoutName}: ${failure.message}"
@@ -57,6 +65,7 @@ class SyncExecutionService(
                 .takeIf { it.isNotEmpty() }
                 ?.joinToString("\n")
                 ?.take(2000)
+
             execution.status = determineStatus(response)
 
             syncExecutionRepository.save(execution)
@@ -65,20 +74,42 @@ class SyncExecutionService(
         } catch (exception: Exception) {
             execution.finishedAt = LocalDateTime.now()
             execution.status = SyncExecutionStatus.FAILED
-            execution.errorMessage = exception.message
-                ?.take(2000)
-                ?: exception.javaClass.simpleName
+            execution.errorMessage =
+                exception.message
+                    ?.take(2000)
+                    ?: exception.javaClass.simpleName
 
             syncExecutionRepository.save(execution)
 
             throw exception
+        } finally {
+            try {
+                maintenanceService.enforceRetention()
+            } catch (exception: Exception) {
+                /*
+                * Uma falha de manutenção do histórico não deve
+                * alterar o resultado da sincronização.
+                */
+                log.error(
+                    "Unable to enforce sync history retention",
+                    exception
+                )
+            }
         }
     }
 
-    fun getRecentExecutions(): List<SyncExecutionResponse> =
-        syncExecutionRepository
-            .findTop50ByOrderByStartedAtDesc()
+    fun getRecentExecutions():
+        List<SyncExecutionResponse> {
+
+        val pageable = PageRequest.of(
+            0,
+            syncHistoryProperties.retentionLimit
+        )
+
+        return syncExecutionRepository
+            .findAllByOrderByIdDesc(pageable)
             .map(SyncExecutionResponse::fromEntity)
+    }
 
     private fun determineStatus(
         response: CopyWorkoutsResponse

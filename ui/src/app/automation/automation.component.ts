@@ -303,6 +303,9 @@ export class AutomationComponent implements OnInit {
 
       case 'FAILED':
         return 'Failed';
+
+      case 'INTERRUPTED':
+        return 'Interrupted';
     }
   }
 

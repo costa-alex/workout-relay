@@ -275,7 +275,8 @@
                 [class.status-no-changes]="execution.status === 'NO_CHANGES'"
                 [class.status-partial]="execution.status === 'PARTIAL_SUCCESS'"
                 [class.status-failed]="execution.status === 'FAILED'"
-                [class.status-running]="execution.status === 'RUNNING'">
+                [class.status-running]="execution.status === 'RUNNING'"
+                [class.status-interrupted]="execution.status === 'INTERRUPTED'">
 
                 {{ statusTitle(execution.status) }}
 
@@ -321,7 +322,11 @@
             </div>
 
             @if (execution.errorMessage) {
-              <div class="history-error">
+              <div
+                class="history-error"
+                [class.history-warning]="
+                  execution.status === 'INTERRUPTED'
+                ">
                 {{ execution.errorMessage }}
               </div>
             }

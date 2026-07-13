@@ -8,6 +8,7 @@ import org.springframework.boot.runApplication
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.cloud.openfeign.EnableFeignClients
 import org.springframework.scheduling.annotation.EnableScheduling
+import org.freekode.tp2intervals.infrastructure.configuration.SyncHistoryProperties
 
 @SpringBootApplication
 @EnableFeignClients
@@ -16,6 +17,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @EnableConfigurationProperties(
     DefaultConfiguration::class,
     SchedulerProperties::class,
+    SyncHistoryProperties::class
 )
 class Application
 

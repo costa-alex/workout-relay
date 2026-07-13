@@ -190,6 +190,16 @@
   color: var(--app-error);
 }
 
+.status-interrupted {
+  background: var(--app-warning-container);
+  color: var(--app-warning);
+}
+
+.history-warning {
+  color: var(--app-warning);
+  background: var(--app-warning-container);
+}
+
 .history-period {
   display: grid;
   grid-template-columns: 100px 1fr;

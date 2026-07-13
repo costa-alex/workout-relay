@@ -27,7 +27,8 @@ export interface SyncExecution {
     | 'SUCCESS'
     | 'NO_CHANGES'
     | 'PARTIAL_SUCCESS'
-    | 'FAILED';
+    | 'FAILED'
+    | 'INTERRUPTED';
   copied: number;
   removed: number;
   skippedByType: number;
