@@ -16,6 +16,96 @@
         <mat-expansion-panel-header class="config-header app-panel-card-header">
           <div class="config-header-content app-panel-card-header-content">
             <div class="config-icon app-panel-card-icon">
+              <mat-icon>directions_bike</mat-icon>
+            </div>
+
+            <div class="config-text app-panel-card-text">
+              <h2 class="config-title app-panel-card-title">TrainerRoad</h2>
+              <div class="config-description app-panel-card-description">
+                Configure authentication and workout description options.
+              </div>
+            </div>
+          </div>
+        </mat-expansion-panel-header>
+
+        <div class="panel-content">
+          <div class="panel-help">
+            <a
+              class="help-link"
+              href="https://github.com/costa-alex/tp2intervals?tab=readme-ov-file#trainerroad"
+              target="_blank"
+              rel="noopener noreferrer">
+              <mat-icon>help_outline</mat-icon>
+              <span>How to configure</span>
+            </a>
+          </div>
+
+          <mat-form-field class="full-width">
+            <mat-label>TrainerRoad Auth Cookie</mat-label>
+            <input type="password" matInput placeholder="TrainerRoadAuth=very_long_string" formControlName="trainer-road.auth-cookie">
+            @if (formGroup.controls['trainer-road.auth-cookie'].errors?.['pattern']) {
+              <mat-error>Must be in format SharedTrainerRoadAuth=...</mat-error>
+            }
+          </mat-form-field>
+
+          <div class="checkbox-line">
+            <mat-checkbox formControlName="trainer-road.remove-html-tags">
+              Remove HTML tags from description
+            </mat-checkbox>
+            <span
+              class="beta-indicator"
+              matTooltip="Beta feature"
+              matTooltipPosition="right"
+              aria-label="Beta feature"
+              tabindex="0">
+              <mat-icon>auto_awesome</mat-icon>
+            </span>
+          </div>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel class="config-panel app-panel-card" [expanded]="false">
+        <mat-expansion-panel-header class="config-header app-panel-card-header">
+          <div class="config-header-content app-panel-card-header-content">
+            <div class="config-icon app-panel-card-icon">
+              <mat-icon>timeline</mat-icon>
+            </div>
+
+            <div class="config-text app-panel-card-text">
+              <h2 class="config-title app-panel-card-title">TrainingPeaks</h2>
+              <div class="config-description app-panel-card-description">
+                Add the authentication details used to connect your account.
+              </div>
+            </div>
+          </div>
+        </mat-expansion-panel-header>
+
+        <div class="panel-content">
+          <div class="panel-help">
+            <a
+              class="help-link"
+              href="https://github.com/costa-alex/tp2intervals?tab=readme-ov-file#trainingpeaks"
+              target="_blank"
+              rel="noopener noreferrer">
+              <mat-icon>help_outline</mat-icon>
+              <span>How to configure</span>
+            </a>
+          </div>
+
+          <mat-form-field class="full-width">
+            <mat-label>TrainingPeaks Auth Cookie</mat-label>
+            <input type="password" matInput placeholder="Production_tpAuth=very_long_string" formControlName="training-peaks.auth-cookie">
+            @if (formGroup.controls['training-peaks.auth-cookie'].errors?.['pattern']) {
+              <mat-error>Must be in format Production_tpAuth=[a-zA-Z0-9-_]*</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel class="config-panel app-panel-card" [expanded]="false">
+        <mat-expansion-panel-header class="config-header app-panel-card-header">
+          <div class="config-header-content app-panel-card-header-content">
+            <div class="config-icon app-panel-card-icon">
               <mat-icon>monitor_heart</mat-icon>
             </div>
 
@@ -78,96 +168,6 @@
         </div>
       </mat-expansion-panel>
 
-      <mat-expansion-panel class="config-panel app-panel-card" [expanded]="false">
-        <mat-expansion-panel-header class="config-header app-panel-card-header">
-          <div class="config-header-content app-panel-card-header-content">
-            <div class="config-icon app-panel-card-icon">
-              <mat-icon>show_chart</mat-icon>
-            </div>
-
-            <div class="config-text app-panel-card-text">
-              <h2 class="config-title app-panel-card-title">TrainingPeaks</h2>
-              <div class="config-description app-panel-card-description">
-                Add the authentication details used to connect your account.
-              </div>
-            </div>
-          </div>
-        </mat-expansion-panel-header>
-
-        <div class="panel-content">
-          <div class="panel-help">
-            <a
-              class="help-link"
-              href="https://github.com/costa-alex/tp2intervals?tab=readme-ov-file#trainingpeaks"
-              target="_blank"
-              rel="noopener noreferrer">
-              <mat-icon>help_outline</mat-icon>
-              <span>How to configure</span>
-            </a>
-          </div>
-
-          <mat-form-field class="full-width">
-            <mat-label>TrainingPeaks Auth Cookie</mat-label>
-            <input type="password" matInput placeholder="Production_tpAuth=very_long_string" formControlName="training-peaks.auth-cookie">
-            @if (formGroup.controls['training-peaks.auth-cookie'].errors?.['pattern']) {
-              <mat-error>Must be in format Production_tpAuth=[a-zA-Z0-9-_]*</mat-error>
-            }
-          </mat-form-field>
-        </div>
-      </mat-expansion-panel>
-
-      <mat-expansion-panel class="config-panel app-panel-card" [expanded]="false">
-        <mat-expansion-panel-header class="config-header app-panel-card-header">
-          <div class="config-header-content app-panel-card-header-content">
-            <div class="config-icon app-panel-card-icon">
-              <mat-icon>directions_bike</mat-icon>
-            </div>
-
-            <div class="config-text app-panel-card-text">
-              <h2 class="config-title app-panel-card-title">TrainerRoad</h2>
-              <div class="config-description app-panel-card-description">
-                Configure authentication and workout description options.
-              </div>
-            </div>
-          </div>
-        </mat-expansion-panel-header>
-
-        <div class="panel-content">
-          <div class="panel-help">
-            <a
-              class="help-link"
-              href="https://github.com/costa-alex/tp2intervals?tab=readme-ov-file#trainerroad"
-              target="_blank"
-              rel="noopener noreferrer">
-              <mat-icon>help_outline</mat-icon>
-              <span>How to configure</span>
-            </a>
-          </div>
-
-          <mat-form-field class="full-width">
-            <mat-label>TrainerRoad Auth Cookie</mat-label>
-            <input type="password" matInput placeholder="TrainerRoadAuth=very_long_string" formControlName="trainer-road.auth-cookie">
-            @if (formGroup.controls['trainer-road.auth-cookie'].errors?.['pattern']) {
-              <mat-error>Must be in format SharedTrainerRoadAuth=...</mat-error>
-            }
-          </mat-form-field>
-
-          <div class="checkbox-line">
-            <mat-checkbox formControlName="trainer-road.remove-html-tags">
-              Remove HTML tags from description
-            </mat-checkbox>
-            <span
-              class="beta-indicator"
-              matTooltip="Beta feature"
-              matTooltipPosition="right"
-              aria-label="Beta feature"
-              tabindex="0">
-              <mat-icon>auto_awesome</mat-icon>
-            </span>
-          </div>
-        </div>
-      </mat-expansion-panel>
-
       <mat-expansion-panel class="config-panel app-panel-card" [expanded]="true">
         <mat-expansion-panel-header class="config-header app-panel-card-header">
           <div class="config-header-content app-panel-card-header-content">
@@ -227,7 +227,7 @@
         type="submit"
         [disabled]="formGroup.invalid || inProgress">
         <mat-icon>save</mat-icon>
-        <span>Confirm</span>
+        <span>Save</span>
       </button>
     </div>
 

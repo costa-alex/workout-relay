@@ -68,7 +68,7 @@ export class HomeComponent implements OnInit {
     {
       key: Platform.INTERVALS.key,
       title: Platform.INTERVALS.title,
-      icon: 'insights'
+      icon: 'monitor_heart'
     }
   ];
 
