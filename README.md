@@ -104,7 +104,7 @@ The **Scheduler** page allows you to create recurring calendar synchronization j
 Current scheduler behavior:
 
 - each schedule uses a configurable rolling period relative to the execution date;
-- offsets from `-365` to `365` days are supported;
+- offsets from `-1` to `7` days are supported;
 - existing schedules without an explicit period continue to process the current day;
 - all schedules use the global scheduler interval, which defaults to **1 hour**;
 - schedules are persisted in SQLite and survive container restarts;
