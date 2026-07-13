@@ -16,7 +16,7 @@ spring:
       client:
         config:
           default:
-            loggerLevel: full
+            loggerLevel: basic
   jackson:
     default-property-inclusion: non_null
     serialization:
@@ -33,7 +33,7 @@ spring:
 
 server:
   error:
-    include-message: always
+    include-message: never
 
 management:
   info:
@@ -42,12 +42,12 @@ management:
   endpoints:
     web:
       exposure:
-        include: 'health,info,loggers'
+        include: health,info
       cors:
         allowed-origins: '*'
   endpoint:
     loggers:
-      enabled: true
+      enabled: false
 
 logging:
   file:

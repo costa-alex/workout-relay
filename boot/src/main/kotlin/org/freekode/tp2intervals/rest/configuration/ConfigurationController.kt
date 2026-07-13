@@ -1,6 +1,6 @@
 package org.freekode.tp2intervals.rest.configuration
 
-import org.freekode.tp2intervals.app.confguration.ConfigurationService
+import org.freekode.tp2intervals.app.configuration.ConfigurationService
 import org.freekode.tp2intervals.domain.Platform
 import org.freekode.tp2intervals.domain.config.UpdateConfigurationRequest
 import org.freekode.tp2intervals.domain.workout.structure.StepModifier
@@ -29,7 +29,7 @@ class ConfigurationController(
 
     @PutMapping("/api/configuration")
     fun updateConfiguration(@RequestBody requestDTO: UpdateConfigurationRequestDTO): ResponseEntity<ErrorResponseDTO> {
-        log.debug("Received request for updating configuration: {}", requestDTO)
+        log.debug("Received request for updating configuration")
         val errors = configurationService.updateConfiguration(UpdateConfigurationRequest(requestDTO.config))
         if (errors.isNotEmpty()) {
             return ResponseEntity.badRequest().body(ErrorResponseDTO(errors.joinToString()))

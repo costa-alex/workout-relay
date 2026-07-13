@@ -450,7 +450,7 @@ The TrainingPeaks and TrainerRoad integrations depend on web endpoints and sessi
 - TrainerRoad is supported as a source, not as a synchronization destination.
 - Changed-workout replacement is available for **Only today**, **Only tomorrow**, and scheduled TrainerRoad → TrainingPeaks rolling periods. The regular manual **Confirm** action still uses non-destructive copy behavior.
 - Changed-workout detection is primarily based on the TrainerRoad workout identifier. A content change that keeps the same identifier may be treated as already synchronized.
-- Scheduler periods are relative to the execution date and are limited to offsets between `-365` and `365` days.
+- Scheduler periods are relative to the execution date and are limited to offsets between `-1` and `7` days.
 - The scheduler interval is global for the application instance and cannot be configured per schedule.
 - Synchronization history currently covers calendar-to-calendar operations only.
 - TrainingPeaks capabilities can differ between athlete, coach, free, and Premium accounts.

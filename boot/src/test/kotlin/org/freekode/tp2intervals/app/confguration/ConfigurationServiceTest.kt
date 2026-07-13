@@ -1,4 +1,4 @@
-package org.freekode.tp2intervals.app.confguration
+package org.freekode.tp2intervals.app.configuration
 
 import org.freekode.tp2intervals.domain.config.DebugModeService
 import org.freekode.tp2intervals.domain.config.UpdateConfigurationRequest

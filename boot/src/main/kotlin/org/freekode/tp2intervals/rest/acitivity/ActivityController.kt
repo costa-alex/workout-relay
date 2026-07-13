@@ -1,4 +1,4 @@
-package org.freekode.tp2intervals.rest.acitivity
+package org.freekode.tp2intervals.rest.activity
 
 import org.freekode.tp2intervals.app.activity.ActivityService
 import org.freekode.tp2intervals.app.activity.CopyActivitiesRequest

@@ -1,4 +1,4 @@
-package org.freekode.tp2intervals.rest.acitivity
+package org.freekode.tp2intervals.rest.activity
 
 import org.freekode.tp2intervals.domain.Platform
 import org.freekode.tp2intervals.domain.TrainingType
