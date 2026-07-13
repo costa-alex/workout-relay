@@ -2,14 +2,14 @@ package org.freekode.tp2intervals.app.workout.schedule
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.freekode.tp2intervals.app.workout.CopyWorkoutsResponse
+import org.freekode.tp2intervals.app.workout.execution.SyncExecutionService
+import org.freekode.tp2intervals.app.workout.execution.SyncExecutionTrigger
 import org.freekode.tp2intervals.infrastructure.schedule.ScheduleRequestEntity
 import org.freekode.tp2intervals.infrastructure.schedule.ScheduleRequestRepository
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.util.concurrent.TimeUnit
-import org.freekode.tp2intervals.app.workout.execution.SyncExecutionService
-import org.freekode.tp2intervals.app.workout.execution.SyncExecutionTrigger
 
 @Service
 class WorkoutScheduledJob(
@@ -19,17 +19,21 @@ class WorkoutScheduledJob(
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
-    fun addRequest(request: C2CTodayScheduledRequest) {
-        val requestJson = objectMapper.writeValueAsString(request)
+    fun addRequest(request: C2CScheduledRequest) {
+        val alreadyExists = scheduleRequestRepository
+            .findAll()
+            .asSequence()
+            .map { it.toSchedulable() }
+            .any { it == request }
 
-        require(
-            scheduleRequestRepository.findByRequestJson(requestJson) == null
-        ) {
+        require(!alreadyExists) {
             "This scheduled sync already exists"
         }
 
         scheduleRequestRepository.save(
-            ScheduleRequestEntity(requestJson)
+            ScheduleRequestEntity(
+                objectMapper.writeValueAsString(request)
+            )
         )
     }
 
@@ -44,7 +48,9 @@ class WorkoutScheduledJob(
                     types = request.types,
                     skipSynced = request.skipSynced,
                     sourcePlatform = request.sourcePlatform,
-                    targetPlatform = request.targetPlatform
+                    targetPlatform = request.targetPlatform,
+                    startOffsetDays = request.startOffsetDays,
+                    endOffsetDays = request.endOffsetDays
                 )
             }
 
@@ -66,7 +72,7 @@ class WorkoutScheduledJob(
             }
 
         return syncExecutionService.execute(
-            request = entity.toSchedulable().forToday(),
+            request = entity.toSchedulable().toCopyRequest(),
             trigger = SyncExecutionTrigger.RUN_NOW,
             scheduleId = entity.id
         )
@@ -89,7 +95,7 @@ class WorkoutScheduledJob(
         requests.forEach { entity ->
             try {
                 syncExecutionService.execute(
-                    request = entity.toSchedulable().forToday(),
+                    request = entity.toSchedulable().toCopyRequest(),
                     trigger = SyncExecutionTrigger.SCHEDULED,
                     scheduleId = entity.id
                 )
@@ -106,11 +112,11 @@ class WorkoutScheduledJob(
     }
 
     private fun ScheduleRequestEntity.toSchedulable():
-        C2CTodayScheduledRequest {
+        C2CScheduledRequest {
 
         return objectMapper.readValue(
             requireNotNull(requestJson),
-            C2CTodayScheduledRequest::class.java
+            C2CScheduledRequest::class.java
         )
     }
 }

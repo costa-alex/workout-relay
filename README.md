@@ -45,13 +45,15 @@ It provides a responsive, mobile-friendly interface for manual synchronization, 
 
 ### TrainerRoad to TrainingPeaks reconciliation
 
-For one-day TrainerRoad → TrainingPeaks operations, TP2Intervals can reconcile changed planned workouts instead of only adding another copy.
+For selected TrainerRoad → TrainingPeaks operations, TP2Intervals can reconcile changed planned workouts instead of only adding another copy.
 
 This behavior is used by:
 
 - **Only today**;
 - **Only tomorrow**;
-- scheduled TrainerRoad → TrainingPeaks synchronization.
+- scheduled TrainerRoad → TrainingPeaks synchronization, including multi-day rolling periods.
+
+Scheduled periods that span more than one day are reconciled independently, one day at a time. This preserves the same safety rules for every date in the configured period.
 
 When the TrainerRoad workout identifier changes, TP2Intervals:
 
@@ -88,7 +90,7 @@ Some TrainingPeaks operations depend on whether the configured account is an ath
 
 | Source | Destination | Manual calendar sync | Scheduled sync | Changed-workout reconciliation |
 |---|---|:---:|:---:|:---:|
-| TrainerRoad | TrainingPeaks | Yes | Yes | Yes, for one-day operations |
+| TrainerRoad | TrainingPeaks | Yes | Yes | Yes, for quick one-day actions and scheduled ranges |
 | TrainerRoad | Intervals.icu | Yes | Yes | No |
 | TrainingPeaks | Intervals.icu | Yes | Yes | No |
 | Intervals.icu | TrainingPeaks | Yes | Yes | No |
@@ -101,14 +103,26 @@ The **Scheduler** page allows you to create recurring calendar synchronization j
 
 Current scheduler behavior:
 
-- scheduled jobs process the **current day**;
+- each schedule uses a configurable rolling period relative to the execution date;
+- offsets from `-365` to `365` days are supported;
+- existing schedules without an explicit period continue to process the current day;
 - all schedules use the global scheduler interval, which defaults to **1 hour**;
 - schedules are persisted in SQLite and survive container restarts;
 - duplicate schedule definitions are rejected;
 - each schedule can be executed immediately with **Run now**;
 - schedules can be deleted without deleting previously synchronized workouts.
 
-TrainerRoad → TrainingPeaks schedules automatically use the safe changed-workout reconciliation described above. Other directions use normal synchronization with the configured duplicate-skipping behavior.
+TrainerRoad → TrainingPeaks schedules automatically use the safe changed-workout reconciliation described above. Multi-day periods are reconciled one day at a time. Other directions use normal synchronization with the configured duplicate-skipping behavior.
+
+Examples of rolling periods:
+
+| Start offset | End offset | Period processed on every run |
+|---:|---:|---|
+| `0` | `0` | Today |
+| `0` | `1` | Today and tomorrow |
+| `0` | `6` | Today and the following six days |
+| `-1` | `1` | Yesterday, today, and tomorrow |
+| `1` | `7` | Tomorrow through seven days from today |
 
 ### Synchronization history
 
@@ -434,9 +448,9 @@ The TrainingPeaks and TrainerRoad integrations depend on web endpoints and sessi
 
 - TrainerRoad ramp steps are not currently supported.
 - TrainerRoad is supported as a source, not as a synchronization destination.
-- Changed-workout replacement is currently limited to one-day TrainerRoad → TrainingPeaks operations.
+- Changed-workout replacement is available for **Only today**, **Only tomorrow**, and scheduled TrainerRoad → TrainingPeaks rolling periods. The regular manual **Confirm** action still uses non-destructive copy behavior.
 - Changed-workout detection is primarily based on the TrainerRoad workout identifier. A content change that keeps the same identifier may be treated as already synchronized.
-- Scheduled jobs always process the current day.
+- Scheduler periods are relative to the execution date and are limited to offsets between `-365` and `365` days.
 - The scheduler interval is global for the application instance and cannot be configured per schedule.
 - Synchronization history currently covers calendar-to-calendar operations only.
 - TrainingPeaks capabilities can differ between athlete, coach, free, and Premium accounts.

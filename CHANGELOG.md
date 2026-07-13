@@ -1,3 +1,8 @@
+### Unreleased
+- Added configurable rolling date ranges to scheduled calendar synchronization.
+- Added safe multi-day TrainerRoad to TrainingPeaks reconciliation by processing each day independently.
+- Preserved existing schedules as current-day schedules through default offsets.
+
 ### 0.12.3
 - Updated Java to 21.0.3
 

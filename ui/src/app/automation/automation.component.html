@@ -5,7 +5,7 @@
 
     <p>
       Configure recurring workout synchronizations. Scheduled syncs
-      run at the configured interval for the current day.
+      run at the configured interval for the selected rolling period.
     </p>
   </section>
 
@@ -50,6 +50,68 @@
 
             </mat-select>
           </mat-form-field>
+
+          <div class="period-fields">
+            <mat-form-field>
+              <mat-label>Start day offset</mat-label>
+
+              <input
+                matInput
+                type="number"
+                step="1"
+                formControlName="startOffsetDays">
+
+              <mat-hint>
+                0 = today, -1 = yesterday
+              </mat-hint>
+
+              @if (
+                formGroup.controls['startOffsetDays'].hasError('integer') ||
+                formGroup.controls['startOffsetDays'].hasError('min') ||
+                formGroup.controls['startOffsetDays'].hasError('max')
+              ) {
+                <mat-error>
+                  Enter a value between -365 and 365.
+                </mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>End day offset</mat-label>
+
+              <input
+                matInput
+                type="number"
+                step="1"
+                formControlName="endOffsetDays">
+
+              <mat-hint>
+                0 = today, 1 = tomorrow
+              </mat-hint>
+
+              @if (
+                formGroup.controls['endOffsetDays'].hasError('integer') ||
+                formGroup.controls['endOffsetDays'].hasError('min') ||
+                formGroup.controls['endOffsetDays'].hasError('max')
+              ) {
+                <mat-error>
+                  Enter a value between -365 and 365.
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          @if (
+            formGroup.hasError('invalidPeriod') &&
+            (
+              formGroup.controls['startOffsetDays'].touched ||
+              formGroup.controls['endOffsetDays'].touched
+            )
+          ) {
+            <div class="period-error">
+              The start day cannot be after the end day.
+            </div>
+          }
 
           <mat-checkbox formControlName="skipSynced">
             Skip already synced workouts
@@ -104,7 +166,7 @@
             </mat-card-title>
 
             <mat-card-subtitle>
-              Configured interval · Current day
+              Configured interval · {{ schedulePeriodTitle(schedule) }}
             </mat-card-subtitle>
           </mat-card-header>
 
@@ -113,6 +175,11 @@
             <div class="schedule-detail">
               <span class="detail-label">Workout types</span>
               <span>{{ trainingTypeTitles(schedule.types) }}</span>
+            </div>
+
+            <div class="schedule-detail">
+              <span class="detail-label">Period</span>
+              <span>{{ schedulePeriodTitle(schedule) }}</span>
             </div>
 
             <div class="schedule-detail">

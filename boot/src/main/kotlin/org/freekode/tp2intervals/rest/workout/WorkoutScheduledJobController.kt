@@ -1,6 +1,6 @@
 package org.freekode.tp2intervals.rest.workout
 
-import org.freekode.tp2intervals.app.workout.schedule.C2CTodayScheduledRequest
+import org.freekode.tp2intervals.app.workout.schedule.C2CScheduledRequest
 import org.freekode.tp2intervals.app.workout.schedule.WorkoutScheduledJob
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -16,8 +16,8 @@ class WorkoutScheduledJobController(
     @PostMapping(
         "/api/workout/copy-calendar-to-calendar/schedule"
     )
-    fun scheduleC2CTodayRequest(
-        @RequestBody request: C2CTodayScheduledRequest
+    fun scheduleC2CRequest(
+        @RequestBody request: C2CScheduledRequest
     ) {
         workoutScheduledJob.addRequest(request)
     }

@@ -8,5 +8,7 @@ data class ScheduledSyncResponse(
     val types: List<TrainingType>,
     val skipSynced: Boolean,
     val sourcePlatform: Platform,
-    val targetPlatform: Platform
+    val targetPlatform: Platform,
+    val startOffsetDays: Int,
+    val endOffsetDays: Int
 )

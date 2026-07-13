@@ -115,10 +115,48 @@ class WorkoutService(
     ): CopyWorkoutsResponse {
 
         return if (shouldReconcileChangedWorkouts(request)) {
-            reconcileTrainerRoadToTrainingPeaks(request)
+            reconcileTrainerRoadToTrainingPeaksRange(request)
         } else {
             copyWorkoutsNormally(request)
         }
+    }
+
+    private fun reconcileTrainerRoadToTrainingPeaksRange(
+        request: CopyFromCalendarToCalendarRequest
+    ): CopyWorkoutsResponse {
+        require(!request.startDate.isAfter(request.endDate)) {
+            "Start date cannot be after end date"
+        }
+
+        val responses = mutableListOf<CopyWorkoutsResponse>()
+        var currentDate = request.startDate
+
+        while (!currentDate.isAfter(request.endDate)) {
+            responses += reconcileTrainerRoadToTrainingPeaks(
+                request.copy(
+                    startDate = currentDate,
+                    endDate = currentDate
+                )
+            )
+
+            currentDate = currentDate.plusDays(1)
+        }
+
+        return CopyWorkoutsResponse(
+            copied = responses.sumOf { it.copied },
+            filteredOut = responses.sumOf { it.filteredOut },
+            skippedByType = responses.sumOf { it.skippedByType },
+            skippedAlreadySynced =
+                responses.sumOf { it.skippedAlreadySynced },
+            startDate = request.startDate,
+            endDate = request.endDate,
+            externalData = ExternalData.empty(),
+            failed = responses.sumOf { it.failed },
+            failedWorkouts = responses.flatMap { it.failedWorkouts },
+            removed = responses.sumOf { it.removed },
+            failedToRemove = responses.sumOf { it.failedToRemove },
+            failedRemovals = responses.flatMap { it.failedRemovals }
+        )
     }
     
     private fun reconcileTrainerRoadToTrainingPeaks(
@@ -371,7 +409,6 @@ class WorkoutService(
         request: CopyFromCalendarToCalendarRequest
     ): Boolean {
         return request.replaceChangedWorkouts &&
-            request.startDate == request.endDate &&
             request.sourcePlatform == Platform.TRAINER_ROAD &&
             request.targetPlatform == Platform.TRAINING_PEAKS
     }

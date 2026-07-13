@@ -4,6 +4,5 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ScheduleRequestRepository : CrudRepository<ScheduleRequestEntity, Int> {
-    fun findByRequestJson(requestJson: String): ScheduleRequestEntity?
-}
+interface ScheduleRequestRepository :
+    CrudRepository<ScheduleRequestEntity, Int>

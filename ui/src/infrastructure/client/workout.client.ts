@@ -8,6 +8,8 @@ export interface ScheduledSync {
   skipSynced: boolean;
   sourcePlatform: string;
   targetPlatform: string;
+  startOffsetDays: number;
+  endOffsetDays: number;
 }
 
 export interface SyncExecution {
@@ -84,6 +86,8 @@ export class WorkoutClient {
   scheduleCopyCalendarToCalendar(
     types: string[],
     skipSynced: boolean,
+    startOffsetDays: number,
+    endOffsetDays: number,
     platformDirection: {
       sourcePlatform: string;
       targetPlatform: string;
@@ -94,6 +98,8 @@ export class WorkoutClient {
       {
         types,
         skipSynced,
+        startOffsetDays,
+        endOffsetDays,
         ...platformDirection
       }
     );

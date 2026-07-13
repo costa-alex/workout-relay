@@ -1,28 +1,68 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
+  ValidationErrors,
   Validators
 } from '@angular/forms';
-
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
-import { DatePipe } from '@angular/common';
 import { finalize, forkJoin } from 'rxjs';
 import {
   ScheduledSync,
   SyncExecution,
   WorkoutClient
 } from 'infrastructure/client/workout.client';
-import { Platform } from 'infrastructure/platform';
 import { NotificationService } from 'infrastructure/notification.service';
+import { Platform } from 'infrastructure/platform';
 import { TrainingTypes } from 'infrastructure/training-types';
+
+const MIN_OFFSET_DAYS = -365;
+const MAX_OFFSET_DAYS = 365;
+
+
+function integerValidator(
+  control: AbstractControl
+): ValidationErrors | null {
+  const value = control.value;
+
+  if (value === null || value === undefined) {
+    return null;
+  }
+
+  return Number.isInteger(value)
+    ? null
+    : { integer: true };
+}
+
+function periodValidator(
+  control: AbstractControl
+): ValidationErrors | null {
+  const startOffset = control.get('startOffsetDays')?.value;
+  const endOffset = control.get('endOffsetDays')?.value;
+
+  if (
+    startOffset === null ||
+    startOffset === undefined ||
+    endOffset === null ||
+    endOffset === undefined
+  ) {
+    return null;
+  }
+
+  return startOffset <= endOffset
+    ? null
+    : { invalidPeriod: true };
+}
 
 @Component({
   selector: 'app-automation',
@@ -35,6 +75,7 @@ import { TrainingTypes } from 'infrastructure/training-types';
     MatCheckboxModule,
     MatFormFieldModule,
     MatIconModule,
+    MatInputModule,
     MatProgressBarModule,
     MatSelectModule
   ],
@@ -85,17 +126,40 @@ export class AutomationComponent implements OnInit {
     private workoutClient: WorkoutClient,
     private notificationService: NotificationService
   ) {
-    this.formGroup = this.formBuilder.group({
-      direction: [
-        Platform.DIRECTION_TR_TP,
-        Validators.required
-      ],
-      trainingTypes: [
-        ['BIKE', 'VIRTUAL_BIKE'],
-        Validators.required
-      ],
-      skipSynced: [true]
-    });
+    this.formGroup = this.formBuilder.group(
+      {
+        direction: [
+          Platform.DIRECTION_TR_TP,
+          Validators.required
+        ],
+        trainingTypes: [
+          ['BIKE', 'VIRTUAL_BIKE'],
+          Validators.required
+        ],
+        startOffsetDays: [
+          0,
+          [
+            Validators.required,
+            integerValidator,
+            Validators.min(MIN_OFFSET_DAYS),
+            Validators.max(MAX_OFFSET_DAYS)
+          ]
+        ],
+        endOffsetDays: [
+          0,
+          [
+            Validators.required,
+            integerValidator,
+            Validators.min(MIN_OFFSET_DAYS),
+            Validators.max(MAX_OFFSET_DAYS)
+          ]
+        ],
+        skipSynced: [true]
+      },
+      {
+        validators: periodValidator
+      }
+    );
   }
 
   ngOnInit(): void {
@@ -104,19 +168,26 @@ export class AutomationComponent implements OnInit {
 
   createSchedule(): void {
     if (this.formGroup.invalid) {
+      this.formGroup.markAllAsTouched();
       return;
     }
 
-    const direction = this.formGroup.value.direction;
-    const types = this.formGroup.value.trainingTypes;
-    const skipSynced = this.formGroup.value.skipSynced;
+    const {
+      direction,
+      trainingTypes,
+      skipSynced,
+      startOffsetDays,
+      endOffsetDays
+    } = this.formGroup.getRawValue();
 
     this.loading = true;
 
     this.workoutClient
       .scheduleCopyCalendarToCalendar(
-        types,
+        trainingTypes,
         skipSynced,
+        startOffsetDays,
+        endOffsetDays,
         direction
       )
       .pipe(
@@ -181,28 +252,17 @@ export class AutomationComponent implements OnInit {
       `${Platform.getTitle(schedule.targetPlatform)}`;
   }
 
+  schedulePeriodTitle(schedule: ScheduledSync): string {
+    return this.periodTitle(
+      schedule.startOffsetDays,
+      schedule.endOffsetDays
+    );
+  }
+
   trainingTypeTitles(types: string[]): string {
     return types
       .map(type => TrainingTypes.getTitle(type))
       .join(', ');
-  }
-
-  private loadData(): void {
-    this.loading = true;
-
-    forkJoin({
-      schedules: this.workoutClient.getScheduleRequests(),
-      executions: this.workoutClient.getSyncExecutions()
-    })
-      .pipe(
-        finalize(() => {
-          this.loading = false;
-        })
-      )
-      .subscribe(({ schedules, executions }) => {
-        this.schedules = schedules;
-        this.executions = executions;
-      });
   }
 
   executionDirectionTitle(execution: SyncExecution): string {
@@ -244,5 +304,55 @@ export class AutomationComponent implements OnInit {
       case 'FAILED':
         return 'Failed';
     }
+  }
+
+  private periodTitle(
+    startOffset: number,
+    endOffset: number
+  ): string {
+    const start = this.offsetTitle(startOffset);
+    const end = this.offsetTitle(endOffset);
+
+    return startOffset === endOffset
+      ? start
+      : `${start} → ${end}`;
+  }
+
+  private offsetTitle(offset: number): string {
+    if (offset === -1) {
+      return 'Yesterday';
+    }
+
+    if (offset === 0) {
+      return 'Today';
+    }
+
+    if (offset === 1) {
+      return 'Tomorrow';
+    }
+
+    if (offset < 0) {
+      return `${Math.abs(offset)} days before`;
+    }
+
+    return `${offset} days ahead`;
+  }
+
+  private loadData(): void {
+    this.loading = true;
+
+    forkJoin({
+      schedules: this.workoutClient.getScheduleRequests(),
+      executions: this.workoutClient.getSyncExecutions()
+    })
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+        })
+      )
+      .subscribe(({ schedules, executions }) => {
+        this.schedules = schedules;
+        this.executions = executions;
+      });
   }
 }

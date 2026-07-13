@@ -50,6 +50,18 @@
   justify-self: start;
 }
 
+.period-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.period-error {
+  margin-top: -8px;
+  font-size: 0.8rem;
+  color: var(--app-error);
+}
+
 .schedule-grid {
   display: grid;
   gap: 16px;
@@ -104,6 +116,10 @@
 }
 
 @media (max-width: 600px) {
+  .period-fields {
+    grid-template-columns: 1fr;
+  }
+
   .schedule-form button {
     width: 100%;
   }
