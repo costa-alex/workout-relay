@@ -23,8 +23,12 @@ class WorkoutScheduledJob(
         val alreadyExists = scheduleRequestRepository
             .findAll()
             .asSequence()
-            .map { it.toSchedulable() }
-            .any { it == request }
+            .mapNotNull { entity ->
+                entity.tryToSchedulable()
+            }
+            .any { existingRequest ->
+                existingRequest == request
+            }
 
         require(!alreadyExists) {
             "This scheduled sync already exists"
@@ -40,8 +44,10 @@ class WorkoutScheduledJob(
     fun getRequests(): List<ScheduledSyncResponse> =
         scheduleRequestRepository
             .findAll()
-            .map { entity ->
-                val request = entity.toSchedulable()
+            .mapNotNull { entity ->
+                val request =
+                    entity.tryToSchedulable()
+                        ?: return@mapNotNull null
 
                 ScheduledSyncResponse(
                     id = requireNotNull(entity.id),
@@ -49,8 +55,10 @@ class WorkoutScheduledJob(
                     skipSynced = request.skipSynced,
                     sourcePlatform = request.sourcePlatform,
                     targetPlatform = request.targetPlatform,
-                    startOffsetDays = request.startOffsetDays,
-                    endOffsetDays = request.endOffsetDays
+                    startOffsetDays =
+                        request.startOffsetDays,
+                    endOffsetDays =
+                        request.endOffsetDays
                 )
             }
 
@@ -62,7 +70,9 @@ class WorkoutScheduledJob(
         scheduleRequestRepository.deleteById(id)
     }
 
-    fun runRequest(id: Int): CopyWorkoutsResponse {
+    fun runRequest(
+        id: Int
+    ): CopyWorkoutsResponse {
         val entity = scheduleRequestRepository
             .findById(id)
             .orElseThrow {
@@ -71,32 +81,46 @@ class WorkoutScheduledJob(
                 )
             }
 
+        val scheduledRequest =
+            entity.tryToSchedulable()
+                ?: throw IllegalStateException(
+                    "Scheduled sync $id contains an " +
+                        "invalid configuration"
+                )
+
         return syncExecutionService.execute(
-            request = entity.toSchedulable().toCopyRequest(),
+            request = scheduledRequest.toCopyRequest(),
             trigger = SyncExecutionTrigger.RUN_NOW,
             scheduleId = entity.id
         )
     }
 
     @Scheduled(
-        fixedRateString = "\${app.scheduler.interval-hours}",
+        fixedRateString =
+            "\${app.scheduler.interval-hours}",
         timeUnit = TimeUnit.HOURS
     )
     fun job() {
-        val requests = scheduleRequestRepository
+        val entities = scheduleRequestRepository
             .findAll()
             .toList()
 
         log.info(
             "Starting scheduled sync processing. requests={}",
-            requests.size
+            entities.size
         )
 
-        requests.forEach { entity ->
+        entities.forEach { entity ->
+            val scheduledRequest =
+                entity.tryToSchedulable()
+                    ?: return@forEach
+
             try {
                 syncExecutionService.execute(
-                    request = entity.toSchedulable().toCopyRequest(),
-                    trigger = SyncExecutionTrigger.SCHEDULED,
+                    request =
+                        scheduledRequest.toCopyRequest(),
+                    trigger =
+                        SyncExecutionTrigger.SCHEDULED,
                     scheduleId = entity.id
                 )
             } catch (exception: Exception) {
@@ -111,12 +135,26 @@ class WorkoutScheduledJob(
         log.info("Finished scheduled sync processing")
     }
 
-    private fun ScheduleRequestEntity.toSchedulable():
-        C2CScheduledRequest {
+    private fun ScheduleRequestEntity.tryToSchedulable():
+        C2CScheduledRequest? {
 
-        return objectMapper.readValue(
-            requireNotNull(requestJson),
-            C2CScheduledRequest::class.java
-        )
+        return try {
+            objectMapper.readValue(
+                requireNotNull(requestJson) {
+                    "Scheduled sync request JSON is missing"
+                },
+                C2CScheduledRequest::class.java
+            )
+        } catch (exception: Exception) {
+            log.error(
+                "Ignoring invalid scheduled sync. " +
+                    "id={}, reason={}",
+                id,
+                exception.message
+                    ?: exception.javaClass.simpleName
+            )
+
+            null
+        }
     }
 }
