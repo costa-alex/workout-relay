@@ -7,6 +7,7 @@ services:
     environment:
       JAVA_TOOL_OPTIONS: "-Duser.timezone=Europe/Lisbon"
       SCHEDULER_INTERVAL_HOURS: "${SCHEDULER_INTERVAL_HOURS:-1}"
+      SYNC_HISTORY_RETENTION_LIMIT: "${SYNC_HISTORY_RETENTION_LIMIT:-100}"  
     ports:
       - "8098:8080"
     volumes:
