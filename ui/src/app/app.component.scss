@@ -23,6 +23,55 @@
   border-top: 1px solid var(--app-border);
 }
 
+.drawer-header {
+  padding: 20px 16px;
+}
+
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.app-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  border-radius: 12px;
+  color: #ffffff;
+  background: var(--app-primary);
+  font-size: 0.9rem;
+  font-weight: 750;
+  letter-spacing: -0.03em;
+}
+
+.app-brand-text {
+  min-width: 0;
+}
+
+.app-brand-name {
+  overflow: hidden;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-brand-description {
+  margin-top: 3px;
+  overflow: hidden;
+  font-size: 0.75rem;
+  line-height: 1.3;
+  color: var(--app-text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .footer-content {
   max-width: 900px;
   margin: 0 auto;

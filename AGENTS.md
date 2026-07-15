@@ -2,9 +2,9 @@
 
 ## Purpose
 
-This file provides repository-specific guidance for coding agents and contributors working on TP2Intervals.
+This file provides repository-specific guidance for coding agents and contributors working on Workout Relay.
 
-TP2Intervals is a self-hosted web application that synchronizes planned workouts between TrainerRoad, TrainingPeaks, and Intervals.icu. The production distribution is a Docker image containing an Angular frontend and a Kotlin/Spring Boot backend.
+Workout Relay is a self-hosted web application that synchronizes planned workouts between TrainerRoad, TrainingPeaks, and Intervals.icu. The production distribution is a Docker image containing an Angular frontend and a Kotlin/Spring Boot backend.
 
 ---
 

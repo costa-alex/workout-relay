@@ -2,17 +2,17 @@
 [![Latest release](https://img.shields.io/github/v/release/costa-alex/tp2intervals)](https://github.com/costa-alex/tp2intervals/releases/latest)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 
-# TP2Intervals
+# Workout Relay
 
-TP2Intervals is a self-hosted web application for copying and synchronizing planned workouts between **TrainerRoad**, **TrainingPeaks**, and **Intervals.icu**.
+Workout Relay is a self-hosted web application for copying and synchronizing planned workouts between **TrainerRoad**, **TrainingPeaks**, and **Intervals.icu**.
 
 It provides a responsive, mobile-friendly interface for manual synchronization, workout-library operations, recurring schedules, and synchronization history.
 
 > This project is independent and is not affiliated with, endorsed by, or sponsored by TrainerRoad, TrainingPeaks, or Intervals.icu. All trademarks belong to their respective owners.
 
 <p>
-  <img src="docs/TP2I_mobile.JPG" alt="TP2Intervals mobile interface" width="28%">
-  <img src="docs/TP2TR.JPG" alt="TP2Intervals workout synchronization" width="28%">
+  <img src="docs/TP2I_mobile.JPG" alt="Workout Relay mobile interface" width="28%">
+  <img src="docs/TP2TR.JPG" alt="Workout Relay workout synchronization" width="28%">
 </p>
 
 ## Contents
@@ -45,7 +45,7 @@ It provides a responsive, mobile-friendly interface for manual synchronization, 
 
 ### TrainerRoad to TrainingPeaks reconciliation
 
-For selected TrainerRoad → TrainingPeaks operations, TP2Intervals can reconcile changed planned workouts instead of only adding another copy.
+For selected TrainerRoad → TrainingPeaks operations, Workout Relay can reconcile changed planned workouts instead of only adding another copy.
 
 This behavior is used by:
 
@@ -55,13 +55,13 @@ This behavior is used by:
 
 Scheduled periods that span more than one day are reconciled independently, one day at a time. This preserves the same safety rules for every date in the configured period.
 
-When the TrainerRoad workout identifier changes, TP2Intervals:
+When the TrainerRoad workout identifier changes, Workout Relay:
 
 1. creates the new workout in TrainingPeaks;
 2. confirms that the creation succeeded;
 3. removes the previous application-managed TrainingPeaks workout.
 
-Only workouts previously created by TP2Intervals, with the expected external identifiers and metadata marker, are eligible for removal. Manually created TrainingPeaks workouts are not removed by this reconciliation process.
+Only workouts previously created by Workout Relay, with the expected external identifiers and metadata marker, are eligible for removal. Manually created TrainingPeaks workouts are not removed by this reconciliation process.
 
 The regular **Confirm** action for a custom date range uses normal copy behavior and does not remove replaced workouts.
 
@@ -81,7 +81,7 @@ Some TrainingPeaks operations depend on whether the configured account is an ath
 - Responsive Angular Material interface designed for desktop and mobile use.
 - Home page with platform connection status and available synchronization routes.
 - Platform-specific pages for TrainerRoad and TrainingPeaks operations.
-- Dedicated **Scheduler** page.
+- Dedicated **Sync Center** page.
 - In-app result notifications with copied, skipped, replaced, and failed workout counts.
 - Version display and release-update indication.
 - Debug mode for detailed troubleshooting logs.
@@ -99,7 +99,7 @@ TrainerRoad is currently a source platform only. TrainingPeaks → TrainerRoad a
 
 ## Scheduler and history
 
-The **Scheduler** page allows you to create recurring calendar synchronization jobs for any supported direction.
+The **Sync Center** page allows you to create recurring calendar synchronization jobs for any supported direction.
 
 Current scheduler behavior:
 
@@ -126,7 +126,7 @@ Examples of rolling periods:
 
 ### Synchronization history
 
-Calendar-to-calendar executions are stored and displayed on the Scheduler page. The history includes:
+Calendar-to-calendar executions are stored and displayed on the Sync Center page. The history includes:
 
 - manual operations;
 - scheduled executions;
@@ -184,7 +184,7 @@ To obtain it:
 3. Reload TrainingPeaks or open a calendar page.
 4. Select an authenticated request to `tpapi.trainingpeaks.com`.
 5. Copy the request's `Cookie` header or the `Production_tpAuth` cookie value.
-6. Paste it into the TP2Intervals Settings page.
+6. Paste it into the Workout Relay Settings page.
 
 The application accepts the complete cookie string and extracts the required value.
 
@@ -207,7 +207,7 @@ To obtain it:
 3. Reload the page or open the TrainerRoad calendar or workout library.
 4. Select an authenticated request to `www.trainerroad.com`.
 5. Copy the request's `Cookie` header or the `SharedTrainerRoadAuth` cookie value.
-6. Paste it into the TP2Intervals Settings page.
+6. Paste it into the Workout Relay Settings page.
 
 The **Remove HTML tags from description** option can be enabled if TrainerRoad descriptions contain unwanted markup.
 
@@ -434,7 +434,7 @@ Enable **Debug Mode** on the Settings page when additional request and integrati
 
 ## Security considerations
 
-TP2Intervals is intended for self-hosted, trusted environments.
+Workout Relay is intended for self-hosted, trusted environments.
 
 - The application does not currently provide built-in user authentication.
 - Do not expose it directly to the public Internet without an authenticated reverse proxy, VPN, or access-control layer.
@@ -458,7 +458,7 @@ The TrainingPeaks and TrainerRoad integrations depend on web endpoints and sessi
 
 ### TrainingPeaks future dates
 
-TrainingPeaks free accounts may restrict planning workouts on future dates. TP2Intervals displays a warning when synchronizing beyond the near-term date range. A TrainingPeaks Premium account may be required for longer future ranges.
+TrainingPeaks free accounts may restrict planning workouts on future dates. Workout Relay displays a warning when synchronizing beyond the near-term date range. A TrainingPeaks Premium account may be required for longer future ranges.
 
 ## Troubleshooting
 
@@ -471,7 +471,7 @@ TrainingPeaks free accounts may restrict planning workouts on future dates. TP2I
 
 ### A synchronization reports partial success or failure
 
-Open **Scheduler → Sync history** to review:
+Open **Sync Center → Sync history** to review:
 
 - the execution status;
 - copied and removed counts;
@@ -538,4 +538,4 @@ Additional discussion about the original project and workout conversion behavior
 
 ## License
 
-TP2Intervals is distributed under the [GNU General Public License v3.0](LICENSE).
+Workout Relay is distributed under the [GNU General Public License v3.0](LICENSE).

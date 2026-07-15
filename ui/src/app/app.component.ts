@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
     },
     {
       icon: 'schedule',
-      name: 'Scheduler',
+      name: 'Sync Center',
       url: '/automation'
     },
     {
