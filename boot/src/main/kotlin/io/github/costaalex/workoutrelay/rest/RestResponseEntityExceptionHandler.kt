@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
+import io.github.costaalex.workoutrelay.app.workout.schedule.ScheduleAlreadyRunningException
 
 @ControllerAdvice
 class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
@@ -19,5 +20,20 @@ class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
     ): ResponseEntity<ErrorResponseDTO> {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(ErrorResponseDTO(exception.platform.title, exception.message!!))
+    }
+
+    @ExceptionHandler(ScheduleAlreadyRunningException::class)
+    fun scheduleAlreadyRunning(
+        exception: ScheduleAlreadyRunningException
+    ): ResponseEntity<ErrorResponseDTO> {
+
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(
+                ErrorResponseDTO(
+                    exception.message
+                        ?: "Scheduled sync is already running"
+                )
+            )
     }
 }

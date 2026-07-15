@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.ConcurrentHashMap
 
 @Service
 class WorkoutScheduledJob(
@@ -18,6 +19,8 @@ class WorkoutScheduledJob(
     private val objectMapper: ObjectMapper
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
+
+    private val runningScheduleIds = ConcurrentHashMap.newKeySet<Int>()
 
     fun addRequest(request: C2CScheduledRequest) {
         val alreadyExists = scheduleRequestRepository
@@ -63,7 +66,13 @@ class WorkoutScheduledJob(
             }
 
     fun deleteRequest(id: Int) {
-        require(scheduleRequestRepository.existsById(id)) {
+        if (runningScheduleIds.contains(id)) {
+            throw ScheduleAlreadyRunningException(id)
+        }
+
+        require(
+            scheduleRequestRepository.existsById(id)
+        ) {
             "Scheduled sync $id does not exist"
         }
 
@@ -84,14 +93,17 @@ class WorkoutScheduledJob(
         val scheduledRequest =
             entity.tryToSchedulable()
                 ?: throw IllegalStateException(
-                    "Scheduled sync $id contains an " +
-                        "invalid configuration"
+                    "Scheduled sync $id contains an invalid configuration"
                 )
 
-        return syncExecutionService.execute(
-            request = scheduledRequest.toCopyRequest(),
-            trigger = SyncExecutionTrigger.RUN_NOW,
-            scheduleId = entity.id
+        val scheduleId = requireNotNull(entity.id) {
+            "Scheduled sync ID is missing"
+        }
+
+        return executeSchedule(
+            scheduleId = scheduleId,
+            request = scheduledRequest,
+            trigger = SyncExecutionTrigger.RUN_NOW
         )
     }
 
@@ -115,18 +127,37 @@ class WorkoutScheduledJob(
                 entity.tryToSchedulable()
                     ?: return@forEach
 
+            val scheduleId = entity.id
+
+            if (scheduleId == null) {
+                log.error(
+                    "Ignoring scheduled sync without an ID"
+                )
+
+                return@forEach
+            }
+
             try {
-                syncExecutionService.execute(
-                    request =
-                        scheduledRequest.toCopyRequest(),
-                    trigger =
-                        SyncExecutionTrigger.SCHEDULED,
-                    scheduleId = entity.id
+                executeSchedule(
+                    scheduleId = scheduleId,
+                    request = scheduledRequest,
+                    trigger = SyncExecutionTrigger.SCHEDULED
+                )
+            } catch (
+                exception: ScheduleAlreadyRunningException
+            ) {
+                /*
+                * Este caso é esperado quando o utilizador iniciou
+                * manualmente o schedule antes do ciclo automático.
+                */
+                log.warn(
+                    "Skipping scheduled sync {} because it is already running",
+                    scheduleId
                 )
             } catch (exception: Exception) {
                 log.error(
                     "Scheduled sync {} failed",
-                    entity.id,
+                    scheduleId,
                     exception
                 )
             }
@@ -147,14 +178,48 @@ class WorkoutScheduledJob(
             )
         } catch (exception: Exception) {
             log.error(
-                "Ignoring invalid scheduled sync. " +
-                    "id={}, reason={}",
+                "Ignoring invalid scheduled sync. id={}, reason={}",
                 id,
                 exception.message
                     ?: exception.javaClass.simpleName
             )
 
             null
+        }
+    }
+
+    private fun executeSchedule(
+        scheduleId: Int,
+        request: C2CScheduledRequest,
+        trigger: SyncExecutionTrigger
+    ): CopyWorkoutsResponse {
+
+        if (!runningScheduleIds.add(scheduleId)) {
+            throw ScheduleAlreadyRunningException(
+                scheduleId
+            )
+        }
+
+        log.info(
+            "Starting scheduled sync. id={}, trigger={}",
+            scheduleId,
+            trigger
+        )
+
+        return try {
+            syncExecutionService.execute(
+                request = request.toCopyRequest(),
+                trigger = trigger,
+                scheduleId = scheduleId
+            )
+        } finally {
+            runningScheduleIds.remove(scheduleId)
+
+            log.info(
+                "Scheduled sync execution finished. id={}, trigger={}",
+                scheduleId,
+                trigger
+            )
         }
     }
 }

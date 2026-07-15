@@ -25,6 +25,7 @@ import {
 import { NotificationService } from 'infrastructure/notification.service';
 import { Platform } from 'infrastructure/platform';
 import { TrainingTypes } from 'infrastructure/training-types';
+import { HttpErrorResponse } from '@angular/common/http';
 
 const MIN_OFFSET_DAYS = -1;
 const MAX_OFFSET_DAYS = 7;
@@ -211,15 +212,35 @@ export class AutomationComponent implements OnInit {
           this.loading = false;
         })
       )
-      .subscribe(response => {
-        this.notificationService
-          .copyCalendarToCalendarCompleted(
-            response,
-            Platform.getTitle(schedule.sourcePlatform),
-            Platform.getTitle(schedule.targetPlatform)
-          );
+      .subscribe({
+        next: response => {
+          this.notificationService
+            .copyCalendarToCalendarCompleted(
+              response,
+              Platform.getTitle(
+                schedule.sourcePlatform
+              ),
+              Platform.getTitle(
+                schedule.targetPlatform
+              )
+            );
 
-        this.loadData();
+          this.loadData();
+        },
+
+        error: (error: HttpErrorResponse) => {
+          if (error.status === 409) {
+            this.notificationService.error(
+              'This scheduled sync is already running.'
+            );
+
+            return;
+          }
+
+          const message = error.error?.message ?? 'Unable to run the scheduled sync.';
+
+          this.notificationService.error(message);
+        }
       });
   }
 
@@ -241,9 +262,27 @@ export class AutomationComponent implements OnInit {
           this.loading = false;
         })
       )
-      .subscribe(() => {
-        this.notificationService.scheduledSyncDeleted();
-        this.loadData();
+      .subscribe({
+        next: () => {
+          this.notificationService.scheduledSyncDeleted();
+          this.loadData();
+        },
+
+        error: (error: HttpErrorResponse) => {
+          if (error.status === 409) {
+            this.notificationService.error(
+              'This scheduled sync cannot be deleted while it is running.'
+            );
+
+            return;
+          }
+
+          const message =
+            error.error?.message ??
+            'Unable to delete the scheduled sync.';
+
+          this.notificationService.error(message);
+        }
       });
   }
 
