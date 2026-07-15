@@ -13,20 +13,25 @@ import io.github.costaalex.workoutrelay.app.workout.schedule.ScheduleAlreadyRunn
 @ControllerAdvice
 class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(PlatformException::class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     fun platformException(
         exception: PlatformException,
         request: WebRequest
     ): ResponseEntity<ErrorResponseDTO> {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(ErrorResponseDTO(exception.platform.title, exception.message!!))
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(
+                ErrorResponseDTO(
+                    exception.platform.title,
+                    exception.message
+                        ?: "An external platform error occurred"
+                )
+            )
     }
 
     @ExceptionHandler(ScheduleAlreadyRunningException::class)
-    fun scheduleAlreadyRunning(
+    fun handleScheduleAlreadyRunning(
         exception: ScheduleAlreadyRunningException
     ): ResponseEntity<ErrorResponseDTO> {
-
         return ResponseEntity
             .status(HttpStatus.CONFLICT)
             .body(
