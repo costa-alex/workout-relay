@@ -1,5 +1,5 @@
 {
-  "name": "ui",
+  "name": "workout-relay-ui",
   "scripts": {
     "ng": "ng",
     "dev": "ng serve",
