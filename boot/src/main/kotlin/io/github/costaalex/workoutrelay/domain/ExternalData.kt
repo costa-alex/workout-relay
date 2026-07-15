@@ -79,25 +79,28 @@ data class ExternalData(
             """.trimIndent()
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as ExternalData
-
-        if (trainingPeaksId != null && trainingPeaksId == other.trainingPeaksId) return true
-        if (intervalsId != null && intervalsId == other.intervalsId) return true
-        if (trainerRoadId != null && trainerRoadId == other.trainerRoadId) return true
-
-        return false
+    fun matchesAnyId(other: ExternalData): Boolean {
+        return matchesNonBlankId(
+            trainingPeaksId,
+            other.trainingPeaksId
+        ) ||
+            matchesNonBlankId(
+                intervalsId,
+                other.intervalsId
+            ) ||
+            matchesNonBlankId(
+                trainerRoadId,
+                other.trainerRoadId
+            )
     }
 
-    override fun hashCode(): Int {
-        var result = trainingPeaksId?.hashCode() ?: 0
-        result = 31 * result + (intervalsId?.hashCode() ?: 0)
-        result = 31 * result + (trainerRoadId?.hashCode() ?: 0)
-        return result
+    private fun matchesNonBlankId(
+        first: String?,
+        second: String?
+    ): Boolean {
+        return !first.isNullOrBlank() &&
+            !second.isNullOrBlank() &&
+            first == second
     }
-
 
 }

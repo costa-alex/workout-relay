@@ -3,11 +3,11 @@ package io.github.costaalex.workoutrelay.domain
 enum class TrainingType(val title: String) {
     BIKE("Ride"),
     MTB("MTB"),
-    VIRTUAL_BIKE("Virtual Ride"),
+    VIRTUAL_BIKE("Virtual Bike"),
     RUN("Run"),
     SWIM("Swim"),
     WALK("Walk"),
-    WEIGHT("Weight"),
+    STRENGTH("Strength"),
     NOTE("Note"),
     UNKNOWN("Unknown");
 

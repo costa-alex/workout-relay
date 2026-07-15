@@ -8,7 +8,7 @@ plugins {
     kotlin("plugin.spring") version "1.9.22"
 }
 
-group = "org.freekode"
+group = "io.github.costaalex"
 version = file("version").readText().trim()
 
 java {

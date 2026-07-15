@@ -7,6 +7,8 @@ enum class TPWorkoutType(
     BIKE(2),
     RUN(3),
     DAY_OFF(7),
-    WEIGHT(9),
+    MTB_BIKE(8),
+    STRENGTH(9),
+    WALK(13),
     OTHER(100)
 }

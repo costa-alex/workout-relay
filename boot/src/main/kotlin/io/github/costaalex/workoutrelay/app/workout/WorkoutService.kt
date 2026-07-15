@@ -19,12 +19,6 @@ class WorkoutService(
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val workoutRepositoryMap = workoutRepositories.associateBy { it.platform() }
     private val planRepositoryMap = planRepositories.associateBy { it.platform() }
-
-    private fun hasSameExternalId(source: ExternalData, target: ExternalData): Boolean {
-        return (source.trainerRoadId != null && source.trainerRoadId == target.trainerRoadId)
-            || (source.trainingPeaksId != null && source.trainingPeaksId == target.trainingPeaksId)
-            || (source.intervalsId != null && source.intervalsId == target.intervalsId)
-    }
     
     private data class DeleteWorkoutsResult(
         val removed: Int,
@@ -363,8 +357,7 @@ class WorkoutService(
 
             workoutsAfterTypeFilter.filter { sourceWorkout ->
                 plannedWorkouts.none { targetWorkout ->
-                    hasSameExternalId(
-                        sourceWorkout.details.externalData,
+                    sourceWorkout.details.externalData.matchesAnyId(
                         targetWorkout.details.externalData
                     )
                 }
