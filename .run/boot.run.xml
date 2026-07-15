@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="boot" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <option name="ACTIVE_PROFILES" value="dev" />
-    <module name="org.freekode.tp2intervals.main" />
-    <option name="SPRING_BOOT_MAIN_CLASS" value="org.freekode.tp2intervals.Application" />
+    <module name="io.github.costaalex.workoutrelay.main" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="io.github.costaalex.workoutrelay.WorkoutRelayApplication" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

@@ -160,8 +160,8 @@ The runtime data directory is:
 Important files include:
 
 ```text
-/data/tp2intervals.sqlite
-/data/tp2intervals.log
+/data/workout-relay.sqlite
+/data/workout-relay.log
 ```
 
 The database can contain platform authentication cookies and API keys. Treat it and all backups as sensitive.
@@ -361,7 +361,7 @@ cd boot
 The expected JAR is:
 
 ```text
-boot/build/libs/tp2intervals.jar
+boot/build/libs/workout-relay.jar
 ```
 
 ### Backend development server
@@ -370,8 +370,8 @@ boot/build/libs/tp2intervals.jar
 mkdir -p data
 cd boot
 
-SPRING_DATASOURCE_URL="jdbc:sqlite:../data/tp2intervals.sqlite" \
-LOGGING_FILE_NAME="../data/tp2intervals.log" \
+SPRING_DATASOURCE_URL="jdbc:sqlite:../data/workout-relay.sqlite" \
+LOGGING_FILE_NAME="../data/workout-relay.log" \
 SCHEDULER_INTERVAL_HOURS=1 \
 SYNC_HISTORY_RETENTION_LIMIT=100 \
 ./gradlew bootRun
@@ -413,14 +413,14 @@ The Angular development server uses the configured proxy for backend API and Act
 ### Complete Docker image
 
 ```bash
-docker build -t tp2intervals:local .
+docker build -t workout-relay:local .
 ```
 
 ### Docker Compose
 
 ```bash
 docker compose up -d
-docker compose logs -f --tail=200 tp2intervals
+docker compose logs -f --tail=200 workout-relay
 ```
 
 ---

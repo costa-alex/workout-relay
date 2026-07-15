@@ -1,5 +1,5 @@
-[![Build branches](https://github.com/costa-alex/tp2intervals/actions/workflows/docker.yml/badge.svg)](https://github.com/costa-alex/tp2intervals/actions/workflows/docker.yml)
-[![Latest release](https://img.shields.io/github/v/release/costa-alex/tp2intervals)](https://github.com/costa-alex/tp2intervals/releases/latest)
+[![Build branches](https://github.com/costa-alex/workout-relay/actions/workflows/docker.yml/badge.svg)](https://github.com/costa-alex/workout-relay/actions/workflows/docker.yml)
+[![Latest release](https://img.shields.io/github/v/release/costa-alex/workout-relay)](https://github.com/costa-alex/workout-relay/releases/latest)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 
 # Workout Relay
@@ -220,23 +220,23 @@ See [`docs/tr_guide.png`](docs/tr_guide.png) for a visual guide.
 The published container image is:
 
 ```text
-ghcr.io/costa-alex/tp2intervals:latest
+ghcr.io/costa-alex/workout-relay:latest
 ```
 
 Create a directory for the application:
 
 ```bash
-mkdir -p tp2intervals/data
-cd tp2intervals
+mkdir -p workout-relay/data
+cd workout-relay
 ```
 
 Create `docker-compose.yml`:
 
 ```yaml
 services:
-  tp2intervals:
-    image: ghcr.io/costa-alex/tp2intervals:latest
-    container_name: tp2intervals
+  workout-relay:
+    image: ghcr.io/costa-alex/workout-relay:latest
+    container_name: workout-relay
     restart: unless-stopped
     environment:
       # Replace with your local IANA timezone.
@@ -273,7 +273,7 @@ Then open **Settings**, enter the credentials for the platforms you use, and sav
 For a more predictable deployment, replace `latest` with a release tag:
 
 ```yaml
-image: ghcr.io/costa-alex/tp2intervals:<version>
+image: ghcr.io/costa-alex/workout-relay:<version>
 ```
 
 This Compose definition can also be deployed through tools such as Komodo, Portainer, or another Docker-compatible orchestrator.
@@ -298,7 +298,7 @@ docker compose up -d
 Review the logs after updating:
 
 ```bash
-docker compose logs -f --tail=200 tp2intervals
+docker compose logs -f --tail=200 workout-relay
 ```
 
 Database schema updates are applied automatically by Liquibase when the application starts.
@@ -310,20 +310,20 @@ Database schema updates are applied automatically by Liquibase when the applicat
 From the repository root:
 
 ```bash
-docker build -t tp2intervals:local .
+docker build -t workout-relay:local .
 ```
 
 Run it:
 
 ```bash
 docker run --rm \
-  --name tp2intervals \
+  --name workout-relay \
   -p 8098:8080 \
   -e JAVA_TOOL_OPTIONS="-Duser.timezone=Europe/Lisbon" \
   -e SCHEDULER_INTERVAL_HOURS=1 \
   -e SYNC_HISTORY_RETENTION_LIMIT=100 \
   -v "$(pwd)/data:/data" \
-  tp2intervals:local
+  workout-relay:local
 ```
 
 The multi-stage Docker build:
@@ -347,8 +347,8 @@ Start the backend from the repository root:
 mkdir -p data
 cd boot
 
-SPRING_DATASOURCE_URL="jdbc:sqlite:../data/tp2intervals.sqlite" \
-LOGGING_FILE_NAME="../data/tp2intervals.log" \
+SPRING_DATASOURCE_URL="jdbc:sqlite:../data/workout-relay.sqlite" \
+LOGGING_FILE_NAME="../data/workout-relay.log" \
 SCHEDULER_INTERVAL_HOURS=1 \
 ./gradlew bootRun
 ```
@@ -393,8 +393,8 @@ npm test
 The `/data` directory contains the persistent application state:
 
 ```text
-/data/tp2intervals.sqlite
-/data/tp2intervals.log
+/data/workout-relay.sqlite
+/data/workout-relay.log
 ```
 
 The SQLite database contains platform configuration, schedules, and synchronization history. Protect it because it may contain authentication cookies.
@@ -404,16 +404,16 @@ The SQLite database contains platform configuration, schedules, and synchronizat
 Stop the container before copying the SQLite database:
 
 ```bash
-docker compose stop tp2intervals
-cp data/tp2intervals.sqlite \
-  "data/tp2intervals.sqlite.backup-$(date +%Y%m%d-%H%M%S)"
-docker compose start tp2intervals
+docker compose stop workout-relay
+cp data/workout-relay.sqlite \
+  "data/workout-relay.sqlite.backup-$(date +%Y%m%d-%H%M%S)"
+docker compose start workout-relay
 ```
 
 Back up the complete data directory if preferred:
 
 ```bash
-tar -czf "tp2intervals-data-$(date +%Y%m%d-%H%M%S).tar.gz" data/
+tar -czf "workout-relay-data-$(date +%Y%m%d-%H%M%S).tar.gz" data/
 ```
 
 ### Logs
@@ -421,13 +421,13 @@ tar -czf "tp2intervals-data-$(date +%Y%m%d-%H%M%S).tar.gz" data/
 Follow container output:
 
 ```bash
-docker compose logs -f --tail=200 tp2intervals
+docker compose logs -f --tail=200 workout-relay
 ```
 
 Read the persistent application log:
 
 ```bash
-tail -f data/tp2intervals.log
+tail -f data/workout-relay.log
 ```
 
 Enable **Debug Mode** on the Settings page when additional request and integration details are needed. Disable it again after troubleshooting because debug logs can be verbose and may include sensitive platform information.
@@ -496,9 +496,9 @@ Replace `Europe/Lisbon` with your local [IANA timezone](https://en.wikipedia.org
 Install the SQLite command-line client on the Docker host and inspect the database while the application is stopped:
 
 ```bash
-docker compose stop tp2intervals
-sqlite3 data/tp2intervals.sqlite ".tables"
-docker compose start tp2intervals
+docker compose stop workout-relay
+sqlite3 data/workout-relay.sqlite ".tables"
+docker compose start workout-relay
 ```
 
 Always create a backup before changing database contents manually.

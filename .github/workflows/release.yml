@@ -89,7 +89,7 @@ jobs:
         id: image
         shell: bash
         run: |
-          echo "image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/tp2intervals" >> "$GITHUB_OUTPUT"
+          echo "image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/workout-relay" >> "$GITHUB_OUTPUT"
 
       - name: Login to GHCR
         uses: docker/login-action@v4

@@ -22,6 +22,6 @@ spring:
 
 logging:
   level:
-    org.freekode.tp2intervals.infrastructure: debug
+    io.github.costaalex.workoutrelay.infrastructure: debug
   file:
     name:

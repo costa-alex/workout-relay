@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
 
   appVersion = '';
   updateAvailableBadgeHidden = true;
-  githubLink = 'https://github.com/costa-alex/tp2intervals';
+  githubLink = 'https://github.com/costa-alex/workout-relay';
 
   menuButtons = [
     { icon: 'home', name: 'Home', url: '/home' },

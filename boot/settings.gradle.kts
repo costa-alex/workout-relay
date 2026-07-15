@@ -1,1 +1,1 @@
-rootProject.name = "tp2intervals"
+rootProject.name = "workout-relay"

@@ -1,0 +1,10 @@
+package io.github.costaalex.workoutrelay.infrastructure.platform.trainingpeaks.workout
+
+import java.time.LocalDateTime
+
+class TPNoteResponseDTO(
+    var id: Long,
+    var noteDate: LocalDateTime,
+    var title: String,
+    var description: String?,
+)

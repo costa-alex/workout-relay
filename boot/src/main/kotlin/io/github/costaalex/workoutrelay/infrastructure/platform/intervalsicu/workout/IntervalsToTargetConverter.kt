@@ -1,0 +1,49 @@
+package io.github.costaalex.workoutrelay.infrastructure.platform.intervalsicu.workout
+
+import io.github.costaalex.workoutrelay.domain.Platform
+import io.github.costaalex.workoutrelay.domain.workout.structure.StepTarget
+import io.github.costaalex.workoutrelay.infrastructure.PlatformException
+
+class IntervalsToTargetConverter(
+    private val ftp: Double?,
+    private val lthr: Double?,
+    private val paceThreshold: Double?
+) {
+    fun toMainTarget(stepDTO: IntervalsWorkoutDocDTO.WorkoutStepDTO): StepTarget {
+        return if (stepDTO._power != null) {
+            mapSimpleUnit(ftp!!, stepDTO._power)
+        } else if (stepDTO._hr != null) {
+            mapSimpleUnit(lthr!!, stepDTO._hr)
+        } else if (stepDTO._pace != null) {
+            mapSimpleUnit(paceThreshold!!, stepDTO._pace)
+        } else {
+            throw PlatformException(Platform.INTERVALS, "Unknown target in step $stepDTO")
+        }
+    }
+
+    fun toCadenceTarget(stepValueDTO: IntervalsWorkoutDocDTO.StepValueDTO): StepTarget {
+        val (min, max) = if (stepValueDTO.value != null) {
+            stepValueDTO.value to stepValueDTO.value
+        } else {
+            stepValueDTO.start!! to stepValueDTO.end!!
+        }
+        return StepTarget(min, max)
+    }
+
+    private fun mapSimpleUnit(
+        thresholdValue: Double,
+        resolvedStepValueDTO: IntervalsWorkoutDocDTO.ResolvedStepValueDTO
+    ): StepTarget {
+        val (min, max) = getRange(thresholdValue, resolvedStepValueDTO)
+        return StepTarget(min, max)
+    }
+
+    private fun getRange(
+        thresholdValue: Double,
+        resolvedStepValueDTO: IntervalsWorkoutDocDTO.ResolvedStepValueDTO
+    ): Pair<Int, Int> {
+        val rangeStart = Math.round((resolvedStepValueDTO.start / thresholdValue) * 100).toInt()
+        val rangeEnd = Math.round((resolvedStepValueDTO.end / thresholdValue) * 100).toInt()
+        return rangeStart to rangeEnd
+    }
+}

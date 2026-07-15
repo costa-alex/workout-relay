@@ -37,6 +37,6 @@ out/
 .vscode/
 
 application-dev.yaml
-tp2intervals.sqlite
+workout-relay.sqlite
 *.log*
 node_modules

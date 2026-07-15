@@ -40,7 +40,7 @@ FROM amazoncorretto:21-alpine
 
 WORKDIR /app
 
-COPY --from=builder /app/boot/build/libs/tp2intervals.jar app.jar
+COPY --from=builder /app/boot/build/libs/workout-relay.jar /app/app.jar
 
 EXPOSE 8080
 

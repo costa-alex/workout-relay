@@ -3,12 +3,12 @@ package config.mock
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.io.InputStream
-import org.freekode.tp2intervals.infrastructure.platform.intervalsicu.IntervalsActivityDTO
-import org.freekode.tp2intervals.infrastructure.platform.intervalsicu.IntervalsApiClient
-import org.freekode.tp2intervals.infrastructure.platform.intervalsicu.activity.CreateActivityResponseDTO
-import org.freekode.tp2intervals.infrastructure.platform.intervalsicu.workout.CreateEventRequestDTO
-import org.freekode.tp2intervals.infrastructure.platform.intervalsicu.workout.CreateWorkoutRequestDTO
-import org.freekode.tp2intervals.infrastructure.platform.intervalsicu.workout.IntervalsEventDTO
+import io.github.costaalex.workoutrelay.infrastructure.platform.intervalsicu.IntervalsActivityDTO
+import io.github.costaalex.workoutrelay.infrastructure.platform.intervalsicu.IntervalsApiClient
+import io.github.costaalex.workoutrelay.infrastructure.platform.intervalsicu.activity.CreateActivityResponseDTO
+import io.github.costaalex.workoutrelay.infrastructure.platform.intervalsicu.workout.CreateEventRequestDTO
+import io.github.costaalex.workoutrelay.infrastructure.platform.intervalsicu.workout.CreateWorkoutRequestDTO
+import io.github.costaalex.workoutrelay.infrastructure.platform.intervalsicu.workout.IntervalsEventDTO
 import org.springframework.web.multipart.MultipartFile
 
 class IntervalsApiClientMock(

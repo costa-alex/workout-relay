@@ -1,8 +1,8 @@
 version: "3.9"
 services:
-  tp2intervals:
-    image: ghcr.io/costa-alex/tp2intervals:latest
-    container_name: tp2intervals
+  workout-relay:
+    image: ghcr.io/costa-alex/workout-relay:latest
+    container_name: workout-relay
     restart: unless-stopped
     environment:
       JAVA_TOOL_OPTIONS: "-Duser.timezone=Europe/Lisbon"

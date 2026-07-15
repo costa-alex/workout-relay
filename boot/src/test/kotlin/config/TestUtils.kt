@@ -1,8 +1,8 @@
 package config
 
-import org.freekode.tp2intervals.domain.workout.structure.StepLength
-import org.freekode.tp2intervals.domain.workout.structure.SingleStep
-import org.freekode.tp2intervals.domain.workout.structure.WorkoutStep
+import io.github.costaalex.workoutrelay.domain.workout.structure.StepLength
+import io.github.costaalex.workoutrelay.domain.workout.structure.SingleStep
+import io.github.costaalex.workoutrelay.domain.workout.structure.WorkoutStep
 import org.junit.jupiter.api.Assertions.assertEquals
 
 class TestUtils {

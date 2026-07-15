@@ -14,7 +14,7 @@
     </cache>
     <cache alias="tpUserCache">
         <key-type>java.lang.String</key-type>
-        <value-type>org.freekode.tp2intervals.infrastructure.platform.trainingpeaks.user.TrainingPeaksUser</value-type>
+        <value-type>io.github.costaalex.workoutrelay.infrastructure.platform.trainingpeaks.user.TrainingPeaksUser</value-type>
         <expiry>
             <ttl unit="days">1</ttl>
         </expiry>
@@ -55,7 +55,7 @@
     </cache>
     <cache alias="trWorkoutCache">
         <key-type>java.lang.String</key-type>
-        <value-type>org.freekode.tp2intervals.domain.workout.Workout</value-type>
+        <value-type>io.github.costaalex.workoutrelay.domain.workout.Workout</value-type>
         <expiry>
             <ttl unit="days">1</ttl>
         </expiry>
@@ -86,7 +86,7 @@
     </cache>
     <cache alias="platformInfoCache">
         <key-type>java.lang.String</key-type>
-        <value-type>org.freekode.tp2intervals.domain.config.PlatformInfo</value-type>
+        <value-type>io.github.costaalex.workoutrelay.domain.config.PlatformInfo</value-type>
         <expiry>
             <ttl unit="hours">1</ttl>
         </expiry>

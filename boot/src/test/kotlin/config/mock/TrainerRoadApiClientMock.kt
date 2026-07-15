@@ -2,12 +2,12 @@ package config.mock
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.io.InputStream
-import org.freekode.tp2intervals.infrastructure.platform.trainerroad.TRFindWorkoutsRequestDTO
-import org.freekode.tp2intervals.infrastructure.platform.trainerroad.TrainerRoadApiClient
-import org.freekode.tp2intervals.infrastructure.platform.trainerroad.TrainerRoadTimelineDTO
-import org.freekode.tp2intervals.infrastructure.platform.trainerroad.activity.TrainerRoadActivityDTO
-import org.freekode.tp2intervals.infrastructure.platform.trainerroad.workout.TRFindWorkoutsResponseDTO
-import org.freekode.tp2intervals.infrastructure.platform.trainerroad.workout.TRWorkoutResponseDTO
+import io.github.costaalex.workoutrelay.infrastructure.platform.trainerroad.TRFindWorkoutsRequestDTO
+import io.github.costaalex.workoutrelay.infrastructure.platform.trainerroad.TrainerRoadApiClient
+import io.github.costaalex.workoutrelay.infrastructure.platform.trainerroad.TrainerRoadTimelineDTO
+import io.github.costaalex.workoutrelay.infrastructure.platform.trainerroad.activity.TrainerRoadActivityDTO
+import io.github.costaalex.workoutrelay.infrastructure.platform.trainerroad.workout.TRFindWorkoutsResponseDTO
+import io.github.costaalex.workoutrelay.infrastructure.platform.trainerroad.workout.TRWorkoutResponseDTO
 import org.springframework.core.io.Resource
 
 class TrainerRoadApiClientMock(
