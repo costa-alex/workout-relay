@@ -20,11 +20,11 @@ export const routes: Routes = [
     component: TrainerRoadComponent
   },
   {
-    path: 'automation',
+    path: 'sync-center',
     component: AutomationComponent
   },
   {
-    path: 'config',
+    path: 'settings',
     component: ConfigurationComponent
   },
   {

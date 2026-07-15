@@ -52,12 +52,12 @@ export class AppComponent implements OnInit {
     {
       icon: 'schedule',
       name: 'Sync Center',
-      url: '/automation'
+      url: '/sync-center'
     },
     {
       icon: 'settings',
       name: 'Settings',
-      url: '/config'
+      url: '/settings'
     }
   ];
 
