@@ -23,11 +23,6 @@ class TrainerRoadWorkoutMapper {
 
         val workoutData = trWorkout.additionalProperties["WorkoutData"]
 
-        logWorkoutDataBoundaries(
-            workoutData = workoutData,
-            intervals = trWorkout.intervalData
-        )
-
         return Workout(
             toWorkoutDetails(trWorkout.details, removeHtmlTags),
             null,
@@ -145,39 +140,5 @@ class TrainerRoadWorkoutMapper {
             cadence = null,
             ramp = isRamp
         )
-    }
-
-    private fun logWorkoutDataBoundaries(
-        workoutData: Any?,
-        intervals: List<TRWorkoutResponseDTO.IntervalsDataDTO>
-    ) {
-        val points = workoutData as? List<*>
-            ?: return
-
-        intervals.forEach { interval ->
-            val startTick = interval.start.toInt()
-            val endTick = interval.end.toInt()
-
-            val ticksToLog = listOf(
-                startTick,
-                (startTick + 1).coerceAtMost(endTick),
-                (endTick - 1).coerceAtLeast(startTick),
-                endTick
-            ).distinct()
-
-            ticksToLog.forEach { tick ->
-                val point = points.getOrNull(tick) as? Map<*, *>
-
-                log.info(
-                    "Mapped TrainerRoad interval. name={}, startTick={}, lastTick={}, targetStart={}, targetEnd={}, ramp={}",
-                    interval.name,
-                    startTick,
-                    lastIntervalTick,
-                    targetStart,
-                    targetEnd,
-                    isRamp
-                )
-            }
-        }
     }
 }
