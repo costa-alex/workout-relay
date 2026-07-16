@@ -49,6 +49,15 @@ class TrainerRoadWorkoutMapper {
             val singleStep =
                 SingleStep(name, stepLength, StepTarget(interval.targetStart(), interval.targetEnd()), null, false)
             steps.add(singleStep)
+
+            log.debug(
+                "TrainerRoad interval. name={}, startTarget={}, startTargetPowerPercent={}, resolvedStart={}, resolvedEnd={}",
+                interval.name,
+                interval.startTarget,
+                interval.startTargetPowerPercent,
+                interval.targetStart(),
+                interval.targetEnd()
+            )
         }
         return steps
     }
