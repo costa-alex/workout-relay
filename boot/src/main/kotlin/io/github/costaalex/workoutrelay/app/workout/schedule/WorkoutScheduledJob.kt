@@ -85,48 +85,30 @@ class WorkoutScheduledJob(
     }
 
     @Scheduled(
-        fixedRateString =
-            "\${app.scheduler.interval-hours}",
+        fixedRateString = "\${app.scheduler.interval-hours}",
         timeUnit = TimeUnit.HOURS
     )
     fun job() {
-        val entities = scheduleRequestRepository
+        val scheduleIds = scheduleRequestRepository
             .findAll()
-            .toList()
+            .mapNotNull { entity ->
+                entity.id
+            }
 
         log.info(
             "Starting scheduled sync processing. requests={}",
-            entities.size
+            scheduleIds.size
         )
 
-        entities.forEach { entity ->
-            val scheduledRequest =
-                entity.tryToSchedulable()
-                    ?: return@forEach
-
-            val scheduleId = entity.id
-
-            if (scheduleId == null) {
-                log.error(
-                    "Ignoring scheduled sync without an ID"
-                )
-
-                return@forEach
-            }
-
+        scheduleIds.forEach { scheduleId ->
             try {
                 executeSchedule(
                     scheduleId = scheduleId,
-                    request = scheduledRequest,
                     trigger = SyncExecutionTrigger.SCHEDULED
                 )
             } catch (
                 exception: ScheduleAlreadyRunningException
             ) {
-                /*
-                * Este caso é esperado quando o utilizador iniciou
-                * manualmente o schedule antes do ciclo automático.
-                */
                 log.warn(
                     "Skipping scheduled sync {} because it is already running",
                     scheduleId
@@ -173,15 +155,12 @@ class WorkoutScheduledJob(
             val entity = scheduleRequestRepository
                 .findById(scheduleId)
                 .orElseThrow {
-                    IllegalArgumentException(
-                        "Scheduled sync $scheduleId does not exist"
-                    )
+                    IllegalArgumentException("Scheduled sync $scheduleId does not exist")
                 }
 
-            val request = entity.tryToSchedulable()
-                ?: throw IllegalStateException(
-                    "Scheduled sync $scheduleId contains an invalid configuration"
-                )
+            val scheduledRequest =
+                entity.tryToSchedulable()
+                    ?: throw IllegalStateException("Scheduled sync $scheduleId contains an invalid configuration")
 
             log.info(
                 "Starting scheduled sync. id={}, trigger={}",
@@ -189,11 +168,19 @@ class WorkoutScheduledJob(
                 trigger
             )
 
-            syncExecutionService.execute(
-                request = request.toCopyRequest(),
-                trigger = trigger,
-                scheduleId = scheduleId
-            )
+            try {
+                syncExecutionService.execute(
+                    request = scheduledRequest.toCopyRequest(),
+                    trigger = trigger,
+                    scheduleId = scheduleId
+                )
+            } finally {
+                log.info(
+                    "Scheduled sync execution finished. id={}, trigger={}",
+                    scheduleId,
+                    trigger
+                )
+            }
         }
     }
 
