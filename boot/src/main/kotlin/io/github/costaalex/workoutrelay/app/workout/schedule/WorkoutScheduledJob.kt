@@ -58,51 +58,28 @@ class WorkoutScheduledJob(
                     skipSynced = request.skipSynced,
                     sourcePlatform = request.sourcePlatform,
                     targetPlatform = request.targetPlatform,
-                    startOffsetDays =
-                        request.startOffsetDays,
-                    endOffsetDays =
-                        request.endOffsetDays
+                    startOffsetDays = request.startOffsetDays,
+                    endOffsetDays = request.endOffsetDays
                 )
             }
 
     fun deleteRequest(id: Int) {
-        if (runningScheduleIds.contains(id)) {
-            throw ScheduleAlreadyRunningException(id)
-        }
+        withScheduleLock(id) {
+            require(
+                scheduleRequestRepository.existsById(id)
+            ) {
+                "Scheduled sync $id does not exist"
+            }
 
-        require(
-            scheduleRequestRepository.existsById(id)
-        ) {
-            "Scheduled sync $id does not exist"
+            scheduleRequestRepository.deleteById(id)
         }
-
-        scheduleRequestRepository.deleteById(id)
     }
 
     fun runRequest(
         id: Int
     ): CopyWorkoutsResponse {
-        val entity = scheduleRequestRepository
-            .findById(id)
-            .orElseThrow {
-                IllegalArgumentException(
-                    "Scheduled sync $id does not exist"
-                )
-            }
-
-        val scheduledRequest =
-            entity.tryToSchedulable()
-                ?: throw IllegalStateException(
-                    "Scheduled sync $id contains an invalid configuration"
-                )
-
-        val scheduleId = requireNotNull(entity.id) {
-            "Scheduled sync ID is missing"
-        }
-
         return executeSchedule(
-            scheduleId = scheduleId,
-            request = scheduledRequest,
+            scheduleId = id,
             trigger = SyncExecutionTrigger.RUN_NOW
         )
     }
@@ -190,36 +167,50 @@ class WorkoutScheduledJob(
 
     private fun executeSchedule(
         scheduleId: Int,
-        request: C2CScheduledRequest,
         trigger: SyncExecutionTrigger
     ): CopyWorkoutsResponse {
+        return withScheduleLock(scheduleId) {
+            val entity = scheduleRequestRepository
+                .findById(scheduleId)
+                .orElseThrow {
+                    IllegalArgumentException(
+                        "Scheduled sync $scheduleId does not exist"
+                    )
+                }
 
+            val request = entity.tryToSchedulable()
+                ?: throw IllegalStateException(
+                    "Scheduled sync $scheduleId contains an invalid configuration"
+                )
+
+            log.info(
+                "Starting scheduled sync. id={}, trigger={}",
+                scheduleId,
+                trigger
+            )
+
+            syncExecutionService.execute(
+                request = request.toCopyRequest(),
+                trigger = trigger,
+                scheduleId = scheduleId
+            )
+        }
+    }
+
+    private inline fun <T> withScheduleLock(
+        scheduleId: Int,
+        action: () -> T
+    ): T {
         if (!runningScheduleIds.add(scheduleId)) {
             throw ScheduleAlreadyRunningException(
                 scheduleId
             )
         }
 
-        log.info(
-            "Starting scheduled sync. id={}, trigger={}",
-            scheduleId,
-            trigger
-        )
-
         return try {
-            syncExecutionService.execute(
-                request = request.toCopyRequest(),
-                trigger = trigger,
-                scheduleId = scheduleId
-            )
+            action()
         } finally {
             runningScheduleIds.remove(scheduleId)
-
-            log.info(
-                "Scheduled sync execution finished. id={}, trigger={}",
-                scheduleId,
-                trigger
-            )
         }
     }
 }
