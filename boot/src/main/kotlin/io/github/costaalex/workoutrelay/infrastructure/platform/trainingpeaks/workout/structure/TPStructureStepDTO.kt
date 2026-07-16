@@ -11,5 +11,20 @@ class TPStructureStepDTO(
 
         fun multiStep(repetitions: Int, stepDTOs: List<TPStepDTO>): TPStructureStepDTO =
             TPStructureStepDTO("repetition", TPLengthDTO.repetitions(repetitions.toLong()), stepDTOs)
+
+        fun rampStep(
+            stepDTO: TPStepDTO,
+            rampUp: Boolean
+        ): TPStructureStepDTO =
+            TPStructureStepDTO(
+                type =
+                    if (rampUp) {
+                        "rampUp"
+                    } else {
+                        "rampDown"
+                    },
+                length = TPLengthDTO.single(),
+                steps = listOf(stepDTO)
+            )
     }
 }

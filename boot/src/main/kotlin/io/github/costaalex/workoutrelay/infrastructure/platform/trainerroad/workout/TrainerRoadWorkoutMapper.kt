@@ -10,6 +10,7 @@ import kotlin.math.roundToInt
 import org.slf4j.LoggerFactory
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
+import io.github.costaalex.workoutrelay.domain.workout.structure.StepIntensity
 
 class TrainerRoadWorkoutMapper {
     private val log = LoggerFactory.getLogger(this.javaClass)
@@ -56,24 +57,34 @@ class TrainerRoadWorkoutMapper {
         val ftpPercentByTick: Map<Int, Double> =
             workoutData
                 .mapNotNull { point ->
-                    point.ftpPercent?.let {
-                        ftpPercent ->
-
+                    point.ftpPercent?.let { ftpPercent ->
                         point.tick to ftpPercent
                     }
                 }
                 .toMap()
 
-        return intervals
-            .filterNot { interval ->
+        val relevantIntervals =
+            intervals.filterNot { interval ->
                 interval.name == "Workout"
             }
-            .map { interval ->
-                mapInterval(
-                    interval = interval,
-                    ftpPercentByTick = ftpPercentByTick
-                )
-            }
+
+        val lastIntervalIndex =
+            relevantIntervals.lastIndex
+
+        return relevantIntervals.mapIndexed {
+            index,
+            interval ->
+
+            mapInterval(
+                interval = interval,
+                ftpPercentByTick =
+                    ftpPercentByTick,
+                isFirstInterval =
+                    index == 0,
+                isLastInterval =
+                    index == lastIntervalIndex
+            )
+        }
     }
 
     private fun getDescription(description: String, removeHtmlTags: Boolean): String =
@@ -86,7 +97,9 @@ class TrainerRoadWorkoutMapper {
     private fun mapInterval(
         interval:
             TRWorkoutResponseDTO.IntervalsDataDTO,
-        ftpPercentByTick: Map<Int, Double>
+        ftpPercentByTick: Map<Int, Double>,
+        isFirstInterval: Boolean,
+        isLastInterval: Boolean
     ): SingleStep {
 
         val startTick = interval.start.roundToInt()
@@ -111,14 +124,26 @@ class TrainerRoadWorkoutMapper {
 
         val isRamp = targetStart != targetEnd
 
+        val intensity =
+            if (
+                interval.isFake &&
+                !isFirstInterval &&
+                !isLastInterval
+            ) {
+                StepIntensity.RECOVERY
+            } else {
+                null
+            }
+
         log.info(
-            "Mapped TrainerRoad interval. name={}, startTick={}, lastTick={}, targetStart={}, targetEnd={}, ramp={}",
+            "Mapped TrainerRoad interval. name={}, startTick={}, lastTick={}, targetStart={}, targetEnd={}, ramp={}, intensity={}",
             interval.name,
             startTick,
             lastIntervalTick,
             targetStart,
             targetEnd,
-            isRamp
+            isRamp,
+            intensity
         )
 
         return SingleStep(
@@ -130,7 +155,8 @@ class TrainerRoadWorkoutMapper {
                 },
             length = StepLength.seconds(
                 (
-                    interval.end - interval.start
+                    interval.end -
+                        interval.start
                 ).roundToLong()
             ),
             target = StepTarget(
@@ -138,7 +164,8 @@ class TrainerRoadWorkoutMapper {
                 end = targetEnd
             ),
             cadence = null,
-            ramp = isRamp
+            ramp = isRamp,
+            intensity = intensity
         )
     }
 }

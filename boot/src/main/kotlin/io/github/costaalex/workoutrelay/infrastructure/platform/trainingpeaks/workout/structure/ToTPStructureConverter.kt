@@ -8,6 +8,7 @@ import io.github.costaalex.workoutrelay.domain.workout.structure.StepLength
 import io.github.costaalex.workoutrelay.domain.workout.structure.WorkoutStep
 import io.github.costaalex.workoutrelay.domain.workout.structure.StepTarget
 import io.github.costaalex.workoutrelay.domain.workout.structure.WorkoutStructure
+import io.github.costaalex.workoutrelay.domain.workout.structure.StepIntensity
 
 class ToTPStructureConverter(
     private val objectMapper: ObjectMapper,
@@ -25,11 +26,34 @@ class ToTPStructureConverter(
             .writeValueAsString(structure)
     }
 
-    private fun toIntensityClass(step: SingleStep): TPIntensityClass {
-        val normalizedName = step.name
-            .orEmpty()
-            .lowercase()
-            .replace(Regex("[\\s_-]"), "")
+    private fun toIntensityClass(
+        step: SingleStep
+    ): TPIntensityClass {
+
+        when (step.intensity) {
+            StepIntensity.WARM_UP ->
+                return TPIntensityClass.WARM_UP
+
+            StepIntensity.ACTIVE ->
+                return TPIntensityClass.ACTIVE
+
+            StepIntensity.RECOVERY ->
+                return TPIntensityClass.REST
+
+            StepIntensity.COOL_DOWN ->
+                return TPIntensityClass.COOL_DOWN
+
+            null -> Unit
+        }
+
+        val normalizedName =
+            step.name
+                .orEmpty()
+                .lowercase()
+                .replace(
+                    Regex("[\\s_-]"),
+                    ""
+                )
 
         return when {
             normalizedName.contains("warmup") ->
@@ -49,16 +73,45 @@ class ToTPStructureConverter(
         }
     }
     
-    private fun mapToWorkoutStructure(steps: List<WorkoutStep>): TPWorkoutStructureDTO {
-        val stepDTOs = steps.map { mapToStructureStep(it) }
+    private fun mapToWorkoutStructure(
+        steps: List<WorkoutStep>
+    ): TPWorkoutStructureDTO {
 
-        val distanceBased = isDistanceBased(steps)
+        val lastStepIndex =
+            steps.lastIndex
+
+        val stepDTOs =
+            steps.mapIndexed {
+                index,
+                workoutStep ->
+
+                mapToStructureStep(
+                    workoutStep = workoutStep,
+                    isFirstStep =
+                        index == 0,
+                    isLastStep =
+                        index == lastStepIndex
+                )
+            }
+
+        val distanceBased =
+            isDistanceBased(steps)
 
         return TPWorkoutStructureDTO(
             stepDTOs,
-            if (distanceBased) "distance" else "duration",
-            TPTargetMapper.getByTargetUnit(structure.target),
-            if (distanceBased) "meter" else null,
+            if (distanceBased) {
+                "distance"
+            } else {
+                "duration"
+            },
+            TPTargetMapper.getByTargetUnit(
+                structure.target
+            ),
+            if (distanceBased) {
+                "meter"
+            } else {
+                null
+            }
         )
     }
 
@@ -78,39 +131,102 @@ class ToTPStructureConverter(
         return false
     }
 
-    private fun mapToStructureStep(workoutStep: WorkoutStep): TPStructureStepDTO {
-        return if (workoutStep.isSingleStep()) {
-            val singleStep = workoutStep as SingleStep
-            if (singleStep.ramp) {
-                mapMultiStep(workoutStep.convertRampToMultiStep())
-            } else {
-                mapSingleStep(singleStep)
-            }
+    private fun mapToStructureStep(
+        workoutStep: WorkoutStep,
+        isFirstStep: Boolean,
+        isLastStep: Boolean
+    ): TPStructureStepDTO {
+
+        if (!workoutStep.isSingleStep()) {
+            return mapMultiStep(
+                workoutStep as MultiStep
+            )
+        }
+
+        val singleStep =
+            workoutStep as SingleStep
+
+        return if (singleStep.ramp) {
+            mapRampStep(
+                singleStep = singleStep,
+                isFirstStep = isFirstStep,
+                isLastStep = isLastStep
+            )
         } else {
-            mapMultiStep(workoutStep as MultiStep)
+            mapSingleStep(singleStep)
         }
     }
 
-    private fun mapSingleStep(singleStep: SingleStep): TPStructureStepDTO {
-        val singleStepDTO = mapToStepDTO(singleStep)
-        return TPStructureStepDTO.singleStep(singleStepDTO)
+    private fun mapSingleStep(
+        singleStep: SingleStep
+    ): TPStructureStepDTO {
+
+        return TPStructureStepDTO.singleStep(
+            mapToStepDTO(singleStep)
+        )
     }
 
-    private fun mapMultiStep(workoutStep: MultiStep): TPStructureStepDTO {
-        val stepDTOs = workoutStep.steps.map { mapToStepDTO(it) }
-        return TPStructureStepDTO.multiStep(workoutStep.repetitions, stepDTOs)
+    private fun mapMultiStep(
+        workoutStep: MultiStep
+    ): TPStructureStepDTO {
+
+        val stepDTOs =
+            workoutStep.steps.map {
+                mapToStepDTO(it)
+            }
+
+        return TPStructureStepDTO.multiStep(
+            workoutStep.repetitions,
+            stepDTOs
+        )
     }
     
-    private fun mapToStepDTO(workoutStep: SingleStep): TPStepDTO {
-        val mainTarget = toMainTarget(workoutStep.target)
-        val cadenceTarget = workoutStep.cadence?.let { TPTargetDTO.cadenceTarget(it.start, it.end) }
-        val targetList = mutableListOf(mainTarget, cadenceTarget).filterNotNull()
+    private fun mapToStepDTO(
+        workoutStep: SingleStep,
+        intensityClassOverride:
+            TPIntensityClass? = null,
+        nameOverride: String? = null,
+        mainTargetOverride:
+            TPTargetDTO? = null
+    ): TPStepDTO {
+
+        val mainTarget =
+            mainTargetOverride
+                ?: toMainTarget(
+                    workoutStep.target
+                )
+
+        val cadenceTarget =
+            workoutStep.cadence?.let {
+                TPTargetDTO.cadenceTarget(
+                    it.start,
+                    it.end
+                )
+            }
+
+        val targetList =
+            listOfNotNull(
+                mainTarget,
+                cadenceTarget
+            )
+
+        val intensityClass =
+            intensityClassOverride
+                ?: toIntensityClass(
+                    workoutStep
+                )
 
         return TPStepDTO(
-            workoutStep.name,
-            TPLengthDTO.fromStepLength(workoutStep.length),
-            targetList,
-            toIntensityClass(workoutStep).apiValue
+            name =
+                nameOverride
+                    ?: workoutStep.name,
+            length =
+                TPLengthDTO.fromStepLength(
+                    workoutStep.length
+                ),
+            targets = targetList,
+            intensityClass =
+                intensityClass.apiValue
         )
     }
 
@@ -120,4 +236,70 @@ class ToTPStructureConverter(
         } else {
             TPTargetDTO.mainTarget(target.start, target.end)
         }
+
+    private fun mapRampStep(
+        singleStep: SingleStep,
+        isFirstStep: Boolean,
+        isLastStep: Boolean
+    ): TPStructureStepDTO {
+
+        val rampUp =
+            singleStep.target.end >
+                singleStep.target.start
+
+        val rampDown =
+            singleStep.target.end <
+                singleStep.target.start
+
+        require(rampUp || rampDown) {
+            "Ramp step must have different start and end targets"
+        }
+
+        val intensityClass =
+            when {
+                isFirstStep && rampUp ->
+                    TPIntensityClass.WARM_UP
+
+                isLastStep && rampDown ->
+                    TPIntensityClass.COOL_DOWN
+
+                else ->
+                    toIntensityClass(singleStep)
+            }
+
+        /*
+        * No target do TrainingPeaks, minValue e maxValue
+        * devem continuar ordenados. A direção é indicada
+        * por rampUp ou rampDown.
+        */
+        val minimumTarget =
+            minOf(
+                singleStep.target.start,
+                singleStep.target.end
+            )
+
+        val maximumTarget =
+            maxOf(
+                singleStep.target.start,
+                singleStep.target.end
+            )
+
+        val stepDTO =
+            mapToStepDTO(
+                workoutStep = singleStep,
+                intensityClassOverride =
+                    intensityClass,
+                nameOverride = "Ramp",
+                mainTargetOverride =
+                    TPTargetDTO.mainTarget(
+                        minimumTarget,
+                        maximumTarget
+                    )
+            )
+
+        return TPStructureStepDTO.rampStep(
+            stepDTO = stepDTO,
+            rampUp = rampUp
+        )
+    }
 }
