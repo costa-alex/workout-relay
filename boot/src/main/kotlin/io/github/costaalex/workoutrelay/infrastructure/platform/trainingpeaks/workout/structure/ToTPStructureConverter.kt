@@ -9,21 +9,43 @@ import io.github.costaalex.workoutrelay.domain.workout.structure.WorkoutStep
 import io.github.costaalex.workoutrelay.domain.workout.structure.StepTarget
 import io.github.costaalex.workoutrelay.domain.workout.structure.WorkoutStructure
 import io.github.costaalex.workoutrelay.domain.workout.structure.StepIntensity
+import kotlin.math.ceil
+import kotlin.math.roundToInt
+import org.slf4j.LoggerFactory
 
 class ToTPStructureConverter(
     private val objectMapper: ObjectMapper,
     private val structure: WorkoutStructure,
 ) {
+
+    private val log = LoggerFactory.getLogger(this.javaClass)
+
     companion object {
         fun toStructureString(objectMapper: ObjectMapper, structure: WorkoutStructure) =
             ToTPStructureConverter(objectMapper, structure).toTPStructureStr()
     }
 
     fun toTPStructureStr(): String {
-        val structure = mapToWorkoutStructure(structure.steps)
-        return objectMapper.copy()
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-            .writeValueAsString(structure)
+        val mappedStructure =
+            mapToWorkoutStructure(
+                structure.steps
+            )
+
+        val json =
+            objectMapper.copy()
+                .setSerializationInclusion(
+                    JsonInclude.Include.NON_NULL
+                )
+                .writeValueAsString(
+                    mappedStructure
+                )
+
+        log.info(
+            "TrainingPeaks workout structure={}",
+            json
+        )
+
+        return json
     }
 
     private fun toIntensityClass(
@@ -252,7 +274,8 @@ class ToTPStructureConverter(
                 singleStep.target.start
 
         require(rampUp || rampDown) {
-            "Ramp step must have different start and end targets"
+            "Ramp step must have different " +
+                "start and end targets"
         }
 
         val intensityClass =
@@ -264,42 +287,117 @@ class ToTPStructureConverter(
                     TPIntensityClass.COOL_DOWN
 
                 else ->
-                    toIntensityClass(singleStep)
+                    toIntensityClass(
+                        singleStep
+                    )
             }
 
-        /*
-        * No target do TrainingPeaks, minValue e maxValue
-        * devem continuar ordenados. A direção é indicada
-        * por rampUp ou rampDown.
-        */
-        val minimumTarget =
-            minOf(
-                singleStep.target.start,
-                singleStep.target.end
-            )
-
-        val maximumTarget =
-            maxOf(
-                singleStep.target.start,
-                singleStep.target.end
-            )
-
-        val stepDTO =
-            mapToStepDTO(
-                workoutStep = singleStep,
-                intensityClassOverride =
-                    intensityClass,
-                nameOverride = "Ramp",
-                mainTargetOverride =
-                    TPTargetDTO.mainTarget(
-                        minimumTarget,
-                        maximumTarget
-                    )
+        val rampStepDTOs =
+            toRampStepDTOs(
+                singleStep = singleStep,
+                intensityClass =
+                    intensityClass
             )
 
         return TPStructureStepDTO.rampStep(
-            stepDTO = stepDTO,
+            stepDTOs = rampStepDTOs,
             rampUp = rampUp
         )
+    }
+
+    private fun toRampStepDTOs(
+        singleStep: SingleStep,
+        intensityClass: TPIntensityClass
+    ): List<TPStepDTO> {
+
+        require(
+            singleStep.length.unit ==
+                StepLength.LengthUnit.SECONDS
+        ) {
+            "TrainingPeaks ramps must be time based"
+        }
+
+        val totalSeconds =
+            singleStep.length.value
+
+        require(totalSeconds > 0) {
+            "Ramp duration must be greater than zero"
+        }
+
+        /*
+        * O TrainingPeaks utiliza ramps stepwise.
+        *
+        * - ramps até 1 minuto: pelo menos 2 passos;
+        * - ramps superiores: aproximadamente 1 passo/minuto;
+        * - nunca criamos mais passos do que segundos.
+        */
+        val desiredStepCount =
+            maxOf(
+                2,
+                ceil(
+                    totalSeconds.toDouble() / 60.0
+                ).toInt()
+            )
+
+        val stepCount =
+            minOf(
+                desiredStepCount,
+                totalSeconds.toInt()
+            )
+
+        val baseDuration =
+            totalSeconds / stepCount
+
+        val remainingSeconds =
+            totalSeconds % stepCount
+
+        val targetDifference =
+            singleStep.target.end -
+                singleStep.target.start
+
+        return (0 until stepCount).map { index ->
+
+            val duration =
+                baseDuration +
+                    if (
+                        index <
+                        remainingSeconds
+                    ) {
+                        1
+                    } else {
+                        0
+                    }
+
+            val ratio =
+                if (stepCount == 1) {
+                    0.0
+                } else {
+                    index.toDouble() /
+                        (stepCount - 1)
+                }
+
+            val target =
+                (
+                    singleStep.target.start +
+                        targetDifference * ratio
+                ).roundToInt()
+
+            TPStepDTO(
+                name = "Ramp",
+                length =
+                    TPLengthDTO.fromStepLength(
+                        StepLength.seconds(
+                            duration
+                        )
+                    ),
+                targets = listOf(
+                    TPTargetDTO.mainTarget(
+                        target
+                    )
+                ),
+                intensityClass =
+                    intensityClass.apiValue
+            )
+        }
     }
 }

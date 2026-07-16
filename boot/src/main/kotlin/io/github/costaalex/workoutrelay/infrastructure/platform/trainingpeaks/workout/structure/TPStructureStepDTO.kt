@@ -13,18 +13,25 @@ class TPStructureStepDTO(
             TPStructureStepDTO("repetition", TPLengthDTO.repetitions(repetitions.toLong()), stepDTOs)
 
         fun rampStep(
-            stepDTO: TPStepDTO,
+            stepDTOs: List<TPStepDTO>,
             rampUp: Boolean
-        ): TPStructureStepDTO =
-            TPStructureStepDTO(
+        ): TPStructureStepDTO {
+            require(stepDTOs.isNotEmpty()) {
+                "Ramp must contain at least one step"
+            }
+
+            return TPStructureStepDTO(
                 type =
                     if (rampUp) {
                         "rampUp"
                     } else {
                         "rampDown"
                     },
-                length = TPLengthDTO.single(),
-                steps = listOf(stepDTO)
+                length = TPLengthDTO.repetitions(
+                    stepDTOs.size.toLong()
+                ),
+                steps = stepDTOs
             )
+        }
     }
 }

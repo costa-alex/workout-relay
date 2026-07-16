@@ -59,56 +59,58 @@ class FromTPStructureConverter(
             TPStructureStepDTO
     ): SingleStep {
 
-        val tpStep =
-            structureStep.steps
-                .firstOrNull()
-                ?: throw IllegalArgumentException(
-                    "Ramp does not contain a step"
-                )
-
-        val mappedStep =
-            mapSingleStep(tpStep)
-
-        val minimumTarget =
-            minOf(
-                mappedStep.target.start,
-                mappedStep.target.end
-            )
-
-        val maximumTarget =
-            maxOf(
-                mappedStep.target.start,
-                mappedStep.target.end
-            )
-
-        val rampTarget =
-            when (structureStep.type) {
-                "rampUp" ->
-                    StepTarget(
-                        minimumTarget,
-                        maximumTarget
-                    )
-
-                "rampDown" ->
-                    StepTarget(
-                        maximumTarget,
-                        minimumTarget
-                    )
-
-                else ->
-                    throw IllegalArgumentException(
-                        "Unsupported ramp type: " +
-                            structureStep.type
-                    )
+        val mappedSteps =
+            structureStep.steps.map {
+                mapSingleStep(it)
             }
 
+        require(mappedSteps.isNotEmpty()) {
+            "Ramp does not contain steps"
+        }
+
+        val firstStep =
+            mappedSteps.first()
+
+        val lastStep =
+            mappedSteps.last()
+
+        val lengthUnit =
+            firstStep.length.unit
+
+        require(
+            mappedSteps.all {
+                it.length.unit == lengthUnit
+            }
+        ) {
+            "Ramp steps use different length units"
+        }
+
+        val totalLength =
+            mappedSteps.sumOf {
+                it.length.value
+            }
+
+        val startTarget =
+            firstStep.target.start
+
+        val endTarget =
+            lastStep.target.end
+
         return SingleStep(
-            name = mappedStep.name,
-            length = mappedStep.length,
-            target = rampTarget,
-            cadence = mappedStep.cadence,
+            name = firstStep.name,
+            length = StepLength(
+                value = totalLength,
+                unit = lengthUnit
+            ),
+            target = StepTarget(
+                start = startTarget,
+                end = endTarget
+            ),
+            cadence =
+                firstStep.cadence,
             ramp = true,
-            intensity = mappedStep.intensity
+            intensity =
+                firstStep.intensity
         )
     }
 
