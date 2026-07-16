@@ -8,6 +8,8 @@ import io.github.costaalex.workoutrelay.domain.workout.structure.*
 import java.time.Duration
 import kotlin.math.roundToInt
 import org.slf4j.LoggerFactory
+import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 class TrainerRoadWorkoutMapper {
     private val log = LoggerFactory.getLogger(this.javaClass)
@@ -44,21 +46,33 @@ class TrainerRoadWorkoutMapper {
         )
     }
 
-    private fun convertSteps(intervals: List<TRWorkoutResponseDTO.IntervalsDataDTO>): List<WorkoutStep> {
-        val steps = mutableListOf<WorkoutStep>()
+    private fun convertSteps(
+        intervals: List<
+            TRWorkoutResponseDTO.IntervalsDataDTO
+        >,
+        workoutData: List<
+            TRWorkoutResponseDTO.WorkoutDataPointDTO
+        >
+    ): List<WorkoutStep> {
 
-        for (interval in intervals) {
-            if (interval.name == "Workout") {
-                continue
+        val ftpPercentByTick = workoutData
+            .mapNotNull { point ->
+                point.ftpPercent?.let { ftpPercent ->
+                    point.tick to ftpPercent
+                }
             }
-            val stepLength = StepLength.seconds((interval.end - interval.start).toLong())
-            val name = if (interval.name == "Fake") "Step" else interval.name
+            .toMap()
 
-            val singleStep =
-                SingleStep(name, stepLength, StepTarget(interval.targetStart(), interval.targetEnd()), null, false)
-            steps.add(singleStep)
-        }
-        return steps
+        return intervals
+            .filterNot { interval ->
+                interval.name == "Workout"
+            }
+            .map { interval ->
+                mapInterval(
+                    interval = interval,
+                    ftpPercentByTick = ftpPercentByTick
+                )
+            }
     }
 
     private fun getDescription(description: String, removeHtmlTags: Boolean): String =
@@ -67,6 +81,64 @@ class TrainerRoadWorkoutMapper {
         } else {
             description
         }.trim()
+
+    private fun mapInterval(
+        interval:
+            TRWorkoutResponseDTO.IntervalsDataDTO,
+        ftpPercentByTick: Map<Int, Double>
+    ): SingleStep {
+
+        val startTick =
+            interval.start.roundToInt()
+
+        val endExclusiveTick =
+            interval.end.roundToInt()
+
+        /*
+        * O ponto no endTick pode já representar o início
+        * do intervalo seguinte. Por isso, usamos end - 1.
+        */
+        val lastIntervalTick =
+            (endExclusiveTick - 1)
+                .coerceAtLeast(startTick)
+
+        val fallbackTarget =
+            interval.targetStart()
+
+        val targetStart =
+            ftpPercentByTick[startTick]
+                ?.roundToInt()
+                ?: interval.targetStart()
+
+        val targetEnd =
+            ftpPercentByTick[lastIntervalTick]
+                ?.roundToInt()
+                ?: targetStart
+
+        val isRamp =
+            targetStart != targetEnd
+
+        return SingleStep(
+            name =
+                if (interval.name == "Fake") {
+                    "Step"
+                } else {
+                    interval.name
+                },
+            length = StepLength.seconds(
+                (
+                    interval.end -
+                        interval.start
+                ).roundToLong()
+            ),
+            target = StepTarget(
+                start = targetStart,
+                end = targetEnd
+            ),
+            cadence = null,
+            ramp = isRamp
+        )
+    }
 
     private fun logWorkoutDataBoundaries(
         workoutData: Any?,
@@ -90,10 +162,13 @@ class TrainerRoadWorkoutMapper {
                 val point = points.getOrNull(tick) as? Map<*, *>
 
                 log.info(
-                    "TrainerRoad power point. interval={}, tick={}, value={}",
+                    "Mapped TrainerRoad interval. name={}, startTick={}, lastTick={}, targetStart={}, targetEnd={}, ramp={}",
                     interval.name,
-                    tick,
-                    point
+                    startTick,
+                    lastIntervalTick,
+                    targetStart,
+                    targetEnd,
+                    isRamp
                 )
             }
         }
