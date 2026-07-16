@@ -40,9 +40,15 @@ class TRWorkoutResponseDTO(
         @JsonProperty("StartTarget")
         @JsonAlias("startTarget")
         val startTarget: List<Double>? = null,
+        @JsonProperty("EndTargetPowerPercent")
+        @JsonAlias("endTargetPowerPercent")
+        val endTargetPowerPercent: Double? = null,
+        @JsonProperty("EndTarget")
+        @JsonAlias("endTarget")
+        val endTarget: List<Double>? = null,
     ) {
         fun targetStart(): Int = (startTarget?.firstOrNull() ?: startTargetPowerPercent).roundToInt()
 
-        fun targetEnd(): Int = (startTarget?.getOrNull(1) ?: targetStart().toDouble()).roundToInt()
+        fun targetEnd(): Int = (endTarget?.firstOrNull() ?: endTargetPowerPercent ?: targetStart().toDouble()).roundToInt()
     }
 }

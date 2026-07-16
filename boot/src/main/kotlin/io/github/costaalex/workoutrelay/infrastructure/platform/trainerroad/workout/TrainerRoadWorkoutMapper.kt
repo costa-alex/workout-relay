@@ -51,10 +51,16 @@ class TrainerRoadWorkoutMapper {
             steps.add(singleStep)
 
             log.info(
-                "TrainerRoad interval. name={}, startTarget={}, startTargetPowerPercent={}, resolvedStart={}, resolvedEnd={}",
+                "TrainerRoad interval. name={}, " +
+                    "startTarget={}, endTarget={}, " +
+                    "startTargetPowerPercent={}, " +
+                    "endTargetPowerPercent={}, " +
+                    "resolvedStart={}, resolvedEnd={}",
                 interval.name,
                 interval.startTarget,
+                interval.endTarget,
                 interval.startTargetPowerPercent,
+                interval.endTargetPowerPercent,
                 interval.targetStart(),
                 interval.targetEnd()
             )
