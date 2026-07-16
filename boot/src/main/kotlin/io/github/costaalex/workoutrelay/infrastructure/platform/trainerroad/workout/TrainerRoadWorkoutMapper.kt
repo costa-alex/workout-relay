@@ -16,7 +16,10 @@ class TrainerRoadWorkoutMapper {
     
     fun toWorkout(trWorkoutResponseDTO: TRWorkoutResponseDTO, removeHtmlTags: Boolean): Workout {
         val trWorkout: TRWorkoutResponseDTO.TRWorkout = trWorkoutResponseDTO.workout
-        val steps = convertSteps(trWorkout.intervalData)
+        val steps = convertSteps(
+            intervals = trWorkout.intervalData,
+            workoutData = trWorkout.workoutData
+        )
 
         val workoutData = trWorkout.additionalProperties["WorkoutData"]
 
@@ -55,13 +58,16 @@ class TrainerRoadWorkoutMapper {
         >
     ): List<WorkoutStep> {
 
-        val ftpPercentByTick = workoutData
-            .mapNotNull { point ->
-                point.ftpPercent?.let { ftpPercent ->
-                    point.tick to ftpPercent
+        val ftpPercentByTick: Map<Int, Double> =
+            workoutData
+                .mapNotNull { point ->
+                    point.ftpPercent?.let {
+                        ftpPercent ->
+
+                        point.tick to ftpPercent
+                    }
                 }
-            }
-            .toMap()
+                .toMap()
 
         return intervals
             .filterNot { interval ->
@@ -88,35 +94,37 @@ class TrainerRoadWorkoutMapper {
         ftpPercentByTick: Map<Int, Double>
     ): SingleStep {
 
-        val startTick =
-            interval.start.roundToInt()
+        val startTick = interval.start.roundToInt()
 
-        val endExclusiveTick =
-            interval.end.roundToInt()
+        val endExclusiveTick = interval.end.roundToInt()
 
-        /*
-        * O ponto no endTick pode já representar o início
-        * do intervalo seguinte. Por isso, usamos end - 1.
-        */
         val lastIntervalTick =
             (endExclusiveTick - 1)
                 .coerceAtLeast(startTick)
 
-        val fallbackTarget =
-            interval.targetStart()
+        val fallbackTarget = interval.targetStart()
 
         val targetStart =
             ftpPercentByTick[startTick]
                 ?.roundToInt()
-                ?: interval.targetStart()
+                ?: fallbackTarget
 
         val targetEnd =
             ftpPercentByTick[lastIntervalTick]
                 ?.roundToInt()
                 ?: targetStart
 
-        val isRamp =
-            targetStart != targetEnd
+        val isRamp = targetStart != targetEnd
+
+        log.info(
+            "Mapped TrainerRoad interval. name={}, startTick={}, lastTick={}, targetStart={}, targetEnd={}, ramp={}",
+            interval.name,
+            startTick,
+            lastIntervalTick,
+            targetStart,
+            targetEnd,
+            isRamp
+        )
 
         return SingleStep(
             name =
@@ -127,8 +135,7 @@ class TrainerRoadWorkoutMapper {
                 },
             length = StepLength.seconds(
                 (
-                    interval.end -
-                        interval.start
+                    interval.end - interval.start
                 ).roundToLong()
             ),
             target = StepTarget(
