@@ -1,6 +1,6 @@
 package io.github.costaalex.workoutrelay.app.workout.schedule
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import tools.jackson.databind.ObjectMapper
 import io.github.costaalex.workoutrelay.app.workout.CopyWorkoutsResponse
 import io.github.costaalex.workoutrelay.app.workout.execution.SyncExecutionService
 import io.github.costaalex.workoutrelay.app.workout.execution.SyncExecutionTrigger

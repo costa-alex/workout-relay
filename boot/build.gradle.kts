@@ -1,18 +1,19 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    id("org.springframework.boot") version "3.5.16"
+    id("org.springframework.boot") version "4.1.0"
     id("io.spring.dependency-management") version "1.1.7"
-    id("org.openapi.generator") version "7.2.0"
-    kotlin("jvm") version "2.1.21"
-    kotlin("plugin.spring") version "2.1.21"
+    kotlin("jvm") version "2.3.21"
+    kotlin("plugin.spring") version "2.3.21"
 }
 
 group = "io.github.costaalex"
 version = file("version").readText().trim()
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 repositories {
@@ -21,45 +22,46 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.0.3")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.1.2")
     }
 }
 
 dependencies {
-
-    implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
     implementation("org.springframework.boot:spring-boot-starter-cache")
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-
+    implementation("org.springframework.boot:spring-boot-starter-liquibase")
+    implementation("org.springframework.boot:spring-boot-starter-aspectj")
     implementation("org.hibernate.orm:hibernate-community-dialects")
     implementation("org.xerial:sqlite-jdbc")
-    implementation("org.liquibase:liquibase-core")
-
-    implementation(group = "org.ehcache", name = "ehcache", classifier = "jakarta")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation(
+        group = "org.ehcache",
+        name = "ehcache",
+        classifier = "jakarta"
+    )
+    implementation("org.springframework.boot:spring-boot-starter-jackson")
+    implementation("tools.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.wiremock:wiremock-standalone:3.5.2")
-
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 springBoot {
     buildInfo()
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs += "-Xjsr305=strict"
-        jvmTarget = "21"
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add(
+            "-Xjsr305=strict"
+        )
+
+        jvmTarget.set(
+            JvmTarget.JVM_21
+        )
     }
 }
 

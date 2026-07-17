@@ -1,7 +1,6 @@
 package io.github.costaalex.workoutrelay.infrastructure.platform.trainingpeaks.workout.structure
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.ObjectMapper
+import tools.jackson.databind.ObjectMapper
 import io.github.costaalex.workoutrelay.domain.workout.structure.MultiStep
 import io.github.costaalex.workoutrelay.domain.workout.structure.SingleStep
 import io.github.costaalex.workoutrelay.domain.workout.structure.StepLength
@@ -24,24 +23,11 @@ class ToTPStructureConverter(
     }
 
     fun toTPStructureStr(): String {
-        val mappedStructure =
-            mapToWorkoutStructure(
-                structure.steps
-            )
+        val mappedStructure = mapToWorkoutStructure(structure.steps)
 
-        val json =
-            objectMapper.copy()
-                .setSerializationInclusion(
-                    JsonInclude.Include.NON_NULL
-                )
-                .writeValueAsString(
-                    mappedStructure
-                )
+        val json = objectMapper.writeValueAsString(mappedStructure)
 
-        log.debug(
-            "TrainingPeaks workout structure={}",
-            json
-        )
+        log.info("TrainingPeaks workout structure={}", json)
 
         return json
     }
