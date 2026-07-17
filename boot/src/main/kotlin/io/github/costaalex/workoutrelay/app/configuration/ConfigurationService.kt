@@ -42,23 +42,19 @@ class ConfigurationService(
         val info = try {
             repository.platformInfo()
         } catch (exception: Exception) {
-            log.warn(
-                "Unable to validate connection to {}",
-                platform.title,
-                exception
-            )
+            log.warn("Unable to validate connection to {}", platform.title, exception)
 
-            PlatformInfo(
-                mapOf("isValid" to false)
-            )
+            PlatformInfo(mapOf("isValid" to false))
         }
 
         platform to info
     }
 
-    fun platformInfo(platform: Platform): PlatformInfo {
-        return platformInfoRepositoryMap[platform]!!.platformInfo()
-    }
+    fun platformInfo(
+        platform: Platform,
+    ): PlatformInfo =
+        getPlatformInfoRepository(platform)
+            .platformInfo()
  
     fun refreshPlatformInfo(): Map<Platform, PlatformInfo> {
         cacheManager
@@ -68,21 +64,40 @@ class ConfigurationService(
         return platformInfo()
     }
 
+    private fun getPlatformInfoRepository(
+        platform: Platform,
+    ): PlatformInfoRepository =
+        checkNotNull(
+            platformInfoRepositoryMap[platform]
+        ) {
+            "No PlatformInfoRepository registered for platform $platform"
+        }
+
     private fun handleDebugModeIfNecessary(request: UpdateConfigurationRequest) {
         debugModeService.handleDebugMode(request.configMap)
     }
 
     private fun updateConfiguration(
         request: UpdateConfigurationRequest,
-        repository: PlatformConfigurationRepository
+        repository: PlatformConfigurationRepository,
     ): String? {
         return try {
             repository.updateConfig(request)
             null
-        } catch (e: PlatformException) {
-            "${e.platform.title}: ${e.message}"
-        } catch (e: Exception) {
-            e.message
+        } catch (exception: PlatformException) {
+            "${exception.platform.title}: " +
+                (
+                    exception.message ?: "Unable to update configuration"
+                )
+        } catch (exception: Exception) {
+            val platform = repository.platform()
+
+            log.error("Unexpected error while updating configuration for {}", platform.title, exception)
+
+            "${platform.title}: " +
+                (
+                    exception.message ?: "Unexpected configuration error"
+                )
         }
     }
 }

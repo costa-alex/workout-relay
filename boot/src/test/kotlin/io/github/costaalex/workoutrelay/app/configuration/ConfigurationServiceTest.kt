@@ -20,6 +20,7 @@ import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.springframework.cache.Cache
 import org.springframework.cache.CacheManager
+import org.junit.jupiter.api.assertThrows
 
 class ConfigurationServiceTest {
 
@@ -211,5 +212,75 @@ class ConfigurationServiceTest {
         configurationService.refreshPlatformInfo()
 
         verify(cache).clear()
+    }
+
+    @Test
+    fun `should return unexpected error when configuration update fails`() {
+        val request =
+            UpdateConfigurationRequest(
+                mapOf(
+                    "intervals.api-key" to "invalid-key",
+                )
+            )
+
+        doThrow(
+            RuntimeException("Database unavailable")
+        )
+            .`when`(platformConfigurationRepository)
+            .updateConfig(request)
+
+        val errors =
+            configurationService.updateConfiguration(request)
+
+        assertEquals(
+            listOf(
+                "Intervals.icu: Database unavailable"
+            ),
+            errors,
+        )
+
+        verify(debugModeService)
+            .handleDebugMode(request.configMap)
+    }
+
+    @Test
+    fun `should return fallback error when exception has no message`() {
+        val request =
+            UpdateConfigurationRequest(
+                mapOf(
+                    "intervals.api-key" to "invalid-key",
+                )
+            )
+
+        doThrow(
+            RuntimeException()
+        )
+            .`when`(platformConfigurationRepository)
+            .updateConfig(request)
+
+        val errors =
+            configurationService.updateConfiguration(request)
+
+        assertEquals(
+            listOf(
+                "Intervals.icu: Unexpected configuration error"
+            ),
+            errors,
+        )
+
+        verify(debugModeService)
+            .handleDebugMode(request.configMap)
+    }
+
+    @Test
+    fun `should fail with clear error when platform repository is missing`() {
+        val exception =
+            assertThrows<IllegalStateException> {
+                configurationService.platformInfo(
+                    Platform.TRAINING_PEAKS
+                )
+            }
+
+        assertEquals("No PlatformInfoRepository registered for platform TRAINING_PEAKS", exception.message)
     }
 }

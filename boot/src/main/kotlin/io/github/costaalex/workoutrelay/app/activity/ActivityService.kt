@@ -34,5 +34,10 @@ class ActivityService(
         return CopyActivitiesResponse(activitiesToSave.size, filteredOut, request.startDate, request.endDate)
     }
 
-    private fun getRepository(platform: Platform) = repositoryMap[platform]!!
+    private fun getRepository(
+        platform: Platform,
+    ): ActivityRepository =
+        checkNotNull(repositoryMap[platform]) {
+            "No ActivityRepository registered for platform $platform"
+        }
 }
