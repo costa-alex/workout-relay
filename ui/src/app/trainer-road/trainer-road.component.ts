@@ -18,19 +18,18 @@ import {
 } from 'app/trainer-road/tr-copy-library-to-library/tr-copy-library-to-library.component';
 
 @Component({
-  selector: 'app-trainer-road',
-  standalone: true,
-  imports: [
-    NgIf,
-    MatExpansionModule,
-    MatProgressBarModule,
-    MatIconModule,
-    TrCopyLibraryToLibraryComponent,
-    TrCopyCalendarToLibraryComponent,
-    TrCopyCalendarToCalendarComponent
-  ],
-  templateUrl: './trainer-road.component.html',
-  styleUrl: './trainer-road.component.scss'
+    selector: 'app-trainer-road',
+    imports: [
+        NgIf,
+        MatExpansionModule,
+        MatProgressBarModule,
+        MatIconModule,
+        TrCopyLibraryToLibraryComponent,
+        TrCopyCalendarToLibraryComponent,
+        TrCopyCalendarToCalendarComponent
+    ],
+    templateUrl: './trainer-road.component.html',
+    styleUrl: './trainer-road.component.scss'
 })
 export class TrainerRoadComponent implements OnInit {
   platformInfo: any = undefined;

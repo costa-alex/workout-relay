@@ -18,25 +18,24 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {Platform} from "infrastructure/platform";
 
 @Component({
-  selector: 'tp-copy-calendar-to-library',
-  standalone: true,
-  imports: [
-    MatGridListModule,
-    FormsModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatProgressBarModule,
-    NgIf,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatSnackBarModule,
-    MatSelectModule,
-    MatCheckboxModule,
-  ],
-  templateUrl: './tp-copy-calendar-to-library.component.html',
-  styleUrl: './tp-copy-calendar-to-library.component.scss'
+    selector: 'tp-copy-calendar-to-library',
+    imports: [
+        MatGridListModule,
+        FormsModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        MatProgressBarModule,
+        NgIf,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatSnackBarModule,
+        MatSelectModule,
+        MatCheckboxModule,
+    ],
+    templateUrl: './tp-copy-calendar-to-library.component.html',
+    styleUrl: './tp-copy-calendar-to-library.component.scss'
 })
 export class TpCopyCalendarToLibraryComponent implements OnInit {
   readonly selectedTrainingTypes = ['BIKE', 'VIRTUAL_BIKE', 'MTB', 'RUN'];

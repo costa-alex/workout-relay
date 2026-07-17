@@ -36,24 +36,23 @@ import {
 import { ThemeService } from 'infrastructure/theme.service';
 
 @Component({
-  selector: 'app-configuration',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatProgressBarModule,
-    NgIf,
-    MatCheckboxModule,
-    MatOptionModule,
-    MatSelectModule,
-    MatExpansionModule,
-    MatTooltipModule,
-    MatIconModule
-  ],
-  templateUrl: './configuration.component.html',
-  styleUrl: './configuration.component.scss'
+    selector: 'app-configuration',
+    imports: [
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatProgressBarModule,
+        NgIf,
+        MatCheckboxModule,
+        MatOptionModule,
+        MatSelectModule,
+        MatExpansionModule,
+        MatTooltipModule,
+        MatIconModule
+    ],
+    templateUrl: './configuration.component.html',
+    styleUrl: './configuration.component.scss'
 })
 export class ConfigurationComponent implements OnInit {
 

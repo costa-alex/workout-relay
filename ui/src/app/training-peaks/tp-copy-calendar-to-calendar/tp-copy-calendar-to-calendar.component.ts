@@ -16,25 +16,24 @@ import {
 } from "app/components/copy-calendar-to-calendar/copy-calendar-to-calendar.component";
 
 @Component({
-  selector: 'tp-copy-calendar-to-calendar',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatProgressBarModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatSnackBarModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    MatListModule,
-    CopyCalendarToCalendarComponent,
-  ],
-  templateUrl: './tp-copy-calendar-to-calendar.component.html',
-  styleUrl: './tp-copy-calendar-to-calendar.component.scss'
+    selector: 'tp-copy-calendar-to-calendar',
+    imports: [
+        FormsModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        MatProgressBarModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatSnackBarModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        MatListModule,
+        CopyCalendarToCalendarComponent,
+    ],
+    templateUrl: './tp-copy-calendar-to-calendar.component.html',
+    styleUrl: './tp-copy-calendar-to-calendar.component.scss'
 })
 export class TpCopyCalendarToCalendarComponent implements OnInit {
   readonly Platform = Platform;

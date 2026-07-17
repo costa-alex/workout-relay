@@ -25,27 +25,26 @@ import {MatTooltipModule} from "@angular/material/tooltip";
 import {StepModifier} from "app/training-peaks/tp-copy-library-container/step-modifier";
 
 @Component({
-  selector: 'tp-copy-library-container',
-  standalone: true,
-  imports: [
-    MatGridListModule,
-    FormsModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatProgressBarModule,
-    NgIf,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatSnackBarModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    AsyncPipe,
-    MatTooltipModule
-  ],
-  templateUrl: './tp-copy-library-container.component.html',
-  styleUrl: './tp-copy-library-container.component.scss'
+    selector: 'tp-copy-library-container',
+    imports: [
+        MatGridListModule,
+        FormsModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        MatProgressBarModule,
+        NgIf,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatSnackBarModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        AsyncPipe,
+        MatTooltipModule
+    ],
+    templateUrl: './tp-copy-library-container.component.html',
+    styleUrl: './tp-copy-library-container.component.scss'
 })
 export class TpCopyLibraryContainerComponent implements OnInit {
   private readonly mondayDate = formatDate(this.getMonday(new Date()))

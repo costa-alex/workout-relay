@@ -19,27 +19,26 @@ import {Platform} from "infrastructure/platform";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 
 @Component({
-  selector: 'tr-copy-library-to-library',
-  standalone: true,
-  imports: [
-    MatGridListModule,
-    FormsModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatProgressBarModule,
-    NgIf,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatSnackBarModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    AsyncPipe,
-    MatAutocompleteModule
-  ],
-  templateUrl: './tr-copy-library-to-library.component.html',
-  styleUrl: './tr-copy-library-to-library.component.scss'
+    selector: 'tr-copy-library-to-library',
+    imports: [
+        MatGridListModule,
+        FormsModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        MatProgressBarModule,
+        NgIf,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatSnackBarModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        AsyncPipe,
+        MatAutocompleteModule
+    ],
+    templateUrl: './tr-copy-library-to-library.component.html',
+    styleUrl: './tr-copy-library-to-library.component.scss'
 })
 export class TrCopyLibraryToLibraryComponent implements OnInit {
 

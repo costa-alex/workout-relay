@@ -35,18 +35,17 @@ interface SyncRoute {
 }
 
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [
-    DatePipe,
-    RouterLink,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatProgressBarModule
-  ],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+    selector: 'app-home',
+    imports: [
+        DatePipe,
+        RouterLink,
+        MatButtonModule,
+        MatCardModule,
+        MatIconModule,
+        MatProgressBarModule
+    ],
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
 

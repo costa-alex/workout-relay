@@ -17,20 +17,19 @@ import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatIconModule} from '@angular/material/icon';
 
 @Component({
-  selector: 'app-training-peaks',
-  standalone: true,
-  imports: [
-    TpCopyCalendarToCalendarComponent,
-    TpCopyLibraryContainerComponent,
-    TpCopyCalendarToLibraryComponent,
-    MatExpansionModule,
-    NgIf,
-    MatProgressBarModule,
-    MatTooltipModule,
-    MatIconModule,
-  ],
-  templateUrl: './training-peaks.component.html',
-  styleUrl: './training-peaks.component.scss'
+    selector: 'app-training-peaks',
+    imports: [
+        TpCopyCalendarToCalendarComponent,
+        TpCopyLibraryContainerComponent,
+        TpCopyCalendarToLibraryComponent,
+        MatExpansionModule,
+        NgIf,
+        MatProgressBarModule,
+        MatTooltipModule,
+        MatIconModule,
+    ],
+    templateUrl: './training-peaks.component.html',
+    styleUrl: './training-peaks.component.scss'
 })
 export class TrainingPeaksComponent implements OnInit {
   platformInfo: any = undefined;

@@ -21,27 +21,26 @@ import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'copy-calendar-to-calendar',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatProgressBarModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatSnackBarModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    NgIf,
-    MatTooltipModule,
-    MatIconModule,
-    RouterLink
-  ],
-  templateUrl: './copy-calendar-to-calendar.component.html',
-  styleUrl: './copy-calendar-to-calendar.component.scss'
+    selector: 'copy-calendar-to-calendar',
+    imports: [
+        FormsModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        MatProgressBarModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatSnackBarModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        NgIf,
+        MatTooltipModule,
+        MatIconModule,
+        RouterLink
+    ],
+    templateUrl: './copy-calendar-to-calendar.component.html',
+    styleUrl: './copy-calendar-to-calendar.component.scss'
 })
 export class CopyCalendarToCalendarComponent implements OnInit {
   readonly Platform = Platform;

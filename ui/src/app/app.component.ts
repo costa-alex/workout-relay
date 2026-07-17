@@ -17,21 +17,20 @@ import { GitHubClient } from 'infrastructure/client/github.client';
 import { ThemeService } from 'infrastructure/theme.service';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [
-    RouterOutlet,
-    RouterLink,
-    TopBarComponent,
-    MatSidenavModule,
-    MatListModule,
-    MatDividerModule,
-    MatIconModule,
-    MatBadgeModule,
-    MatTooltipModule
-  ],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+    selector: 'app-root',
+    imports: [
+        RouterOutlet,
+        RouterLink,
+        TopBarComponent,
+        MatSidenavModule,
+        MatListModule,
+        MatDividerModule,
+        MatIconModule,
+        MatBadgeModule,
+        MatTooltipModule
+    ],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
 
