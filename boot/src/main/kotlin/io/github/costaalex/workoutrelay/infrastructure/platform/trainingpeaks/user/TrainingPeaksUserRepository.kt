@@ -11,7 +11,16 @@ class TrainingPeaksUserRepository(
 ) {
     @Cacheable(key = "'singleton'")
     fun getUser(): TrainingPeaksUser {
-        val dto = trainingPeaksUserApiClient.getUser()
-        return TrainingPeaksUser(dto.userId!!, dto.accountStatus.isAthlete, dto.accountStatus.isPremium)
+        val dto =
+            trainingPeaksUserApiClient.getUser()
+
+        val account =
+            dto.user.settings.account
+
+        return TrainingPeaksUser(
+            userId = dto.user.userId.toString(),
+            isAthlete = account.isAthlete,
+            isPremium = account.isPremium,
+        )
     }
 }

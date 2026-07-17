@@ -13,49 +13,70 @@ class TrainingPeaksUserDTOTest {
         jacksonObjectMapper()
 
     @Test
-    fun `should default isPremium to false when missing`() {
+    fun `should deserialize premium account information`() {
         val json = """
             {
               "user": {
-                "userId": 12345
-              },
-              "accountStatus": {
-                "isAthlete": true
+                "userId": 3037421,
+                "settings": {
+                  "account": {
+                    "userType": 4,
+                    "isAthlete": true,
+                    "isPremium": true,
+                    "isCoached": false,
+                    "premiumTrial": false
+                  }
+                }
               }
             }
         """.trimIndent()
 
-        val user =
+        val dto =
             objectMapper.readValue<TrainingPeaksUserDTO>(
                 json
             )
 
-        assertEquals("12345", user.userId)
-        assertTrue(user.accountStatus.isAthlete)
-        assertFalse(user.accountStatus.isPremium)
+        val account =
+            dto.user.settings.account
+
+        assertEquals(
+            3037421L,
+            dto.user.userId,
+        )
+
+        assertTrue(account.isAthlete)
+        assertTrue(account.isPremium)
+        assertFalse(account.premiumTrial)
     }
 
     @Test
-    fun `should deserialize isPremium when present`() {
+    fun `should deserialize basic account information`() {
         val json = """
             {
               "user": {
-                "userId": 12345
-              },
-              "accountStatus": {
-                "isAthlete": true,
-                "isPremium": true
+                "userId": 3037421,
+                "settings": {
+                  "account": {
+                    "isAthlete": true,
+                    "isPremium": false,
+                    "premiumTrial": false
+                  }
+                }
               }
             }
         """.trimIndent()
 
-        val user =
+        val dto =
             objectMapper.readValue<TrainingPeaksUserDTO>(
                 json
             )
 
-        assertEquals("12345", user.userId)
-        assertTrue(user.accountStatus.isAthlete)
-        assertTrue(user.accountStatus.isPremium)
+        assertTrue(
+            dto.user.settings.account.isAthlete
+        )
+
+        assertFalse(
+            dto.user.settings.account.isPremium
+        )
     }
 }

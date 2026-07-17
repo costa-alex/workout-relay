@@ -26,7 +26,6 @@ spring:
     serialization:
       fail-on-empty-beans: false
   datasource:
-    # url: jdbc:sqlite:/data/tp2intervals.sqlite
     url: ${SPRING_DATASOURCE_URL:jdbc:sqlite:/data/workout-relay.sqlite}
     driver-class-name: org.sqlite.JDBC
   jpa:
@@ -48,13 +47,10 @@ management:
     web:
       exposure:
         include: health,info
-      cors:
-        allowed-origins: '*'
   endpoint:
     loggers:
       enabled: false
 
 logging:
   file:
-    # name: /data/tp2intervals.log
     name: ${LOGGING_FILE_NAME:/data/workout-relay.log}

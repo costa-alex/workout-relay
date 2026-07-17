@@ -1,19 +1,27 @@
 package io.github.costaalex.workoutrelay.infrastructure.platform.trainingpeaks.user
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
-class TrainingPeaksUserDTO(
-    var userId: String?,
-    val accountStatus: TPUserAccountStatusDTO,
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class TrainingPeaksUserDTO(
+    val user: TPUserDTO,
 ) {
 
-    @JsonProperty("user")
-    private fun mapUserId(map: Map<*, *>) {
-        userId = (map["userId"] as Number).toLong().toString()
-    }
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    data class TPUserDTO(
+        val userId: Long,
+        val settings: TPUserSettingsDTO,
+    )
 
-    class TPUserAccountStatusDTO(
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    data class TPUserSettingsDTO(
+        val account: TPUserAccountDTO,
+    )
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    data class TPUserAccountDTO(
         val isAthlete: Boolean,
-        val isPremium: Boolean = false,
+        val isPremium: Boolean,
+        val premiumTrial: Boolean = false,
     )
 }
