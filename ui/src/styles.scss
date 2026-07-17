@@ -100,15 +100,15 @@ body {
 .mat-mdc-snack-bar-container.app-notification-success {
   --mat-mdc-snack-bar-button-color: var(--app-on-success);
   --mat-snack-bar-button-color: var(--app-on-success);
-  --mdc-snackbar-container-color: var(--app-success);
-  --mdc-snackbar-supporting-text-color: var(--app-on-success);
+  --mat-snackbar-container-color: var(--app-success);
+  --mat-snackbar-supporting-text-color: var(--app-on-success);
 }
 
 .mat-mdc-snack-bar-container.app-notification-error {
   --mat-mdc-snack-bar-button-color: var(--app-on-error);
   --mat-snack-bar-button-color: var(--app-on-error);
-  --mdc-snackbar-container-color: var(--app-error);
-  --mdc-snackbar-supporting-text-color: var(--app-on-error);
+  --mat-snackbar-container-color: var(--app-error);
+  --mat-snackbar-supporting-text-color: var(--app-on-error);
 }
 
 .mat-mdc-snack-bar-container.app-notification .mdc-snackbar__label {

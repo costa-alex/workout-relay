@@ -1,7 +1,7 @@
 package config.mock
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.ObjectMapper
 import java.io.InputStream
 import io.github.costaalex.workoutrelay.infrastructure.platform.intervalsicu.IntervalsActivityDTO
 import io.github.costaalex.workoutrelay.infrastructure.platform.intervalsicu.IntervalsApiClient

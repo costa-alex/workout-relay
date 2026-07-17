@@ -1,8 +1,10 @@
 <div class="configuration-page app-panel-page">
 
-  <div *ngIf="inProgress" class="loading-container app-panel-container">
-    <mat-progress-bar mode="query"></mat-progress-bar>
-  </div>
+  @if (inProgress) {
+    <div class="loading-container app-panel-container">
+      <mat-progress-bar mode="query"></mat-progress-bar>
+    </div>
+  }
 
   <form
     class="content-container app-panel-container"
@@ -202,19 +204,20 @@
             Debug Mode
           </mat-checkbox>
 
-          <div *ngIf="formGroup.controls['general.debug-mode'].value" class="log-location">
-            <div class="log-location-title">
-              <mat-icon>description</mat-icon>
-              <span>Log location</span>
+          @if (formGroup.controls['general.debug-mode'].value) {
+            <div class="log-location">
+              <div class="log-location-title">
+                <mat-icon>description</mat-icon>
+                <span>Log location</span>
+              </div>
+              <div class="log-location-list">
+                <div><span>Linux</span><code>~/.config/workout-relay/logs/main.log</code></div>
+                <div><span>MacOS</span><code>~/Library/Logs/workout-relay/main.log</code></div>
+                <div><span>Windows</span><code>%USERPROFILE%\AppData\Roaming\workout-relay\logs\main.log</code></div>
+                <div><span>JAR</span><code>./workout-relay.log</code></div>
+              </div>
             </div>
-
-            <div class="log-location-list">
-              <div><span>Linux</span><code>~/.config/workout-relay/logs/main.log</code></div>
-              <div><span>MacOS</span><code>~/Library/Logs/workout-relay/main.log</code></div>
-              <div><span>Windows</span><code>%USERPROFILE%\AppData\Roaming\workout-relay\logs\main.log</code></div>
-              <div><span>JAR</span><code>./workout-relay.log</code></div>
-            </div>
-          </div>
+          }
         </div>
       </mat-expansion-panel>
 

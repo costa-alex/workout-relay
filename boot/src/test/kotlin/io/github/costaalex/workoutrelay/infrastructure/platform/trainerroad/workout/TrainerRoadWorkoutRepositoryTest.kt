@@ -44,7 +44,8 @@ class TrainerRoadWorkoutRepositoryTest {
         // then
         val structure = workout.structure!!
 
-        assertEquals(TrainingType.VIRTUAL_BIKE, workout.details.type)
+        assertEquals(TrainingType.BIKE, workout.details.type)
+        assertEquals(TrainingType.VIRTUAL_BIKE, workout.details.subType)
         assertEquals(WorkoutStructure.TargetUnit.FTP_PERCENTAGE, structure.target)
         assertEquals(11, structure.steps.size)
         assertEquals(5 * 60.toLong(), (structure.steps[0] as SingleStep).length.value)
@@ -67,7 +68,8 @@ class TrainerRoadWorkoutRepositoryTest {
         // then
         val structure = workout.structure!!
 
-        assertEquals(TrainingType.VIRTUAL_BIKE, workout.details.type)
+        assertEquals(TrainingType.BIKE, workout.details.type)
+        assertEquals(TrainingType.VIRTUAL_BIKE, workout.details.subType)
         assertEquals(WorkoutStructure.TargetUnit.FTP_PERCENTAGE, structure.target)
         assertEquals(23, structure.steps.size)
         assertEquals(4 * 60.toLong(), (structure.steps[0] as SingleStep).length.value)
@@ -88,7 +90,8 @@ class TrainerRoadWorkoutRepositoryTest {
         val workout = trainerRoadWorkoutRepository.getWorkoutFromLibrary(data)
 
         // then
-        assertEquals(TrainingType.VIRTUAL_BIKE, workout.details.type)
+        assertEquals(TrainingType.BIKE, workout.details.type)
+        assertEquals(TrainingType.VIRTUAL_BIKE, workout.details.subType)
         assertEquals(WorkoutStructure.TargetUnit.FTP_PERCENTAGE, workout.structure!!.target)
         assertTrue(workout.structure!!.steps.isNotEmpty())
     }

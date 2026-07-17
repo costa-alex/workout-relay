@@ -66,22 +66,21 @@ function periodValidator(
 }
 
 @Component({
-  selector: 'app-automation',
-  standalone: true,
-  imports: [
-    DatePipe,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatCardModule,
-    MatCheckboxModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatProgressBarModule,
-    MatSelectModule
-  ],
-  templateUrl: './automation.component.html',
-  styleUrl: './automation.component.scss'
+    selector: 'app-automation',
+    imports: [
+        DatePipe,
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatCardModule,
+        MatCheckboxModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatInputModule,
+        MatProgressBarModule,
+        MatSelectModule
+    ],
+    templateUrl: './automation.component.html',
+    styleUrl: './automation.component.scss'
 })
 export class AutomationComponent implements OnInit {
 

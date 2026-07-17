@@ -5,7 +5,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
-import {AsyncPipe, NgIf} from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatNativeDateModule} from "@angular/material/core";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
@@ -19,9 +19,8 @@ import {Platform} from "infrastructure/platform";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 
 @Component({
-  selector: 'tr-copy-library-to-library',
-  standalone: true,
-  imports: [
+    selector: 'tr-copy-library-to-library',
+    imports: [
     MatGridListModule,
     FormsModule,
     MatButtonModule,
@@ -29,7 +28,6 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
     MatInputModule,
     ReactiveFormsModule,
     MatProgressBarModule,
-    NgIf,
     MatDatepickerModule,
     MatNativeDateModule,
     MatSnackBarModule,
@@ -37,9 +35,9 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
     MatCheckboxModule,
     AsyncPipe,
     MatAutocompleteModule
-  ],
-  templateUrl: './tr-copy-library-to-library.component.html',
-  styleUrl: './tr-copy-library-to-library.component.scss'
+],
+    templateUrl: './tr-copy-library-to-library.component.html',
+    styleUrl: './tr-copy-library-to-library.component.scss'
 })
 export class TrCopyLibraryToLibraryComponent implements OnInit {
 

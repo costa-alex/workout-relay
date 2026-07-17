@@ -1,6 +1,6 @@
 package config.mock
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import tools.jackson.databind.ObjectMapper
 import java.io.InputStream
 import io.github.costaalex.workoutrelay.infrastructure.platform.trainerroad.TRFindWorkoutsRequestDTO
 import io.github.costaalex.workoutrelay.infrastructure.platform.trainerroad.TrainerRoadApiClient

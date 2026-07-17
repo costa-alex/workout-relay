@@ -9,18 +9,22 @@
           </mat-option>
         }
       </mat-select>
-      <mat-progress-bar *ngIf="loadingInProgress" mode="query"></mat-progress-bar>
+      @if (loadingInProgress) {
+        <mat-progress-bar mode="query"></mat-progress-bar>
+      }
     </mat-form-field>
   </div>
 
-  <div class="row" *ngIf="isPlanSelected | async">
-    <mat-form-field class="form-field">
-      <mat-label>Start Date</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="newStartDate">
-      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
-  </div>
+  @if (isPlanSelected | async) {
+    <div class="row">
+      <mat-form-field class="form-field">
+        <mat-label>Start Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="newStartDate">
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+  }
 
   <div class="row">
     <mat-form-field class="form-field">
@@ -39,11 +43,13 @@
           </mat-option>
         }
       </mat-select>
-      <mat-progress-bar *ngIf="loadingInProgress" mode="query"></mat-progress-bar>
+      @if (loadingInProgress) {
+        <mat-progress-bar mode="query"></mat-progress-bar>
+      }
     </mat-form-field>
     <i class="bi bi-stars beta-icon"
-       matTooltip="Beta feature"
-       matTooltipPosition="right"></i>
+      matTooltip="Beta feature"
+    matTooltipPosition="right"></i>
   </div>
 
   <div class="action-button-section">
@@ -53,7 +59,7 @@
       color="primary"
       type="submit"
       [disabled]="formGroup.invalid || formGroup.disabled || submitInProgress"
-    >
+      >
       Confirm
     </button>
     <button
@@ -61,10 +67,12 @@
       color="primary"
       style="margin-left: 10px"
       type="reset"
-    >
+      >
       Reset
     </button>
   </div>
 
-  <mat-progress-bar *ngIf="submitInProgress" mode="query"></mat-progress-bar>
+  @if (submitInProgress) {
+    <mat-progress-bar mode="query"></mat-progress-bar>
+  }
 </form>

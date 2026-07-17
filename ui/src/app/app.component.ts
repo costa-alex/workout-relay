@@ -5,7 +5,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { forkJoin } from 'rxjs';
-import * as semver from 'semver';
+import { gt } from 'semver';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -17,21 +17,20 @@ import { GitHubClient } from 'infrastructure/client/github.client';
 import { ThemeService } from 'infrastructure/theme.service';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [
-    RouterOutlet,
-    RouterLink,
-    TopBarComponent,
-    MatSidenavModule,
-    MatListModule,
-    MatDividerModule,
-    MatIconModule,
-    MatBadgeModule,
-    MatTooltipModule
-  ],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+    selector: 'app-root',
+    imports: [
+        RouterOutlet,
+        RouterLink,
+        TopBarComponent,
+        MatSidenavModule,
+        MatListModule,
+        MatDividerModule,
+        MatIconModule,
+        MatBadgeModule,
+        MatTooltipModule
+    ],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
 
@@ -78,7 +77,7 @@ export class AppComponent implements OnInit {
     ]).subscribe(([latestRelease, appVersion]) => {
       this.appVersion = appVersion;
 
-      if (semver.gt(latestRelease.version, this.appVersion)) {
+      if (gt(latestRelease.version, this.appVersion)) {
         this.updateAvailableBadgeHidden = false;
         this.githubLink = latestRelease.url;
       }

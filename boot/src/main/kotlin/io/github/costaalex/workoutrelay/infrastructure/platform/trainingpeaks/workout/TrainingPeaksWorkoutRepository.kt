@@ -1,6 +1,6 @@
 package io.github.costaalex.workoutrelay.infrastructure.platform.trainingpeaks.workout
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import tools.jackson.databind.ObjectMapper
 import io.github.costaalex.workoutrelay.domain.ExternalData
 import io.github.costaalex.workoutrelay.domain.Platform
 import io.github.costaalex.workoutrelay.domain.librarycontainer.LibraryContainer
@@ -22,7 +22,6 @@ import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
-
 
 @CacheConfig(cacheNames = ["tpWorkoutsCache"])
 @Repository

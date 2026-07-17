@@ -9,17 +9,16 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 
 @Component({
-  selector: 'app-tp-copy-plan-warning-dialog',
-  standalone: true,
-  imports: [
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
-    MatButtonModule,
-    MatDialogTitle
-  ],
-  templateUrl: './tp-copy-plan-warning-dialog.component.html',
-  styleUrl: './tp-copy-plan-warning-dialog.component.scss'
+    selector: 'app-tp-copy-plan-warning-dialog',
+    imports: [
+        MatDialogContent,
+        MatDialogActions,
+        MatDialogClose,
+        MatButtonModule,
+        MatDialogTitle
+    ],
+    templateUrl: './tp-copy-plan-warning-dialog.component.html',
+    styleUrl: './tp-copy-plan-warning-dialog.component.scss'
 })
 export class TpCopyPlanWarningDialogComponent {
   constructor(

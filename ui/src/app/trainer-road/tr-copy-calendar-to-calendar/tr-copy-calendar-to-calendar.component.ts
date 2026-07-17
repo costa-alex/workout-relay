@@ -18,27 +18,26 @@ import {
 } from "app/components/copy-calendar-to-calendar/copy-calendar-to-calendar.component";
 
 @Component({
-  selector: 'tr-copy-calendar-to-calendar',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatProgressBarModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatSnackBarModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    MatIconModule,
-    MatDividerModule,
-    MatListModule,
-    CopyCalendarToCalendarComponent,
-  ],
-  templateUrl: './tr-copy-calendar-to-calendar.component.html',
-  styleUrl: './tr-copy-calendar-to-calendar.component.scss'
+    selector: 'tr-copy-calendar-to-calendar',
+    imports: [
+        FormsModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        MatProgressBarModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatSnackBarModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        MatIconModule,
+        MatDividerModule,
+        MatListModule,
+        CopyCalendarToCalendarComponent,
+    ],
+    templateUrl: './tr-copy-calendar-to-calendar.component.html',
+    styleUrl: './tr-copy-calendar-to-calendar.component.scss'
 })
 export class TrCopyCalendarToCalendarComponent implements OnInit {
   readonly Platform = Platform;

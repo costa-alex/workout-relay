@@ -17,20 +17,33 @@ import org.springframework.cache.CacheManager
 // TODO fix tests
 @Disabled
 class ConfigurationServiceTest {
-    private val appConfigurationRepository = AppConfigurationRepositoryImpl(mock(ConfigurationCrudRepository::class.java))
 
-    private val configurationService = ConfigurationService(
-        listOf(
-            IntervalsConfigurationRepository(
+    private val appConfigurationRepository =
+        AppConfigurationRepositoryImpl(
+            mock(ConfigurationCrudRepository::class.java)
+        )
+
+    private val cacheManager =
+        mock(CacheManager::class.java)
+
+    private val configurationService =
+        ConfigurationService(
+            platformConfigurationRepositories = listOf(
+                IntervalsConfigurationRepository(
+                    appConfigurationRepository,
+                    mock(
+                        IntervalsAthleteApiClient::class.java
+                    ),
+                    mock(CacheManager::class.java)
+                )
+            ),
+            platformInfoRepositories = emptyList(),
+            appConfigurationRepository =
                 appConfigurationRepository,
-                mock(IntervalsAthleteApiClient::class.java),
-                mock(CacheManager::class.java)
-            )
-        ),
-        listOf(),
-        appConfigurationRepository,
-        mock(DebugModeService::class.java)
-    )
+            debugModeService =
+                mock(DebugModeService::class.java),
+            cacheManager = cacheManager
+        )
 
     @Test
     fun `should set and update required configuration`() {

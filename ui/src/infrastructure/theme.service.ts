@@ -1,11 +1,12 @@
-import { DOCUMENT } from '@angular/common';
+
 import {
   computed,
   effect,
   Inject,
   Injectable,
   OnDestroy,
-  signal
+  signal,
+  DOCUMENT
 } from '@angular/core';
 
 export type ThemePreference = 'system' | 'light' | 'dark';
