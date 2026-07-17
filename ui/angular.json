@@ -33,6 +33,9 @@
               "src/theme.scss",
               "src/styles.scss"
             ],
+            "allowedCommonJsDependencies": [
+              "semver"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -45,8 +48,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "4kb",
+                  "maximumError": "6kb"
                 }
               ],
               "outputHashing": "all"

@@ -5,7 +5,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { forkJoin } from 'rxjs';
-import * as semver from 'semver';
+import { gt } from 'semver';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -78,7 +78,7 @@ export class AppComponent implements OnInit {
     ]).subscribe(([latestRelease, appVersion]) => {
       this.appVersion = appVersion;
 
-      if (semver.gt(latestRelease.version, this.appVersion)) {
+      if (gt(latestRelease.version, this.appVersion)) {
         this.updateAvailableBadgeHidden = false;
         this.githubLink = latestRelease.url;
       }

@@ -48,6 +48,8 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.wiremock:wiremock-standalone:3.5.2")
+
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 springBoot {
@@ -61,8 +63,33 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+}
+
+tasks.named<Test>("test") {
+    useJUnitPlatform {
+        excludeTags("external")
+    }
+}
+
+tasks.register<Test>("externalTest") {
+    description =
+        "Runs tests that depend on external platforms"
+
+    group = "verification"
+
+    testClassesDirs =
+        sourceSets["test"].output.classesDirs
+
+    classpath =
+        sourceSets["test"].runtimeClasspath
+
+    useJUnitPlatform {
+        includeTags("external")
+    }
+
+    shouldRunAfter(tasks.test)
 }
 
 tasks.bootJar {

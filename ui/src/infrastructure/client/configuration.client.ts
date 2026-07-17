@@ -11,7 +11,7 @@ export interface PlatformConnectionInfo {
 }
 
 export interface PlatformConnectionMap {
-  [platformKey: string]: PlatformConnectionInfo;
+  [platformKey: string]: PlatformConnectionInfo | undefined;
 }
 
 @Injectable({
