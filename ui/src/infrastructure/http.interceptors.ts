@@ -1,44 +1,34 @@
-import { HttpHandlerFn, HttpInterceptorFn, HttpRequest } from "@angular/common/http";
-import { inject } from "@angular/core";
-import { catchError, throwError } from "rxjs";
-import { NotificationService } from "infrastructure/notification.service";
-import { EnvironmentService } from "infrastructure/environment.service";
+import {
+  HttpHandlerFn,
+  HttpInterceptorFn,
+  HttpRequest
+} from '@angular/common/http';
+import { inject } from '@angular/core';
+import { catchError, throwError } from 'rxjs';
+import { NotificationService } from 'infrastructure/notification.service';
 
 export const httpErrorInterceptor: HttpInterceptorFn = (
-  req: HttpRequest<any>,
-  next: HttpHandlerFn,
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn
 ) => {
-  let notificationService = inject(NotificationService)
+  const notificationService = inject(NotificationService);
 
   return next(req).pipe(
-    catchError((err) => {
-      let message = err.error?.message ? err.error.message : err.message
-      let platform = err.error?.platform
+    catchError(err => {
+      const message =
+        err.error?.message ??
+        err.message ??
+        'An unexpected error occurred';
 
-      let errorMessage
-      if (!!platform) {
-        errorMessage = `${platform}: ${message}`
-      } else {
-        errorMessage = message
-      }
-      notificationService.error(errorMessage)
-      return throwError(() => err)
+      const platform = err.error?.platform;
+
+      const errorMessage = platform
+        ? `${platform}: ${message}`
+        : message;
+
+      notificationService.error(errorMessage);
+
+      return throwError(() => err);
     })
   );
-};
-
-export const httpHostInterceptor: HttpInterceptorFn = (
-  req: HttpRequest<any>,
-  next: HttpHandlerFn,
-) => {
-  let environmentService = inject(EnvironmentService)
-  let host = environmentService.getAddress()
-
-  let url = req.url.replace(/^\/|\/$/g, '')
-  if (!!host && !url.startsWith('http')) {
-    url = `${host}/${url}`
-  }
-
-  const apiReq = req.clone({url});
-  return next(apiReq);
 };

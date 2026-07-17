@@ -10,7 +10,9 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { TopBarComponent } from 'app/top-bar/top-bar.component';
-import { EnvironmentService } from 'infrastructure/environment.service';
+import {
+  ApplicationInfoClient
+} from 'infrastructure/client/application-info.client';
 import { GitHubClient } from 'infrastructure/client/github.client';
 import { ThemeService } from 'infrastructure/theme.service';
 
@@ -64,7 +66,7 @@ export class AppComponent implements OnInit {
   constructor(
     protected router: Router,
     private githubClient: GitHubClient,
-    private environmentService: EnvironmentService,
+    private applicationInfoClient: ApplicationInfoClient,
     private themeService: ThemeService
   ) {
   }
@@ -72,7 +74,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     forkJoin([
       this.githubClient.getLatestRelease(),
-      this.environmentService.getVersion()
+      this.applicationInfoClient.getVersion()
     ]).subscribe(([latestRelease, appVersion]) => {
       this.appVersion = appVersion;
 
