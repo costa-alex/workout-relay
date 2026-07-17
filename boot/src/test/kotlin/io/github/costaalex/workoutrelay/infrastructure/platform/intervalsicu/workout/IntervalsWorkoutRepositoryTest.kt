@@ -168,7 +168,7 @@ class IntervalsWorkoutRepositoryTest {
         val workout = findWorkoutWithName("virtual ride test", workouts)
         assertEquals(TrainingType.VIRTUAL_BIKE, workout.details.type)
         assertEquals(WorkoutStructure.TargetUnit.FTP_PERCENTAGE, workout.structure!!.target)
-        assertEquals(5, workout.structure!!.steps.size)
+        assertEquals(5, workout.structure.steps.size)
     }
 
     @Test

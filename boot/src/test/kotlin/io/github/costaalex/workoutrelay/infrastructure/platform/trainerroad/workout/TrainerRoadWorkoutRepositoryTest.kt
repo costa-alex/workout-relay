@@ -93,7 +93,7 @@ class TrainerRoadWorkoutRepositoryTest {
         assertEquals(TrainingType.BIKE, workout.details.type)
         assertEquals(TrainingType.VIRTUAL_BIKE, workout.details.subType)
         assertEquals(WorkoutStructure.TargetUnit.FTP_PERCENTAGE, workout.structure!!.target)
-        assertTrue(workout.structure!!.steps.isNotEmpty())
+        assertTrue(workout.structure.steps.isNotEmpty())
     }
 
     @Test
