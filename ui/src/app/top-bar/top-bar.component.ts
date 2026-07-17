@@ -8,17 +8,16 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { map, shareReplay } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-top-bar',
-  standalone: true,
-  imports: [
-    AsyncPipe,
-    RouterLink,
-    MatButtonModule,
-    MatIconModule,
-    MatToolbarModule
-  ],
-  templateUrl: './top-bar.component.html',
-  styleUrl: './top-bar.component.scss'
+    selector: 'app-top-bar',
+    imports: [
+        AsyncPipe,
+        RouterLink,
+        MatButtonModule,
+        MatIconModule,
+        MatToolbarModule
+    ],
+    templateUrl: './top-bar.component.html',
+    styleUrl: './top-bar.component.scss'
 })
 export class TopBarComponent {
 

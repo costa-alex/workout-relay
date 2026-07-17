@@ -8,10 +8,7 @@ import {
   withInMemoryScrolling
 } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import {
-  provideHttpClient,
-  withInterceptors
-} from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { routes } from './app.routes';

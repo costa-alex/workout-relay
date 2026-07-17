@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NgIf } from '@angular/common';
+
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,19 +18,17 @@ import {
 } from 'app/trainer-road/tr-copy-library-to-library/tr-copy-library-to-library.component';
 
 @Component({
-  selector: 'app-trainer-road',
-  standalone: true,
-  imports: [
-    NgIf,
+    selector: 'app-trainer-road',
+    imports: [
     MatExpansionModule,
     MatProgressBarModule,
     MatIconModule,
     TrCopyLibraryToLibraryComponent,
     TrCopyCalendarToLibraryComponent,
     TrCopyCalendarToCalendarComponent
-  ],
-  templateUrl: './trainer-road.component.html',
-  styleUrl: './trainer-road.component.scss'
+],
+    templateUrl: './trainer-road.component.html',
+    styleUrl: './trainer-road.component.scss'
 })
 export class TrainerRoadComponent implements OnInit {
   platformInfo: any = undefined;

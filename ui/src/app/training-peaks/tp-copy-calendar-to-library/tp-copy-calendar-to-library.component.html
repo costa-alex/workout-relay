@@ -49,10 +49,12 @@
       color="primary"
       type="submit"
       [disabled]="formGroup.invalid || inProgress"
-    >
+      >
       Confirm
     </button>
   </div>
 
-  <mat-progress-bar *ngIf="inProgress" mode="query"></mat-progress-bar>
+  @if (inProgress) {
+    <mat-progress-bar mode="query"></mat-progress-bar>
+  }
 </form>

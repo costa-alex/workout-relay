@@ -1,7 +1,7 @@
 # ===========================
 # Stage 1 - Build Angular UI
 # ===========================
-FROM node:20 AS ui-builder
+FROM node:22.23.1-bookworm-slim AS ui-builder
 
 WORKDIR /ui
 
