@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.2.0"
-    id("io.spring.dependency-management") version "1.1.4"
+    id("org.springframework.boot") version "3.5.16"
+    id("io.spring.dependency-management") version "1.1.7"
     id("org.openapi.generator") version "7.2.0"
-    kotlin("jvm") version "1.9.22"
-    kotlin("plugin.spring") version "1.9.22"
+    kotlin("jvm") version "2.1.21"
+    kotlin("plugin.spring") version "2.1.21"
 }
 
 group = "io.github.costaalex"
@@ -21,7 +21,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2023.0.0")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.0.3")
     }
 }
 
@@ -35,8 +35,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
-    implementation("org.hibernate.orm:hibernate-community-dialects:6.4.2.Final")
-    implementation("org.xerial:sqlite-jdbc:3.45.0.0")
+    implementation("org.hibernate.orm:hibernate-community-dialects")
+    implementation("org.xerial:sqlite-jdbc")
     implementation("org.liquibase:liquibase-core")
 
     implementation(group = "org.ehcache", name = "ehcache", classifier = "jakarta")
