@@ -1,30 +1,41 @@
-import { HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { catchError, throwError } from 'rxjs';
-import { NotificationService } from 'infrastructure/notification.service';
+import {
+  HttpErrorResponse,
+  HttpHandlerFn,
+  HttpInterceptorFn,
+  HttpRequest
+} from '@angular/common/http';
+
+interface ApiErrorResponse {
+  platform?: string;
+  message?: string;
+  code?: string;
+}
 
 export const httpErrorInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
 ) => {
-  const notificationService = inject(NotificationService);
+  const notificationService =
+    inject(NotificationService);
 
   return next(req).pipe(
-    catchError(err => {
+    catchError((error: HttpErrorResponse) => {
+      const response =
+        error.error as ApiErrorResponse | undefined;
+
       const message =
-        err.error?.message ??
-        err.message ??
+        response?.message ??
+        error.message ??
         'An unexpected error occurred';
 
-      const platform = err.error?.platform;
-
-      const errorMessage = platform
-        ? `${platform}: ${message}`
-        : message;
+      const errorMessage =
+        response?.platform
+          ? `${response.platform}: ${message}`
+          : message;
 
       notificationService.error(errorMessage);
 
-      return throwError(() => err);
+      return throwError(() => error);
     })
   );
 };
