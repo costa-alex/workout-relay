@@ -9,6 +9,7 @@ import io.github.costaalex.workoutrelay.domain.config.PlatformInfo
 import io.github.costaalex.workoutrelay.domain.config.PlatformInfoRepository
 import io.github.costaalex.workoutrelay.domain.config.UpdateConfigurationRequest
 import io.github.costaalex.workoutrelay.infrastructure.PlatformException
+import io.github.costaalex.workoutrelay.infrastructure.PlatformErrorCode
 import org.springframework.stereotype.Service
 import org.slf4j.LoggerFactory
 import org.springframework.cache.CacheManager
