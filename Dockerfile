@@ -18,6 +18,8 @@ RUN npm run build
 # ===========================
 FROM amazoncorretto:21 AS builder
 
+RUN microdnf install -y findutils && microdnf clean all
+
 WORKDIR /app
 
 COPY . .
