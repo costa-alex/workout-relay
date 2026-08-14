@@ -28,8 +28,26 @@ class TrainerRoadApiClientService(
             .map { TrainerRoadWorkoutMapper().toWorkoutDetails(it, removeHtmlTags) }
     }
 
+    private fun getTimeline(
+        memberId: Long,
+        startDate: LocalDate,
+        endDate: LocalDate,
+    ): TrainerRoadTimelineDTO {
+        val apiEndDate = if (startDate == endDate) {
+            endDate.plusDays(1)
+        } else {
+            endDate
+        }
+
+        return trainerRoadApiClient.getTimeline(
+            memberId,
+            startDate.toString(),
+            apiEndDate.toString(),
+        )
+    }
+
     fun getWorkoutsFromCalendar(startDate: LocalDate, endDate: LocalDate, memberId: Long): List<Workout> {
-        return trainerRoadApiClient.getTimeline(memberId, startDate.toString(), endDate.toString())
+        return getTimeline(memberId, startDate, endDate)
             .plannedActivities
             .filter { it.date.toLocalDate() in startDate..endDate }
             .filter { it.workoutId != null }
@@ -55,7 +73,7 @@ class TrainerRoadApiClientService(
     }
 
     fun getActivities(memberId: Long, startDate: LocalDate, endDate: LocalDate): List<Activity> {
-        val activityIds = trainerRoadApiClient.getTimeline(memberId, startDate.toString(), endDate.toString())
+        val activityIds = getTimeline(memberId, startDate, endDate)
             .activities
             .filter {
                 val startedDate = it.started?.toLocalDate()
