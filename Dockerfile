@@ -16,7 +16,9 @@ RUN npm run build
 # ===========================
 # Stage 2 - Build Spring Boot
 # ===========================
-FROM amazoncorretto:21-debian AS builder
+FROM amazoncorretto:21-al2023 AS builder
+
+RUN yum install -y findutils && yum clean all && rm -rf /var/cache/yum
 
 WORKDIR /app
 
