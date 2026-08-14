@@ -16,9 +16,7 @@ RUN npm run build
 # ===========================
 # Stage 2 - Build Spring Boot
 # ===========================
-FROM amazoncorretto:21 AS builder
-
-RUN microdnf install -y findutils && microdnf clean all
+FROM amazoncorretto:21-debian AS builder
 
 WORKDIR /app
 
