@@ -1,4 +1,11 @@
-<div class="configuration-page app-panel-page">
+<div class="configuration-page app-panel-page app-standard-page">
+
+  <section class="app-page-intro">
+    <h1>Settings</h1>
+    <p>
+      Manage platform connections, workout conversion preferences, appearance, and diagnostics.
+    </p>
+  </section>
 
   @if (inProgress) {
     <div class="loading-container app-panel-container">
@@ -11,6 +18,13 @@
     [formGroup]="formGroup"
     novalidate
     (ngSubmit)="onSubmit()">
+
+    <div class="app-section-header">
+      <div>
+        <h2>Connections and preferences</h2>
+        <p>Open a section to review or update its configuration.</p>
+      </div>
+    </div>
 
     <mat-accordion multi class="config-accordion app-panel-accordion">
 

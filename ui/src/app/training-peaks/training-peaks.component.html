@@ -1,20 +1,35 @@
-<div class="training-peaks-page app-panel-page">
+<div class="training-peaks-page app-panel-page app-standard-page">
 
-  @if (!platformInfo) {
-    <div class="loading-container app-panel-container">
-      <mat-progress-bar mode="query"></mat-progress-bar>
+  <section class="app-page-intro">
+    <h1>TrainingPeaks</h1>
+    <p>
+      Sync calendar workouts and move training plans or libraries between TrainingPeaks and Intervals.icu.
+    </p>
+  </section>
+
+  <section class="actions-section">
+    <div class="app-section-header">
+      <div>
+        <h2>Workout actions</h2>
+        <p>Choose how you want to move your TrainingPeaks workouts.</p>
+      </div>
     </div>
-  }
 
-  @if (platformInfo?.isValid === false) {
-    <div
-      class="not-configured app-panel-container app-not-configured">
-      Platform is not configured. Please set required parameters on the Settings page.
-    </div>
-  }
+    @if (!platformInfo) {
+      <div class="loading-container app-panel-container">
+        <mat-progress-bar mode="query"></mat-progress-bar>
+      </div>
+    }
 
-  @if (platformInfo?.isValid) {
-    <div class="content-container app-panel-container">
+    @if (platformInfo?.isValid === false) {
+      <div
+        class="not-configured app-panel-container app-not-configured">
+        Platform is not configured. Please set required parameters on the Settings page.
+      </div>
+    }
+
+    @if (platformInfo?.isValid) {
+      <div class="content-container app-panel-container">
       <mat-accordion multi class="action-accordion app-panel-accordion">
         <mat-expansion-panel
           class="action-panel app-panel-card"
@@ -79,7 +94,8 @@
           <tp-copy-calendar-to-library></tp-copy-calendar-to-library>
         </mat-expansion-panel>
       </mat-accordion>
-    </div>
-  }
+      </div>
+    }
+  </section>
 
 </div>
