@@ -34,7 +34,7 @@ class TrainerRoadWorkoutRepositoryTest {
         TrainerRoadApiClientService(
             trainerRoadApiClient,
             trainerRoadConfigurationRepository,
-            TrainerRoadWorkoutCacheService(trainerRoadApiClient, trainerRoadConfigurationRepository),
+            TrainerRoadWorkoutCacheService(trainerRoadApiClient, trainerRoadConfigurationRepository, objectMapper),
         )
 
     private val trainerRoadWorkoutRepository =

@@ -63,18 +63,31 @@ class TPToWorkoutConverter {
         )
     }
 
-    private fun toWorkoutStructure(tpWorkout: TPBaseWorkoutResponseDTO) =
-        try {
-            if (tpWorkout.structure == null || tpWorkout.structure.structure.isEmpty()) {
-                throw IllegalArgumentException("There is no structure")
-            }
-            FromTPStructureConverter.toWorkoutStructure(tpWorkout.structure).also {
+    private fun toWorkoutStructure(tpWorkout: TPBaseWorkoutResponseDTO): WorkoutStructure? {
+        val structure = tpWorkout.structure
+        if (structure == null || structure.structure.isEmpty()) {
+            log.debug(
+                "TrainingPeaks workout has no structured steps, id: {}, name: {}",
+                tpWorkout.id,
+                tpWorkout.title,
+            )
+            return null
+        }
+
+        return try {
+            FromTPStructureConverter.toWorkoutStructure(structure).also {
                 log.debug("Read TrainingPeaks workout {}, target preview: {}", tpWorkout.title, targetPreview(it))
             }
         } catch (e: IllegalArgumentException) {
-            log.warn("Error during TP Workout conversion, skipping, id: ${tpWorkout.id}, name: ${tpWorkout.title}, error - ${e.message}'")
+            log.warn(
+                "Invalid TrainingPeaks workout structure, id: {}, name: {}, error: {}",
+                tpWorkout.id,
+                tpWorkout.title,
+                e.message,
+            )
             null
         }
+    }
 
     private fun getWorkoutExternalData(tpWorkout: TPBaseWorkoutResponseDTO): ExternalData {
         return ExternalData.empty().withTrainingPeaks(tpWorkout.id).fromSimpleString(tpWorkout.description ?: "")
