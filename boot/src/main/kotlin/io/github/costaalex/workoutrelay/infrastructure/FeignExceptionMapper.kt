@@ -67,7 +67,6 @@ class FeignExceptionMapper {
             code = codeAndMessage.first,
             upstreamStatus = upstreamStatus,
             message = codeAndMessage.second,
-            cause = exception,
         )
     }
 }

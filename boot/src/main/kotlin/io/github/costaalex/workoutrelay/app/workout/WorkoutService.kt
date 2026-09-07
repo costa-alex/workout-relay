@@ -121,6 +121,11 @@ class WorkoutService(
     fun copyWorkoutsC2C(
         request: CopyFromCalendarToCalendarRequest
     ): CopyWorkoutsResponse {
+        requireValidDateRange(request.startDate, request.endDate)
+        requireSupportedCalendarDirection(
+            request.sourcePlatform,
+            request.targetPlatform,
+        )
 
         return if (shouldReconcileChangedWorkouts(request)) {
             reconcileTrainerRoadToTrainingPeaksRange(request)
@@ -406,6 +411,20 @@ class WorkoutService(
     }
     
     fun copyWorkoutsC2L(request: CopyFromCalendarToLibraryRequest): CopyWorkoutsResponse {
+        requireValidDateRange(request.startDate, request.endDate)
+        require(request.name.isNotBlank()) {
+            "Library name cannot be blank"
+        }
+        require(
+            request.targetPlatform == Platform.INTERVALS &&
+                request.sourcePlatform in setOf(
+                    Platform.TRAINER_ROAD,
+                    Platform.TRAINING_PEAKS,
+                )
+        ) {
+            "Calendar-to-library synchronization from ${request.sourcePlatform} " +
+                "to ${request.targetPlatform} is not supported"
+        }
         log.debug("Received request for copy calendar to library: $request")
         val sourceWorkoutRepository = getWorkoutRepository(request.sourcePlatform)
         val targetWorkoutRepository = getWorkoutRepository(request.targetPlatform)
@@ -430,6 +449,16 @@ class WorkoutService(
     }
 
     fun copyWorkoutL2L(request: CopyFromLibraryToLibraryRequest): CopyWorkoutsResponse {
+        require(
+            request.targetPlatform == Platform.INTERVALS &&
+                request.sourcePlatform in setOf(
+                    Platform.TRAINER_ROAD,
+                    Platform.TRAINING_PEAKS,
+                )
+        ) {
+            "Library synchronization from ${request.sourcePlatform} " +
+                "to ${request.targetPlatform} is not supported"
+        }
         log.debug("Received request for copy library to library: $request")
         val sourceWorkoutRepository = getWorkoutRepository(request.sourcePlatform)
         val targetWorkoutRepository = getWorkoutRepository(request.targetPlatform)
@@ -448,11 +477,21 @@ class WorkoutService(
     }
 
     fun findWorkoutsByName(platform: Platform, name: String): List<WorkoutDetails> {
+        require(platform in setOf(Platform.TRAINER_ROAD, Platform.TRAINING_PEAKS)) {
+            "Workout library search is not supported for $platform"
+        }
+        require(name.isNotBlank()) {
+            "Workout name cannot be blank"
+        }
         log.debug("Received request for find workouts by name, platform: $platform, name: $name")
         return getWorkoutRepository(platform).findWorkoutsFromLibraryByName(name)
     }
 
     fun deleteWorkoutsFromCalendar(request: DeleteWorkoutRequestDTO) {
+        requireValidDateRange(request.startDate, request.endDate)
+        require(request.platform == Platform.TRAINING_PEAKS) {
+            "Calendar workout deletion is not supported for ${request.platform}"
+        }
         log.debug("Received request to delete workouts from calendar: $request")
         val workoutRepository = getWorkoutRepository(request.platform)
         workoutRepository.deleteWorkoutsFromCalendar(request.startDate, request.endDate)
@@ -468,5 +507,14 @@ class WorkoutService(
             workout.details.description?.contains(
                 ExternalData.DESCRIPTION_SEPARATOR
             ) == true
+    }
+
+    private fun requireValidDateRange(
+        startDate: LocalDate,
+        endDate: LocalDate,
+    ) {
+        require(!startDate.isAfter(endDate)) {
+            "Start date cannot be after end date"
+        }
     }
 }

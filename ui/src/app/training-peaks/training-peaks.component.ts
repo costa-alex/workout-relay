@@ -10,7 +10,7 @@ import {
 } from "app/training-peaks/tp-copy-calendar-to-library/tp-copy-calendar-to-library.component";
 import {MatExpansionModule} from "@angular/material/expansion";
 
-import {ConfigurationClient} from "infrastructure/client/configuration.client";
+import {ConfigurationClient, PlatformConnectionInfo} from "infrastructure/client/configuration.client";
 import {Platform} from "infrastructure/platform";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {MatTooltipModule} from "@angular/material/tooltip";
@@ -31,7 +31,7 @@ import {MatIconModule} from '@angular/material/icon';
     styleUrl: './training-peaks.component.scss'
 })
 export class TrainingPeaksComponent implements OnInit {
-  platformInfo: any = undefined;
+  platformInfo: PlatformConnectionInfo | undefined;
 
   constructor(
     private configurationClient: ConfigurationClient

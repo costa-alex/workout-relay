@@ -17,6 +17,7 @@ import {debounceTime, filter, finalize, map, Observable, switchMap, tap} from "r
 import {LibraryClient} from "infrastructure/client/library-client.service";
 import {Platform} from "infrastructure/platform";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import {LibraryContainer, WorkoutDetails} from 'infrastructure/api-models';
 
 @Component({
     selector: 'tr-copy-library-to-library',
@@ -49,8 +50,8 @@ export class TrCopyLibraryToLibraryComponent implements OnInit {
   searchInProgress = false
   submitInProgress = false
 
-  workouts: Observable<any[]>;
-  intervalsLibraryItem: Observable<{ name: any; value: any }[]>;
+  workouts: Observable<WorkoutDetails[]>;
+  intervalsLibraryItem: Observable<{ name: string; value: LibraryContainer }[]>;
 
   private readonly direction = Platform.DIRECTION_TR_INT
 
@@ -67,11 +68,15 @@ export class TrCopyLibraryToLibraryComponent implements OnInit {
     this.subscribeOnWorkoutNameChange();
   }
 
-  copyWorkoutSubmit() {
+  copyWorkoutSubmit(): void {
+    if (this.formGroup.invalid) {
+      this.formGroup.markAllAsTouched();
+      return;
+    }
+
     this.submitInProgress = true
-    let workoutDetails = this.formGroup.value.trWorkoutDetails
-    let intervalsPlan = this.formGroup.value.intervalsPlan
-    console.log(this.formGroup.getRawValue())
+    const workoutDetails = this.formGroup.value.trWorkoutDetails as WorkoutDetails
+    const intervalsPlan = this.formGroup.value.intervalsPlan as LibraryContainer
     this.workoutClient.copyLibraryToLibrary(workoutDetails.externalData, intervalsPlan, this.direction).pipe(
       finalize(() => this.submitInProgress = false)
     ).subscribe((response) => {
@@ -79,14 +84,14 @@ export class TrCopyLibraryToLibraryComponent implements OnInit {
     })
   }
 
-  getWorkoutDetailsName(details) {
+  getWorkoutDetailsName(details: WorkoutDetails | null): string {
     if (!details) {
       return ''
     }
     return `${details.name} (Duration: ${details.duration || '0'}, Load: ${details.load})`
   }
 
-  private loadPlans() {
+  private loadPlans(): void {
     this.formGroup.disable()
     this.intervalsLibraryItem = this.planClient.getLibraries(Platform.INTERVALS.key).pipe(
       map(plans => plans.map(plan => {
@@ -99,14 +104,14 @@ export class TrCopyLibraryToLibraryComponent implements OnInit {
     )
   }
 
-  private subscribeOnWorkoutNameChange() {
+  private subscribeOnWorkoutNameChange(): void {
     this.workouts = this.formGroup.controls['trWorkoutDetails'].valueChanges.pipe(
       debounceTime(500),
       filter(() => this.formGroup.controls['trWorkoutDetails'].valid),
       tap(() => {
         this.searchInProgress = true
       }),
-      switchMap(value => this.workoutClient.findWorkoutsByName(Platform.TRAINER_ROAD.key, value).pipe(
+      switchMap((value: string) => this.workoutClient.findWorkoutsByName(Platform.TRAINER_ROAD.key, value).pipe(
         finalize(() => {
           this.searchInProgress = false
         })

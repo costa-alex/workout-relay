@@ -23,6 +23,7 @@ import {
 import {formatDate} from "utils/date-formatter";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {StepModifier} from "app/training-peaks/tp-copy-library-container/step-modifier";
+import {LibraryContainer} from 'infrastructure/api-models';
 
 @Component({
     selector: 'tp-copy-library-container',
@@ -61,8 +62,8 @@ export class TpCopyLibraryContainerComponent implements OnInit {
   loadingInProgress = false
 
   stepModifiers = StepModifier.stepModifiers;
-  plans: any[];
-  config: any;
+  plans: { name: string; value: LibraryContainer }[];
+  config: Record<string, string | boolean | null> = {};
 
   constructor(
     private formBuilder: FormBuilder,
@@ -81,16 +82,21 @@ export class TpCopyLibraryContainerComponent implements OnInit {
     this.onPlanChange();
   }
 
-  copyPlanSubmit() {
-    let plan = this.formGroup.value.plan
+  copyPlanSubmit(): void {
+    if (this.formGroup.invalid) {
+      this.formGroup.markAllAsTouched();
+      return;
+    }
+
+    const plan = this.formGroup.value.plan as LibraryContainer
     if (plan.workoutsAmount > 100) {
-      this.openWarningDialog(plan, this.copyPlan)
+      this.openWarningDialog(plan, () => this.copyPlan())
       return
     }
     this.copyPlan()
   }
 
-  private copyPlan() {
+  private copyPlan(): void {
     this.submitInProgress = true
     let plan = this.formGroup.value.plan
     let newName = this.formGroup.value.newName
@@ -105,32 +111,35 @@ export class TpCopyLibraryContainerComponent implements OnInit {
     })
   }
 
-  private openWarningDialog(plan, continueCallback): void {
+  private openWarningDialog(
+    plan: LibraryContainer,
+    continueCallback: () => void,
+  ): void {
     const dialogRef = this.dialog.open(TpCopyPlanWarningDialogComponent, {
       data: plan,
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        continueCallback.bind(this)()
+        continueCallback()
       }
     });
   }
 
-  private getMonday(date) {
+  private getMonday(date: Date): Date {
     date = new Date(date);
     let day = date.getDay(),
       diff = date.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
     return new Date(date.setDate(diff));
   }
 
-  private getConfig() {
+  private getConfig(): void {
     this.configurationClient.getConfig().subscribe(config => {
       this.config = config.config
     })
   }
 
-  private getPlans() {
+  private getPlans(): void {
     this.planClient.getLibraries(Platform.TRAINING_PEAKS.key).pipe(
       map(plans => plans.map(plan => {
           return {name: plan.name, value: plan}
@@ -143,7 +152,7 @@ export class TpCopyLibraryContainerComponent implements OnInit {
     ).subscribe(plans => this.plans = plans)
   }
 
-  private onPlanChange() {
+  private onPlanChange(): void {
     this.formGroup.controls['plan'].valueChanges.pipe(
       filter(value => value!!)
     ).subscribe(value => {

@@ -49,7 +49,6 @@ class CatchFeignExceptionAspect(
                 platform.title,
                 platformException.code,
                 platformException.upstreamStatus,
-                exception,
             )
 
             throw platformException

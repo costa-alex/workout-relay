@@ -7,6 +7,7 @@ import {
   MatDialogRef, MatDialogTitle
 } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
+import {LibraryContainer} from 'infrastructure/api-models';
 
 @Component({
     selector: 'app-tp-copy-plan-warning-dialog',
@@ -23,6 +24,6 @@ import { MatButtonModule } from "@angular/material/button";
 export class TpCopyPlanWarningDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<TpCopyPlanWarningDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: LibraryContainer,
   ) {}
 }

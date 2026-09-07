@@ -6,6 +6,7 @@ import {
   MatSnackBarVerticalPosition
 } from '@angular/material/snack-bar';
 import { BreakpointObserver } from '@angular/cdk/layout';
+import {CopyWorkoutsResponse} from './api-models';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,7 @@ export class NotificationService {
   }
 
   copyCalendarToCalendarCompleted(
-    response: any,
+    response: CopyWorkoutsResponse,
     sourcePlatformTitle?: string,
     targetPlatformTitle?: string
   ): void {
@@ -103,7 +104,7 @@ export class NotificationService {
     ]));
   }
 
-  copyCalendarToLibraryCompleted(response: any, libraryName?: string): void {
+  copyCalendarToLibraryCompleted(response: CopyWorkoutsResponse, libraryName?: string): void {
     const copied = response.copied ?? 0;
     const skippedByType = response.skippedByType ?? 0;
     const failed = response.failed ?? 0;

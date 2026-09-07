@@ -9,7 +9,7 @@ import {MatNativeDateModule} from "@angular/material/core";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {MatSelectModule} from "@angular/material/select";
 import {MatCheckboxModule} from "@angular/material/checkbox";
-import {Platform} from "infrastructure/platform";
+import {Platform, PlatformDefinition, PlatformDirection, PlatformKey} from "infrastructure/platform";
 import {formatDate} from "utils/date-formatter";
 
 import {ConfigurationClient} from "infrastructure/client/configuration.client";
@@ -19,6 +19,17 @@ import {NotificationService} from "infrastructure/notification.service";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import {PlatformConnectionMap} from 'infrastructure/client/configuration.client';
+
+interface TrainingTypeOption {
+  title: string;
+  value: string;
+}
+
+interface DirectionOption {
+  title: string;
+  value: PlatformDirection;
+}
 
 @Component({
     selector: 'copy-calendar-to-calendar',
@@ -46,13 +57,13 @@ export class CopyCalendarToCalendarComponent implements OnInit {
   readonly todayDate = new Date()
   readonly tomorrowDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
 
-  @Input() trainingTypes: any[] = []
+  @Input() trainingTypes: TrainingTypeOption[] = []
   @Input() selectedTrainingTypes = ['BIKE', 'VIRTUAL_BIKE']
-  @Input() directions: any[] = []
+  @Input() directions: DirectionOption[] = []
   @Input() inProgress = false
 
   formGroup: FormGroup
-  platformsInfo: any
+  platformsInfo: PlatformConnectionMap = {}
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -72,6 +83,11 @@ export class CopyCalendarToCalendarComponent implements OnInit {
   }
 
   submit(): void {
+    if (this.formGroup.invalid) {
+      this.formGroup.markAllAsTouched();
+      return;
+    }
+
     const startDate = formatDate(
       this.formGroup.controls['startDate'].value
     );
@@ -154,7 +170,9 @@ export class CopyCalendarToCalendarComponent implements OnInit {
     })
   }
 
-  private platformKey(platform: any): string {
+  private platformKey(
+    platform: PlatformKey | PlatformDefinition | undefined
+  ): PlatformKey | undefined {
     return typeof platform === 'string'
       ? platform
       : platform?.key;

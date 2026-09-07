@@ -5,7 +5,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 
 import { Platform } from 'infrastructure/platform';
-import { ConfigurationClient } from 'infrastructure/client/configuration.client';
+import { ConfigurationClient, PlatformConnectionInfo } from 'infrastructure/client/configuration.client';
 
 import {
   TrCopyCalendarToCalendarComponent
@@ -31,7 +31,7 @@ import {
     styleUrl: './trainer-road.component.scss'
 })
 export class TrainerRoadComponent implements OnInit {
-  platformInfo: any = undefined;
+  platformInfo: PlatformConnectionInfo | undefined;
 
   private readonly platform = Platform.TRAINER_ROAD;
 

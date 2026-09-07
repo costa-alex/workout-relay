@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: restore-scheduled-requests-after-0008
+      author: workout-relay
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: schedule_requests_0008_backup
+      changes:
+        - sql:
+            sql: INSERT INTO schedule_requests (id, request_json) SELECT id, request_json FROM schedule_requests_0008_backup
+
+        - dropTable:
+            tableName: schedule_requests_0008_backup

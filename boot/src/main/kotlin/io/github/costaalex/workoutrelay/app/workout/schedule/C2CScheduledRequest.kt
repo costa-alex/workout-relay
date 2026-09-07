@@ -1,6 +1,7 @@
 package io.github.costaalex.workoutrelay.app.workout.schedule
 
 import io.github.costaalex.workoutrelay.app.workout.CopyFromCalendarToCalendarRequest
+import io.github.costaalex.workoutrelay.app.workout.requireSupportedCalendarDirection
 import io.github.costaalex.workoutrelay.domain.Platform
 import io.github.costaalex.workoutrelay.domain.TrainingType
 import java.time.LocalDate
@@ -26,6 +27,11 @@ data class C2CScheduledRequest(
         require(startOffsetDays <= endOffsetDays) {
             "Start offset cannot be after end offset"
         }
+
+        requireSupportedCalendarDirection(
+            sourcePlatform,
+            targetPlatform,
+        )
     }
 
     fun toCopyRequest(

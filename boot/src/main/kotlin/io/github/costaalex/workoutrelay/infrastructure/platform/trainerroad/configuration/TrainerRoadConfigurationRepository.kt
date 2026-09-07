@@ -24,7 +24,7 @@ class TrainerRoadConfigurationRepository(
 
     @CatchFeignException(platform = Platform.TRAINER_ROAD)
     override fun updateConfig(request: UpdateConfigurationRequest) {
-        cacheManager.getCache("platformInfoCache")!!.evict(platform().key)
+        cacheManager.getCache("platformInfoCache")?.evict(platform().key)
         val updatedConfig = request.getByPrefix(platform().key)
         if (updatedConfig.isEmpty()) {
             return
@@ -34,6 +34,14 @@ class TrainerRoadConfigurationRepository(
         val newConfig = currentConfig.configMap + updatedConfig
         validateConfiguration(newConfig, true)
         appConfigurationRepository.updateConfig(UpdateConfigurationRequest(newConfig))
+        listOf(
+            "trCookieCache",
+            "trUsernameCache",
+            "trMemberIdCache",
+            "trWorkoutCache",
+        ).forEach { cacheName ->
+            cacheManager.getCache(cacheName)?.clear()
+        }
     }
 
     @Cacheable(key = "'trainer-road'")

@@ -15,6 +15,16 @@ class ActivityService(
     private val repositoryMap = repositories.associateBy { it.platform() }
 
     fun syncActivities(request: CopyActivitiesRequest): CopyActivitiesResponse {
+        require(!request.startDate.isAfter(request.endDate)) {
+            "Start date cannot be after end date"
+        }
+        require(
+            request.sourcePlatform == Platform.TRAINER_ROAD &&
+                request.targetPlatform == Platform.INTERVALS
+        ) {
+            "Activity synchronization from ${request.sourcePlatform} " +
+                "to ${request.targetPlatform} is not supported"
+        }
         log.info("Sync activities by request $request")
         val sourceActivityRepository = getRepository(request.sourcePlatform)
         val targetActivityRepository = getRepository(request.targetPlatform)

@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - include:
+      file: schemas/0000-add-config.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: schemas/0001-add-scheduled-requests.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: schemas/0002-add-range-configs.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: schemas/0003-add-apply-plan-shift-config.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: schemas/0004-add-log-level.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: schemas/0005-add-beta-checkbox.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: schemas/0006-add-remove-html-checkbox.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: schemas/0007-add-debug-mode.yaml
+      relativeToChangelogFile: true

@@ -1,3 +1,2 @@
 databaseChangeLog:
-  - includeAll:
-      path: classpath:db/changelog/schemas
+  - includeAll: { path: db/changelog/schemas }

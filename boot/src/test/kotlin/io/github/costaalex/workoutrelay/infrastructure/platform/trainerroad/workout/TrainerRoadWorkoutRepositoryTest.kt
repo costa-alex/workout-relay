@@ -7,6 +7,7 @@ import io.github.costaalex.workoutrelay.domain.TrainingType
 import io.github.costaalex.workoutrelay.domain.workout.structure.SingleStep
 import io.github.costaalex.workoutrelay.domain.workout.structure.WorkoutStructure
 import io.github.costaalex.workoutrelay.infrastructure.platform.trainerroad.TrainerRoadApiClientService
+import io.github.costaalex.workoutrelay.infrastructure.platform.trainerroad.TrainerRoadWorkoutCacheService
 import io.github.costaalex.workoutrelay.infrastructure.platform.trainerroad.configuration.TrainerRoadConfiguration
 import io.github.costaalex.workoutrelay.infrastructure.platform.trainerroad.configuration.TrainerRoadConfigurationRepository
 import io.github.costaalex.workoutrelay.infrastructure.platform.trainerroad.member.TRUsernameRepository
@@ -30,7 +31,11 @@ class TrainerRoadWorkoutRepositoryTest {
     private val trainerRoadConfigurationRepository = trainerRoadConfigurationRepository()
 
     private val trainerRoadApiClientService =
-        TrainerRoadApiClientService(trainerRoadApiClient, trainerRoadConfigurationRepository)
+        TrainerRoadApiClientService(
+            trainerRoadApiClient,
+            trainerRoadConfigurationRepository,
+            TrainerRoadWorkoutCacheService(trainerRoadApiClient, trainerRoadConfigurationRepository),
+        )
 
     private val trainerRoadWorkoutRepository =
         TrainerRoadWorkoutRepository(mock(TRUsernameRepository::class.java), trainerRoadApiClientService)

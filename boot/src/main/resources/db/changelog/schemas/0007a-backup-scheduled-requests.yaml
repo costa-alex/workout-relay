@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: backup-scheduled-requests-before-0008
+      author: workout-relay
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: SELECT COUNT(*) FROM DATABASECHANGELOG WHERE FILENAME LIKE '%0008-add-scheduled-requests.yaml'
+      changes:
+        - createTable:
+            tableName: schedule_requests_0008_backup
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: request_json
+                  type: varchar(5000)
+                  constraints:
+                    nullable: false
+
+        - sql:
+            sql: INSERT INTO schedule_requests_0008_backup (id, request_json) SELECT id, request_json FROM schedule_requests

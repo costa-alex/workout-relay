@@ -4,7 +4,7 @@ import feign.FeignException
 import feign.codec.DecodeException
 import io.github.costaalex.workoutrelay.domain.Platform
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertSame
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
@@ -38,10 +38,7 @@ class FeignExceptionMapperTest {
             result.upstreamStatus,
         )
 
-        assertSame(
-            feignException,
-            result.cause,
-        )
+        assertNull(result.cause)
     }
 
     @Test

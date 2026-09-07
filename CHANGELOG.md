@@ -17,7 +17,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- Preserved scheduled synchronization definitions when upgrading through the legacy schedule-table correction migration.
+- Invalidated platform account caches after configuration changes to prevent stale credentials and account data.
+- Rejected invalid date ranges and unsupported platform operations with clear client errors.
+- Added explicit frontend API contracts and guarded form submission paths.
+
 ### Security
+
+- Updated Angular to patched releases that address runtime cache-key ambiguity and i18n sanitization vulnerabilities.
+- Prevented external platform response details from being retained or written through exception stack traces.
 
 ## [0.4.0] - 2026-07-15
 

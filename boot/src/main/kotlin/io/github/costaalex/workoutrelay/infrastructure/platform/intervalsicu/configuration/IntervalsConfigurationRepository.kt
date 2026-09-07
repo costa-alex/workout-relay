@@ -25,10 +25,11 @@ class IntervalsConfigurationRepository(
 
     @CatchFeignException(platform = Platform.INTERVALS)
     override fun updateConfig(request: UpdateConfigurationRequest) {
-        cacheManager.getCache("platformInfoCache")!!.evict(platform().key)
+        cacheManager.getCache("platformInfoCache")?.evict(platform().key)
         val newConfig = getConfigToUpdate(request)
         validateConfiguration(newConfig)
         appConfigurationRepository.updateConfig(UpdateConfigurationRequest(newConfig))
+        cacheManager.getCache("libraryItemsCache")?.clear()
     }
 
     @Cacheable(key = "'intervals'")

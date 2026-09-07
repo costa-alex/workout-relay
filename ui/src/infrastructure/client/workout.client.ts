@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import {Observable} from 'rxjs';
+import {CopyWorkoutsResponse, ExternalData, LibraryContainer, WorkoutDetails} from '../api-models';
+import {PlatformDirection, PlatformKey} from '../platform';
 
 export interface ScheduledSync {
   id: number;
@@ -47,14 +49,14 @@ export class WorkoutClient {
   }
 
   copyCalendarToCalendar(
-    startDate,
-    endDate,
-    types,
-    skipSynced,
-    platformDirection,
+    startDate: string,
+    endDate: string,
+    types: string[],
+    skipSynced: boolean,
+    platformDirection: PlatformDirection,
     replaceChangedWorkouts = false
-  ): Observable<any> {
-    return this.httpClient.post(
+  ): Observable<CopyWorkoutsResponse> {
+    return this.httpClient.post<CopyWorkoutsResponse>(
       `/api/workout/copy-calendar-to-calendar`,
       {
         startDate,
@@ -67,21 +69,32 @@ export class WorkoutClient {
     );
   }
 
-  copyCalendarToLibrary(name, startDate, endDate, types, platformDirection, isPlan): Observable<any> {
+  copyCalendarToLibrary(
+    name: string,
+    startDate: string,
+    endDate: string,
+    types: string[],
+    platformDirection: PlatformDirection,
+    isPlan: boolean,
+  ): Observable<CopyWorkoutsResponse> {
     return this.httpClient
-      .post(`/api/workout/copy-calendar-to-library`, {name, startDate, endDate, types, ...platformDirection, isPlan})
+      .post<CopyWorkoutsResponse>(`/api/workout/copy-calendar-to-library`, {name, startDate, endDate, types, ...platformDirection, isPlan})
   }
 
-  copyLibraryToLibrary(externalData, targetLibraryContainer, platformDirection): Observable<any> {
+  copyLibraryToLibrary(
+    externalData: ExternalData,
+    targetLibraryContainer: LibraryContainer,
+    platformDirection: PlatformDirection,
+  ): Observable<CopyWorkoutsResponse> {
     return this.httpClient
-      .post(`/api/workout/copy-library-to-library`, {
+      .post<CopyWorkoutsResponse>(`/api/workout/copy-library-to-library`, {
         workoutExternalData: externalData,
         targetLibraryContainer, ...platformDirection
       })
   }
 
-  findWorkoutsByName(platform, name): Observable<any> {
-    return this.httpClient.get(`/api/workout/find`, {params: {platform, name}})
+  findWorkoutsByName(platform: PlatformKey, name: string): Observable<WorkoutDetails[]> {
+    return this.httpClient.get<WorkoutDetails[]>(`/api/workout/find`, {params: {platform, name}})
   }
 
   scheduleCopyCalendarToCalendar(
@@ -112,8 +125,8 @@ export class WorkoutClient {
     );
   }
 
-  runScheduleRequest(id: number): Observable<any> {
-    return this.httpClient.post(
+  runScheduleRequest(id: number): Observable<CopyWorkoutsResponse> {
+    return this.httpClient.post<CopyWorkoutsResponse>(
       `/api/workout/copy-calendar-to-calendar/schedule/${id}/run`,
       {}
     );

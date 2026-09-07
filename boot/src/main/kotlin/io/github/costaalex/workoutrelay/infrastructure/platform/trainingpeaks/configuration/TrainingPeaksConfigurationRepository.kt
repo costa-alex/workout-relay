@@ -19,7 +19,7 @@ class TrainingPeaksConfigurationRepository(
 
     @CatchFeignException(platform = Platform.TRAINING_PEAKS)
     override fun updateConfig(request: UpdateConfigurationRequest) {
-        cacheManager.getCache("platformInfoCache")!!.evict(platform().key)
+        cacheManager.getCache("platformInfoCache")?.evict(platform().key)
         val updatedConfig = request.getByPrefix(platform().key)
         if (updatedConfig.isEmpty()) {
             return
@@ -29,6 +29,14 @@ class TrainingPeaksConfigurationRepository(
         val newConfig = currentConfig.configMap + updatedConfig
         validateConfiguration(newConfig, true)
         appConfigurationRepository.updateConfig(UpdateConfigurationRequest(newConfig))
+        listOf(
+            "tpAccessTokenCache",
+            "tpUserCache",
+            "tpWorkoutsCache",
+            "libraryItemsCache",
+        ).forEach { cacheName ->
+            cacheManager.getCache(cacheName)?.clear()
+        }
     }
 
     fun getConfiguration(): TrainingPeaksConfiguration {

@@ -12,6 +12,19 @@ import io.github.costaalex.workoutrelay.infrastructure.PlatformErrorCode
 
 @ControllerAdvice
 class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun invalidRequest(
+        exception: IllegalArgumentException,
+    ): ResponseEntity<ErrorResponseDTO> {
+        return ResponseEntity
+            .badRequest()
+            .body(
+                ErrorResponseDTO(
+                    exception.message ?: "Invalid request"
+                )
+            )
+    }
+
     @ExceptionHandler(PlatformException::class)
     fun platformException(
         exception: PlatformException,

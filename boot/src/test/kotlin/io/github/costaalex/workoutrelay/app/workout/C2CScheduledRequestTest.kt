@@ -62,4 +62,18 @@ class C2CScheduledRequestTest {
             )
         }
     }
+
+    @Test
+    fun `rejects an unsupported calendar direction`() {
+        assertThatIllegalArgumentException().isThrownBy {
+            C2CScheduledRequest(
+                types = listOf(TrainingType.BIKE),
+                skipSynced = true,
+                sourcePlatform = Platform.INTERVALS,
+                targetPlatform = Platform.TRAINER_ROAD,
+            )
+        }.withMessage(
+            "Calendar synchronization from INTERVALS to TRAINER_ROAD is not supported"
+        )
+    }
 }

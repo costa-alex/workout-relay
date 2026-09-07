@@ -9,16 +9,14 @@ import io.github.costaalex.workoutrelay.infrastructure.platform.trainerroad.acti
 import io.github.costaalex.workoutrelay.infrastructure.platform.trainerroad.configuration.TrainerRoadConfigurationRepository
 import io.github.costaalex.workoutrelay.infrastructure.platform.trainerroad.workout.TrainerRoadWorkoutMapper
 import org.slf4j.LoggerFactory
-import org.springframework.cache.annotation.CacheConfig
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
-@CacheConfig(cacheNames = ["trWorkoutCache"])
 @Repository
 class TrainerRoadApiClientService(
     private val trainerRoadApiClient: TrainerRoadApiClient,
     private val trainerRoadConfigurationRepository: TrainerRoadConfigurationRepository,
+    private val trainerRoadWorkoutCacheService: TrainerRoadWorkoutCacheService,
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
@@ -33,16 +31,14 @@ class TrainerRoadApiClientService(
         startDate: LocalDate,
         endDate: LocalDate,
     ): TrainerRoadTimelineDTO {
-        val apiEndDate = if (startDate == endDate) {
-            endDate.plusDays(1)
-        } else {
-            endDate
+        require(!startDate.isAfter(endDate)) {
+            "Start date cannot be after end date"
         }
 
         return trainerRoadApiClient.getTimeline(
             memberId,
             startDate.toString(),
-            apiEndDate.toString(),
+            endDate.plusDays(1).toString(),
         )
     }
 
@@ -50,19 +46,15 @@ class TrainerRoadApiClientService(
         return getTimeline(memberId, startDate, endDate)
             .plannedActivities
             .filter { it.date.toLocalDate() in startDate..endDate }
-            .filter { it.workoutId != null }
-            .map { plannedActivity ->
-                getWorkout(plannedActivity.workoutId!!.toString())
-                    .withDate(plannedActivity.date.toLocalDate())
+            .mapNotNull { plannedActivity ->
+                plannedActivity.workoutId
+                    ?.let { getWorkout(it.toString()) }
+                    ?.withDate(plannedActivity.date.toLocalDate())
             }
     }
 
-    @Cacheable
     fun getWorkout(trWorkoutId: String): Workout {
-        val removeHtmlTags = trainerRoadConfigurationRepository.getConfiguration().removeHtmlTags
-        val trainerRoadWorkoutMapper = TrainerRoadWorkoutMapper()
-        return trainerRoadApiClient.getWorkout(trWorkoutId)
-            .let { trainerRoadWorkoutMapper.toWorkout(it, removeHtmlTags) }
+        return trainerRoadWorkoutCacheService.getWorkout(trWorkoutId)
             .also { workout ->
                 log.debug(
                     "Mapped TrainerRoad workout {}, target preview: {}",
@@ -88,11 +80,16 @@ class TrainerRoadApiClientService(
         val activities = trainerRoadApiClient.getActivities(memberId, activityIds.joinToString(","))
             .filter { it.date.toLocalDate() in startDate..endDate }
         val activityMapper = TrainerRoadActivityMapper()
-        return activities.map { mapToActivity(activityMapper, it) }
+        return activities.mapNotNull { mapToActivity(activityMapper, it) }
     }
 
-    private fun mapToActivity(activityMapper: TrainerRoadActivityMapper, it: TrainerRoadActivityDTO): Activity {
+    private fun mapToActivity(activityMapper: TrainerRoadActivityMapper, it: TrainerRoadActivityDTO): Activity? {
         val activityId = it.completedRide?.WorkoutRecordId ?: it.activityId
+        if (activityId == null) {
+            log.warn("Skipping TrainerRoad activity {} because its export ID is missing", it.Id)
+            return null
+        }
+
         val resource = trainerRoadApiClient.exportFit(activityId.toString())
         return activityMapper.mapToActivity(it, resource)
     }

@@ -2,6 +2,11 @@ import {Injectable} from '@angular/core';
 import {map, Observable} from "rxjs";
 import { HttpClient } from "@angular/common/http";
 
+interface GitHubReleaseResponse {
+  tag_name: string;
+  html_url: string;
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +19,8 @@ export class GitHubClient {
   ) {
   }
 
-  getLatestRelease(): Observable<any> {
-    return this.httpClient.get(`${GitHubClient.url}/repos/costa-alex/workout-relay/releases/latest`).pipe(
+  getLatestRelease(): Observable<Release> {
+    return this.httpClient.get<GitHubReleaseResponse>(`${GitHubClient.url}/repos/costa-alex/workout-relay/releases/latest`).pipe(
       map(response => new Release(response)),
     )
   }
@@ -25,8 +30,8 @@ export class Release {
   version: string;
   url: string;
 
-  constructor(json: any) {
-    this.version = json['tag_name'].split('v')[1];
-    this.url = json['html_url'];
+  constructor(json: GitHubReleaseResponse) {
+    this.version = json.tag_name.replace(/^v/, '');
+    this.url = json.html_url;
   }
 }
