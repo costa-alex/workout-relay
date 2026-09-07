@@ -45,6 +45,7 @@ Workout Relay is distributed exclusively as a Docker application. Electron and s
 - Skip workouts that were already synchronized by comparing platform identifiers.
 - Continue processing a batch when an individual workout fails, while reporting the failed items.
 - Preserve relevant workout metadata where supported, including workout structure, duration, load, and external platform identifiers.
+- Reconstruct compact TrainerRoad workout steps from per-second power data when the API omits interval metadata.
 
 ### TrainerRoad to TrainingPeaks reconciliation
 
@@ -58,13 +59,17 @@ This behavior is used by:
 
 Scheduled periods that span more than one day are reconciled independently, one day at a time. This preserves the same safety rules for every date in the configured period.
 
-When the TrainerRoad workout identifier changes, Workout Relay:
+Workout Relay replaces an application-managed TrainingPeaks workout when the TrainerRoad workout identifier changes. It also repairs a matching workout with the same TrainerRoad identifier when the source now has structured steps but the existing TrainingPeaks copy has no structure.
+
+For either replacement case, Workout Relay:
 
 1. creates the new workout in TrainingPeaks;
 2. confirms that the creation succeeded;
 3. removes the previous application-managed TrainingPeaks workout.
 
 Only workouts previously created by Workout Relay, with the expected external identifiers and metadata marker, are eligible for removal. Manually created TrainingPeaks workouts are not removed by this reconciliation process.
+
+Some TrainerRoad workouts do not include `IntervalData`. When per-second `WorkoutData` is available, Workout Relay groups contiguous linear power segments into compact warm-up, work, and cooldown steps before sending the workout to TrainingPeaks.
 
 The regular **Confirm** action for a custom date range uses normal copy behavior and does not remove replaced workouts.
 
@@ -510,7 +515,7 @@ The TrainingPeaks and TrainerRoad integrations depend on web endpoints and sessi
 - TrainerRoad ramp steps are supported, but TrainingPeaks may display the label of some single-step descending ramps differently from the original direction.
 - TrainerRoad is supported as a source, not as a synchronization destination.
 - Changed-workout replacement is available for **Only today**, **Only tomorrow**, and scheduled TrainerRoad → TrainingPeaks rolling periods. The regular manual **Confirm** action still uses non-destructive copy behavior.
-- Changed-workout detection is primarily based on the TrainerRoad workout identifier. A content change that keeps the same identifier may be treated as already synchronized.
+- Changed-workout detection is primarily based on the TrainerRoad workout identifier. A managed TrainingPeaks workout without structure is repaired when the matching TrainerRoad source has structured steps, but other content changes that keep the same identifier may still be treated as already synchronized.
 - Scheduler periods are relative to the execution date and are limited to offsets between `-1` and `7` days.
 - The scheduler interval is global for the application instance and cannot be configured per schedule.
 - Synchronization history currently covers calendar-to-calendar operations only.
