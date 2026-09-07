@@ -12,6 +12,7 @@ import io.github.costaalex.workoutrelay.domain.workout.structure.WorkoutStep
 import io.github.costaalex.workoutrelay.domain.workout.structure.WorkoutStructure
 import org.slf4j.LoggerFactory
 import java.time.Duration
+import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
@@ -69,6 +70,10 @@ class TrainerRoadWorkoutMapper {
                 interval.name == "Workout"
             }
 
+        if (relevantIntervals.isEmpty()) {
+            return convertWorkoutDataToSteps(workoutData)
+        }
+
         val lastIntervalIndex =
             relevantIntervals.lastIndex
 
@@ -86,6 +91,78 @@ class TrainerRoadWorkoutMapper {
                     index == lastIntervalIndex
             )
         }
+    }
+
+    private fun convertWorkoutDataToSteps(
+        workoutData: List<TRWorkoutResponseDTO.WorkoutDataPointDTO>
+    ): List<WorkoutStep> {
+        val points = workoutData
+            .mapNotNull { point ->
+                point.ftpPercent?.let { PowerPoint(point.tick, it) }
+            }
+            .sortedBy { it.tick }
+
+        if (points.size < 2) {
+            return emptyList()
+        }
+
+        val boundaryIndexes = mutableListOf(0)
+        var previousSlope = slope(points[0], points[1])
+
+        for (index in 2 until points.size) {
+            val currentSlope = slope(points[index - 1], points[index])
+            if (abs(currentSlope - previousSlope) > SLOPE_TOLERANCE) {
+                boundaryIndexes += index - 1
+                previousSlope = currentSlope
+            }
+        }
+
+        if (boundaryIndexes.last() != points.lastIndex) {
+            boundaryIndexes += points.lastIndex
+        }
+
+        val segmentCount = boundaryIndexes.size - 1
+        return boundaryIndexes.zipWithNext().mapIndexedNotNull { index, (startIndex, endIndex) ->
+            val start = points[startIndex]
+            val end = points[endIndex]
+            val duration = end.tick - start.tick
+            if (duration <= 0) {
+                return@mapIndexedNotNull null
+            }
+
+            val targetStart = start.ftpPercent.roundToInt()
+            val targetEnd = end.ftpPercent.roundToInt()
+            SingleStep(
+                name = when {
+                    segmentCount == 1 -> "Step"
+                    index == 0 -> "Warm Up"
+                    index == segmentCount - 1 -> "Cool Down"
+                    else -> "Step"
+                },
+                length = StepLength.seconds(duration.toLong()),
+                target = StepTarget(targetStart, targetEnd),
+                cadence = null,
+                ramp = targetStart != targetEnd,
+                intensity = when {
+                    segmentCount == 1 -> StepIntensity.ACTIVE
+                    index == 0 -> StepIntensity.WARM_UP
+                    index == segmentCount - 1 -> StepIntensity.COOL_DOWN
+                    else -> StepIntensity.ACTIVE
+                },
+            )
+        }
+    }
+
+    private fun slope(start: PowerPoint, end: PowerPoint): Double =
+        (end.ftpPercent - start.ftpPercent) / (end.tick - start.tick)
+
+    private data class PowerPoint(
+        val tick: Int,
+        val ftpPercent: Double,
+    )
+
+    private companion object {
+        const val SLOPE_TOLERANCE = 0.0001
     }
 
     private fun getDescription(description: String, removeHtmlTags: Boolean): String =

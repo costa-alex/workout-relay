@@ -8,10 +8,57 @@ import io.github.costaalex.workoutrelay.domain.librarycontainer.LibraryContainer
 import io.github.costaalex.workoutrelay.domain.workout.Workout
 import io.github.costaalex.workoutrelay.domain.workout.WorkoutDetails
 import io.github.costaalex.workoutrelay.domain.workout.WorkoutRepository
+import io.github.costaalex.workoutrelay.domain.workout.structure.SingleStep
+import io.github.costaalex.workoutrelay.domain.workout.structure.StepLength
+import io.github.costaalex.workoutrelay.domain.workout.structure.StepTarget
+import io.github.costaalex.workoutrelay.domain.workout.structure.WorkoutStructure
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
 class WorkoutServiceReconciliationRangeTest {
+
+    @Test
+    fun `replaces managed workout without structure when source is structured`() {
+        val date = LocalDate.of(2026, 9, 10)
+        val sourceWorkout = workout(
+            date = date,
+            name = "Lazy Mountain -1",
+            externalData = ExternalData(null, null, "524179"),
+            structure = workoutStructure(),
+        )
+        val targetWorkout = workout(
+            date = date,
+            name = "Lazy Mountain -1",
+            description = ExternalData.DESCRIPTION_SEPARATOR,
+            externalData = ExternalData("3940305210", null, "524179"),
+        )
+        val sourceRepository = FakeWorkoutRepository(
+            Platform.TRAINER_ROAD,
+            mapOf(date to listOf(sourceWorkout)),
+        )
+        val targetRepository = FakeWorkoutRepository(
+            Platform.TRAINING_PEAKS,
+            mapOf(date to listOf(targetWorkout)),
+        )
+        val service = WorkoutService(listOf(sourceRepository, targetRepository), emptyList())
+
+        val response = service.copyWorkoutsC2C(
+            CopyFromCalendarToCalendarRequest(
+                startDate = date,
+                endDate = date,
+                types = listOf(TrainingType.BIKE),
+                skipSynced = true,
+                sourcePlatform = Platform.TRAINER_ROAD,
+                targetPlatform = Platform.TRAINING_PEAKS,
+                replaceChangedWorkouts = true,
+            )
+        )
+
+        assertThat(response.copied).isEqualTo(1)
+        assertThat(response.removed).isEqualTo(1)
+        assertThat(response.skippedAlreadySynced).isZero()
+        assertThat(targetRepository.operations).containsExactly("save:524179", "delete:524179")
+    }
 
     @Test
     fun `reconciles TrainerRoad to TrainingPeaks one day at a time`() {
@@ -110,7 +157,8 @@ class WorkoutServiceReconciliationRangeTest {
         date: LocalDate,
         name: String,
         description: String? = null,
-        externalData: ExternalData
+        externalData: ExternalData,
+        structure: WorkoutStructure? = null,
     ) = Workout(
         details = WorkoutDetails(
             type = TrainingType.BIKE,
@@ -122,7 +170,20 @@ class WorkoutServiceReconciliationRangeTest {
             externalData = externalData
         ),
         date = date,
-        structure = null
+        structure = structure,
+    )
+
+    private fun workoutStructure() = WorkoutStructure(
+        target = WorkoutStructure.TargetUnit.FTP_PERCENTAGE,
+        steps = listOf(
+            SingleStep(
+                name = "Step",
+                length = StepLength.seconds(3600),
+                target = StepTarget(45, 45),
+                cadence = null,
+                ramp = false,
+            )
+        ),
     )
 
     private class FakeWorkoutRepository(
@@ -132,6 +193,7 @@ class WorkoutServiceReconciliationRangeTest {
         val requestedPeriods = mutableListOf<Pair<LocalDate, LocalDate>>()
         val savedWorkouts = mutableListOf<Workout>()
         val deletedWorkouts = mutableListOf<Workout>()
+        val operations = mutableListOf<String>()
 
         override fun platform() = platform
 
@@ -145,10 +207,12 @@ class WorkoutServiceReconciliationRangeTest {
 
         override fun saveWorkoutsToCalendar(workouts: List<Workout>) {
             savedWorkouts += workouts
+            operations += workouts.map { "save:${it.details.externalData.trainerRoadId}" }
         }
 
         override fun deleteWorkoutFromCalendar(workout: Workout) {
             deletedWorkouts += workout
+            operations += "delete:${workout.details.externalData.trainerRoadId}"
         }
 
         override fun getWorkoutsFromLibrary(

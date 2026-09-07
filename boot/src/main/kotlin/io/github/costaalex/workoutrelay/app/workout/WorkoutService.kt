@@ -259,15 +259,35 @@ class WorkoutService(
             }
             .toSet()
 
+        val targetWorkoutsByTrainerRoadId = managedTargetWorkouts
+            .groupBy { it.details.externalData.trainerRoadId }
+
+        val trainerRoadIdsToReplace = validSourceWorkouts
+            .filter { sourceWorkout ->
+                val matchingTargets = targetWorkoutsByTrainerRoadId[
+                    sourceWorkout.details.externalData.trainerRoadId
+                ].orEmpty()
+
+                sourceWorkout.structure != null &&
+                    matchingTargets.isNotEmpty() &&
+                    matchingTargets.all { it.structure == null }
+            }
+            .mapNotNull { it.details.externalData.trainerRoadId }
+            .toSet()
+
         val workoutsToCreate = validSourceWorkouts.filter {
-            it.details.externalData.trainerRoadId !in targetTrainerRoadIds
+            val trainerRoadId = it.details.externalData.trainerRoadId
+            trainerRoadId !in targetTrainerRoadIds ||
+                trainerRoadId in trainerRoadIdsToReplace
         }
 
         val alreadySynced =
             validSourceWorkouts.size - workoutsToCreate.size
 
         val workoutsToRemove = managedTargetWorkouts.filter {
-            it.details.externalData.trainerRoadId !in sourceTrainerRoadIds
+            val trainerRoadId = it.details.externalData.trainerRoadId
+            trainerRoadId !in sourceTrainerRoadIds ||
+                trainerRoadId in trainerRoadIdsToReplace
         }
 
         /*

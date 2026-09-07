@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Rejected invalid date ranges and unsupported platform operations with clear client errors.
 - Added explicit frontend API contracts and guarded form submission paths.
 - Treated TrainingPeaks workouts without structured steps as valid unstructured workouts instead of logging conversion warnings.
+- Reconstructed TrainerRoad workout steps from power data when interval metadata is absent and repaired matching unstructured TrainingPeaks workouts.
 
 ### Security
 
